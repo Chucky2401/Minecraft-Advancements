@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/">
+        <file>img/folder_24px_black.png</file>
+        <file>img/folder_24px_white.png</file>
+        <file>img/icons8_minecraft_logo_48px.png</file>
+    </qresource>
+</RCC>
