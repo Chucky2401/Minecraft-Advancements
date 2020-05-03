@@ -1,1 +1,0 @@
-.\7z.exe x "C:\Users\The Black Wizard\AppData\Roaming\.minecraft\versions\1.15.2\1.15.2.jar" -oD:\TEST -ir!data\minecraft\advancements\*.json

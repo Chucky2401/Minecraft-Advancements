@@ -1,4 +1,4 @@
-#include "frm_principale.h"
+﻿#include "frm_principale.h"
 #include <QApplication>
 #include <QSplashScreen>
 #include <QTime>
@@ -34,7 +34,7 @@ int main(int argc, char *argv[])
 
     app.processEvents();
 
-    FRM_Principale w;
+    FRM_Principale w(nullptr, test);
     w.show();
     return app.exec();
 }

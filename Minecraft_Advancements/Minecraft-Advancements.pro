@@ -17,13 +17,18 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     main.cpp \
-    frm_principale.cpp
+    frm_principale.cpp \
+    mysortfilterproxymodel.cpp \
+    pop_avancement.cpp
 
 HEADERS += \
-    frm_principale.h
+    frm_principale.h \
+    mysortfilterproxymodel.h \
+    pop_avancement.h
 
 FORMS += \
-    frm_principale.ui
+    frm_principale.ui \
+    pop_avancement.ui
 
 TRANSLATIONS += \
     Minecraft-Advancements_fr_FR.ts
@@ -34,6 +39,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
+    Backup-ReadJson.txt \
     Note.txt
 
 RESOURCES += \
