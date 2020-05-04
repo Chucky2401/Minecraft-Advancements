@@ -17,18 +17,13 @@ DEFINES += QT_DEPRECATED_WARNINGS
 
 SOURCES += \
     main.cpp \
-    frm_principale.cpp \
-    mysortfilterproxymodel.cpp \
-    pop_avancement.cpp
+    frm_principale.cpp
 
 HEADERS += \
-    frm_principale.h \
-    mysortfilterproxymodel.h \
-    pop_avancement.h
+    frm_principale.h
 
 FORMS += \
-    frm_principale.ui \
-    pop_avancement.ui
+    frm_principale.ui
 
 TRANSLATIONS += \
     Minecraft-Advancements_fr_FR.ts

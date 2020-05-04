@@ -3,3 +3,5 @@
 Variable qui contient le partie du chemin à supprimer pour les advancements : m_qdDossierAdvancedments
 
 Origine;Titre;Progres Fini;Condition;Condition Faite;Date Fait
+
+/en_us.lang

@@ -10,12 +10,18 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
 
     if (test == false) {
         ui->qpbReadJSON->setVisible(test);
+        ui->lineInDebug->setVisible(test);
     } else {
         ui->qpbReadJSON->setVisible(test);
-        connect(ui->qpbReadJSON, SIGNAL(clicked(bool)), this, SLOT(readJSON(bool)));
+        ui->lineInDebug->setVisible(test);
+        connect(ui->qpbReadJSON, SIGNAL(clicked(bool)), this, SLOT(TEST(bool)));
     }
 
     ui->qgbFiltres->setEnabled(false);
+
+    ui->qcbLangue->addItem("Français", QVariant("/fr_fr.lang"));
+    ui->qcbLangue->addItem("English", QVariant("/en_us.lang"));
+    //ui->qcbLangue->setCurrentIndex(0);
 
     this->setWindowTitle(QApplication::applicationName());
     this->setWindowIcon(QIcon(":/img/icons8_minecraft_logo_48px.png"));
@@ -101,12 +107,10 @@ void FRM_Principale::choixLauncher(int index) {
 
     ui->qcbVersion->addItem("", QVariant("EMPTY"));
 
-    //qDebug() << qsLanceur;
-
     if (qsLanceur == "Mojang") {
         ui->qpbSelectionDossierLanceur->setEnabled(false);
+
         qslDossierLanceurTemp = m_qsAppDataPath.split("\\");
-        //qDebug() << qslDossierLanceurTemp;
         for (int i = 0 ; i < qslDossierLanceurTemp.length() ; i++) {
             if (i != 2) {
                 qsFauxCheminLanceur += qslDossierLanceurTemp.at(i);
@@ -118,12 +122,13 @@ void FRM_Principale::choixLauncher(int index) {
                 qsFauxCheminLanceur += "\\";
         }
 
-        //qDebug() << qsFauxCheminLanceur;
 
         ui->qleDossierLanceur->setText(qsFauxCheminLanceur);
         m_qsDossierMinecraft = m_qsAppDataPath + "\\.minecraft";
         m_qsDossierVersion = m_qsAppDataPath + "\\.minecraft\\versions";
         m_qsDossierAssets = m_qsAppDataPath + "\\.minecraft\\assets";
+        m_qsDossierObjects = m_qsDossierAssets + "\\objects";
+        m_qsDossierIndexes = m_qsDossierAssets + "\\indexes";
         QDirIterator qdiMinecraftVersion(m_qsDossierVersion, qslFormatFichier, QDir::Files, QDirIterator::Subdirectories);
 
         while (qdiMinecraftVersion.hasNext()) {
@@ -132,26 +137,43 @@ void FRM_Principale::choixLauncher(int index) {
             m_qslListVersionJar << qsValeurTemp;
             qsNomVersionTemp = qsValeurTemp.split("/").last();
 
-            qslNomVersionTemp = qsNomVersionTemp.split(".");
-            for (int i = 0; i < qslNomVersionTemp.length()-1; i++) {
-                qsNomVersion = qsNomVersion + qslNomVersionTemp.at(i);
-                if (i + 1 != qslNomVersionTemp.length()-1) {
-                    qsNomVersion = qsNomVersion + ".";
+            if (!qsNomVersionTemp.contains("fabric") && !qsNomVersionTemp.contains("forge")) {
+                qslNomVersionTemp = qsNomVersionTemp.split(".");
+                for (int i = 0; i < qslNomVersionTemp.length()-1; i++) {
+                    qsNomVersion = qsNomVersion + qslNomVersionTemp.at(i);
+                    if (i + 1 != qslNomVersionTemp.length()-1) {
+                        qsNomVersion = qsNomVersion + ".";
+                    }
                 }
+                ui->qcbVersion->addItem(qsNomVersion, QVariant(qsValeurTemp));
+                qDebug() << "Nom Version" << qsNomVersion << "- qsValeurTemp" << qsValeurTemp;
             }
 
-            ui->qcbVersion->addItem(qsNomVersion, QVariant(qsValeurTemp));
         }
-
-        //qDebug() << m_qslListVersionJar;
     }
 }
 
 void FRM_Principale::choixVersion(int index) {
     QString qsCheminVersion = ui->qcbVersion->itemData(index).toString();
+    QString qsFauxChemin, qsNumeroIndex = "";
+    QStringList qslFormatFichier;
+    qslFormatFichier << "*.json";
+    int iFicherDejaExtrait = 0;
+
+    if (ui->qcbVersion->currentIndex() != 0) {
+        m_qsJSONVersion = ui->qcbVersion->currentData().toString().replace(".jar", ".json");
+        // Aller chercher id avec la variable m_qsJSONVersion
+        qsNumeroIndex = numeroIndex();
+        // Renseigner fichier index (m_qsFichierIndex
+        m_qsFichierIndex = m_qsDossierIndexes + "\\" + qsNumeroIndex + ".json";
+    }
+    qDebug() << m_qsFichierIndex;
+
     m_qsNumeroVersion = ui->qcbVersion->currentText();
-    QString qsFauxChemin;
     m_qsl7zipArguments.clear();
+    m_qsl7zipArgumentsLang.clear();
+    //ui->qlAdvancementsExtrait->setVisible(false);
+    //ui->qlLangExtraite->setVisible(false);
 
     if (qsCheminVersion != "EMPTY") {
         ui->qleCheminVersion->setText("C:\\fake_Path\\" + qsCheminVersion.split("/").last());
@@ -159,26 +181,67 @@ void FRM_Principale::choixVersion(int index) {
         ui->qleCheminVersion->setText("");
 
     m_qdDossierAdvancedments.setPath("advancements/" + ui->qcbVersion->currentText() + "/");
-    m_qsFichierLangUs = m_qdDossierAdvancedments.absolutePath() + "/en_us.lang";
-    qDebug() << m_qdDossierAdvancedments.path();
+    m_qsFichierLang = m_qdDossierAdvancedments.absolutePath() + ui->qcbLangue->currentData().toString();
+    m_qsCleLang = "minecraft/lang" + ui->qcbLangue->currentData().toString().replace(".lang", ".json");
 
     if (ui->qcbVersion->currentData() != "EMPTY")
         m_bVersionOK = true;
     else
         m_bVersionOK = false;
 
-    if (m_qdDossierAdvancedments.exists() && QFile(m_qsFichierLangUs).exists() && m_bVersionOK) {
+    if (m_qdDossierAdvancedments.exists() && QFile(m_qsFichierLang).exists() && m_bVersionOK) {
         ui->qpbExtraireProgres->setText("Update Progrès");
         ui->qpbExtraireProgres->setEnabled(true);
         m_bUpdateProgres = true;
         m_bProgresVanillaOK = true;
-    } else if (m_qdDossierAdvancedments.exists() && !QFile(m_qsFichierLangUs).exists() && m_bVersionOK) {
+
+        QDirIterator qdiFichierProgresExtrait(m_qdDossierAdvancedments.path(), qslFormatFichier, QDir::Files, QDirIterator::Subdirectories);
+        while (qdiFichierProgresExtrait.hasNext()) {
+            qdiFichierProgresExtrait.next();
+            iFicherDejaExtrait++;
+        }
+
+        if (iFicherDejaExtrait > 1) {
+            ui->qlAdvancementsExtrait->setText("Progrès extrait !");
+            ui->qlAdvancementsExtrait->setStyleSheet("QLabel { color: green; }");
+            ui->qlAdvancementsExtrait->setVisible(true);
+        } else {
+            ui->qlAdvancementsExtrait->setText("Progrès non extrait proprement !");
+            ui->qlAdvancementsExtrait->setStyleSheet("QLabel { color: red; }");
+            ui->qlAdvancementsExtrait->setVisible(true);
+        }
+
+        ui->qlLangExtraite->setText("Langue extraite !");
+        ui->qlLangExtraite->setStyleSheet("QLabel { color: green; }");
+        ui->qlLangExtraite->setVisible(true);
+
+    } else if (m_qdDossierAdvancedments.exists() && !QFile(m_qsFichierLang).exists() && m_bVersionOK) {
         m_qdDossierAdvancedments.removeRecursively();
         if (m_qdDossierAdvancedments.mkpath(".")) {
             ui->qpbExtraireProgres->setEnabled(true);
             ui->qpbExtraireProgres->setText("Extraire Progrès");
             m_bUpdateProgres = false;
             m_bProgresVanillaOK = false;
+
+            QDirIterator qdiFichierProgresExtrait(m_qdDossierAdvancedments.path(), qslFormatFichier, QDir::Files, QDirIterator::Subdirectories);
+            while (qdiFichierProgresExtrait.hasNext()) {
+                qdiFichierProgresExtrait.next();
+                iFicherDejaExtrait++;
+            }
+
+            if (iFicherDejaExtrait > 1) {
+                ui->qlAdvancementsExtrait->setText("Progrès extrait !");
+                ui->qlAdvancementsExtrait->setStyleSheet("QLabel { color: green; }");
+                ui->qlAdvancementsExtrait->setVisible(true);
+            } else {
+                ui->qlAdvancementsExtrait->setText("Progrès non extrait proprement !");
+                ui->qlAdvancementsExtrait->setStyleSheet("QLabel { color: red; }");
+                ui->qlAdvancementsExtrait->setVisible(true);
+            }
+
+            ui->qlLangExtraite->setText("Langue non extraite !");
+            ui->qlLangExtraite->setStyleSheet("QLabel { color: red; }");
+            ui->qlLangExtraite->setVisible(true);
         }
     } else if (ui->qcbVersion->currentData() == "EMPTY") {
         ui->qpbExtraireProgres->setEnabled(false);
@@ -198,7 +261,7 @@ void FRM_Principale::choixVersion(int index) {
         ui->qpbReadJSONsVanilla->setEnabled(false);
     }
 
-    if (m_bVersionOK && m_bProgresVanillaOK && m_bProgresPersoOK && m_bProgresBlazeandcaveOK) {
+    if (m_bVersionOK && m_bProgresPersoOK && m_bProgresBlazeandcaveOK) {
         ui->qpbReadAllJSONs->setEnabled(true);
     } else {
         ui->qpbReadAllJSONs->setEnabled(false);
@@ -208,13 +271,19 @@ void FRM_Principale::choixVersion(int index) {
         m_qsl7zipArguments << "x" << qsCheminVersion << "-o"+m_tempDir.path() << "-ir!data\\minecraft\\advancements\\*.json";
         m_qsl7zipArgumentsLang << "x" << qsCheminVersion << "-o"+m_tempDir.path() << "-ir!assets\\minecraft\\lang\\*.json";
     }
-    //qDebug() << m_qsl7zipArguments;
 }
 
 void FRM_Principale::extraireProgres(bool checked) {
     QStringList qslFormatFichier;
     QString qsTempNom, qsNouveauNom;
     bool bErreurDetecteAdvancement = false, bErreurDetecteLang = false;
+
+    QMessageBox qmbError;
+    qmbError.setTextFormat(Qt::RichText);
+    qmbError.setWindowIcon(QIcon(":/img/icons8_minecraft_logo_48px.png"));
+    qmbError.setStandardButtons(QMessageBox::Ok);
+    qmbError.setDefaultButton(QMessageBox::Ok);
+    qmbError.setIcon(QMessageBox::Critical);
 
     qslFormatFichier << "*.json";
 
@@ -282,58 +351,106 @@ void FRM_Principale::extraireProgres(bool checked) {
         qdDossierTemporaire.removeRecursively();
     }
 
-    if (!bErreurDetecteAdvancement) {
+//    qDebug () << "ErreurDetectAdvancement" << bErreurDetecteAdvancement;
+//    qDebug () << "ErreurDetectLang" << bErreurDetecteLang;
+    if (!bErreurDetecteAdvancement && ui->qcbLangue->currentData() == "/en_us.lang") {
+//        qDebug() << "Traitement de la lang";
         m_qp7zProcess->start(m_qs7zBin, m_qsl7zipArgumentsLang);
         if (m_qp7zProcess->waitForFinished()) {
-            QDirIterator qdiFichierProgres(m_tempDir.path()+"/assets/minecraft/lang/", qslFormatFichier, QDir::Files, QDirIterator::Subdirectories);
+            QDirIterator qdiFichierLang(m_tempDir.path()+"/assets/minecraft/lang/", qslFormatFichier, QDir::Files, QDirIterator::Subdirectories);
 
-            while (qdiFichierProgres.hasNext() && !bErreurDetecteLang) {
-                qsTempNom = qdiFichierProgres.next();
-                QString qsCheminCompletTemp = qdiFichierProgres.filePath();
-                QString qsNomDuFichierTemp = qdiFichierProgres.fileName();
+            while (qdiFichierLang.hasNext() && !bErreurDetecteLang) {
+                qsTempNom = qdiFichierLang.next();
+                QString qsCheminCompletTemp = qdiFichierLang.filePath();
+                QString qsNomDuFichierTemp = qdiFichierLang.fileName();
                 QString qsDossierTemp = qsCheminCompletTemp.replace(qsNomDuFichierTemp, "");
                 QFile qfFichierTemporaire(qsTempNom);
-                QFile qfFichierFinal(m_qsFichierLangUs);
+                QFile qfFichierFinal(m_qsFichierLang);
+                qDebug() << qsCheminCompletTemp;
+                qDebug() << qsNomDuFichierTemp;
 
                 if (qsNomDuFichierTemp != "." && qsNomDuFichierTemp != "..") {
-                    if(!qfFichierTemporaire.open(QIODevice::ReadOnly)){
+                    if(!qfFichierTemporaire.open(QIODevice::ReadOnly)) {
                         qDebug() << "Failed to open " << qfFichierTemporaire;
                         bErreurDetecteLang = true;
                     } else {
+                        qDebug() << "Fichier" << qfFichierTemporaire << "ouvert";
                         if(!qfFichierFinal.open(QIODevice::ReadWrite)){
                             qDebug() << "Failed to open " << qfFichierFinal;
                             bErreurDetecteLang = true;
                         } else {
+                            qDebug() << "Fichier" << qfFichierFinal << "ouvert";
                             QByteArray qbaContenuFichierTemp = qfFichierTemporaire.readAll();
+                            qDebug() << "qbaContenuFichierTemp" << qbaContenuFichierTemp;
                             if (qfFichierFinal.write(qbaContenuFichierTemp) == -1) {
                                 bErreurDetecteLang = true;
                             }
+                            qfFichierFinal.close();
+                            qfFichierTemporaire.close();
+                            qfFichierTemporaire.remove();
                         }
                     }
                 }
 
+            }
+        }
+    } else if (!bErreurDetecteAdvancement && ui->qcbLangue->currentData() != "/en_us.lang") {
+        QString qsNomFichierLangue = hashLangue();
+        QString qsFichier = "";
+        QFile qfFichierTemporaire("");
+        QFile qfFichierFinal(m_qsFichierLang);
+
+        QDirIterator qdiFichierLangue(m_qsDossierObjects, QStringList() << qsNomFichierLangue, QDir::Files, QDirIterator::Subdirectories);
+
+        qDebug() << "qsNomFichierLangue" << qsNomFichierLangue;
+
+        while (qdiFichierLangue.hasNext()) {
+            qsFichier = qdiFichierLangue.next();
+            qDebug() << "#BOUCLE" << qsFichier << "-" << qdiFichierLangue.path();
+        }
+
+        qfFichierTemporaire.setFileName(qsFichier);
+
+        if(!qfFichierTemporaire.open(QIODevice::ReadOnly)) {
+            qDebug() << "Failed to open " << qsFichier;
+            bErreurDetecteLang = true;
+        } else {
+            qDebug() << "Fichier" << qsFichier << "ouvert";
+            if(!qfFichierFinal.open(QIODevice::ReadWrite)){
+                qDebug() << "Failed to open " << m_qsFichierLang;
+                bErreurDetecteLang = true;
+            } else {
+                qDebug() << "Fichier" << qfFichierFinal << "ouvert";
+                QByteArray qbaContenuFichierTemp = qfFichierTemporaire.readAll();
+                //qDebug() << "qbaContenuFichierTemp" << qbaContenuFichierTemp;
+                if (qfFichierFinal.write(qbaContenuFichierTemp) == -1) {
+                    bErreurDetecteLang = true;
+                }
                 qfFichierFinal.close();
                 qfFichierTemporaire.close();
-                qfFichierTemporaire.remove();
             }
-
-            ui->qlLangExtraite->setVisible(true);
-
-            if (!bErreurDetecteLang) {
-                ui->qlLangExtraite->setText("Langue extraite !");
-                ui->qlLangExtraite->setStyleSheet("QLabel { color: green; }");
-                m_bUpdateProgres = true;
-                QMessageBox::information(this, "Extraction langue US terminée", "L'extraction de la langue US a réussie.");
-            } else {
-                ui->qlLangExtraite->setText("Extraction éhcouée !");
-                ui->qlLangExtraite->setStyleSheet("QLabel { color: red; }");
-                m_bUpdateProgres = true;
-                QMessageBox::critical(this, "Extraction échouée", "L'extraction de la langue US a échouée.");
-            }
-            QDir qdDossierTemporaire(m_tempDir.path()+"/assets");
-            qdDossierTemporaire.removeRecursively();
         }
     }
+
+    ui->qlLangExtraite->setVisible(true);
+
+    if (!bErreurDetecteLang) {
+        ui->qlLangExtraite->setText("Langue extraite !");
+        ui->qlLangExtraite->setStyleSheet("QLabel { color: green; }");
+        m_bUpdateProgres = true;
+        QMessageBox::information(this, "Extraction langue terminée", "L'extraction de la langue a réussie.");
+    } else {
+        ui->qlLangExtraite->setText("Extraction éhcouée !");
+        ui->qlLangExtraite->setStyleSheet("QLabel { color: red; }");
+        m_bUpdateProgres = true;
+        qmbError.setText("Impossible d'extraire la langue <i>" + ui->qcbLangue->currentData().toString().right(ui->qcbLangue->currentData().toString().count()-1) + "<i>.");
+        qmbError.setInformativeText("<strong>Lancer le jeux dans la même version, fermer et relancer l'extraction.</strong>");
+        //qmbError.setDetailedText(error->errorString().replace(0, 1, error->errorString()[0].toUpper()));
+        qmbError.exec();
+        //QMessageBox::critical(this, "Extraction échouée", "L'extraction de la langue a échouée.");
+    }
+    QDir qdDossierTemporaire(m_tempDir.path()+"/assets");
+    qdDossierTemporaire.removeRecursively();
 
     if (bErreurDetecteAdvancement || bErreurDetecteLang) {
         m_bErreurExtraction = true;
@@ -448,7 +565,6 @@ void FRM_Principale::choixFichierAdvancements(bool checked) {
         if (!m_bErreurExtraction && bOuvertureJson) {
             ui->qlProgresPersoOuvert->setText("Vos progrès ont pu être ouvert !");
             ui->qlProgresPersoOuvert->setStyleSheet("QLabel { color: green; }");
-            //ui->qpbReadJSONsVanilla->setEnabled(true);
             m_bProgresPersoOK = true;
         } else if (!bOuvertureJson) {
             ui->qlProgresPersoOuvert->setText("Vos progrès n'ont pas pu être ouvert !");
@@ -463,7 +579,7 @@ void FRM_Principale::choixFichierAdvancements(bool checked) {
             ui->qpbReadJSONsVanilla->setEnabled(false);
         }
 
-        if (m_bProgresBlazeandcaveOK && m_bProgresPersoOK) {
+        if (m_bVersionOK && m_bProgresBlazeandcaveOK && m_bProgresPersoOK) {
             ui->qpbReadJSONsBlazeandcave->setEnabled(true);
         } else {
             ui->qpbReadJSONsBlazeandcave->setEnabled(false);
@@ -502,7 +618,7 @@ void FRM_Principale::readJSONsVanilla(bool checked) {
 
     ui->qcbFiltreOrigine->addItem("Minecraft Vanilla");
     ui->qcbFiltreTitre->addItem("----- Minecraft Vanilla -----");
-    QString qsJsonLang = m_qsFichierLangUs;
+    QString qsJsonLang = m_qsFichierLang;
     QFile qfLangUs(qsJsonLang);
     if(!qfLangUs.open(QIODevice::ReadOnly)){
         qDebug()<<"Failed to open "<< qsJsonLang;
@@ -579,6 +695,7 @@ void FRM_Principale::readJSONsVanilla(bool checked) {
         QJsonArray qjaConditionsTemp = json_map["requirements"].toJsonArray();
         QString qsIdentifiant = qsJsonFile;
         QString qsTitre = qvmJsonLang[qmTitle["translate"].toString()].toString();
+        QString qsTitreAvecDescription = "";
         QString qsDescription = qvmJsonLang[qmDescription["translate"].toString()].toString();
         qsIdentifiant.replace(m_qdDossierAdvancedments.path()+"/", "");
         qsIdentifiant = "minecraft:" + qsIdentifiant.split(".").first();
@@ -652,10 +769,14 @@ void FRM_Principale::readJSONsVanilla(bool checked) {
 
                 QStandardItem *qsiOrigine = new QStandardItem("Minecraft Vanilla");
                 QStandardItem *qsiTitre = new QStandardItem("");
-                if (qsDescription == "")
+                if (qsDescription == "") {
                     qsiTitre->setText(qsTitre);
-                else
+                    qsTitreAvecDescription = qsTitre;
+                }
+                else {
                     qsiTitre->setText(qsTitre + " (" + qsDescription + ")");
+                    qsTitreAvecDescription = qsTitre + " (" + qsDescription + ")";
+                }
                 QStandardItem *qsiProgreFini = new QStandardItem(qsProgresFini);
                 QStandardItem *qsiCondition = new QStandardItem(qsCondition);
                 QStandardItem *qsiConditionRemplie = new QStandardItem("");
@@ -663,7 +784,7 @@ void FRM_Principale::readJSONsVanilla(bool checked) {
 
                 if (bCriteresPersoExiste && (bProgesFini && iCritereFait <= iCritereAFaire)) {
                     if (qsDateRealisation != "") {
-                        qDebug() << "Minecraft Vanilla;" + qsTitre + ";" + qsProgresFini + ";" + qsCondition + ";oui;" + qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss");
+                        qDebug() << "Minecraft Vanilla;" + qsTitreAvecDescription + ";" + qsProgresFini + ";" + qsCondition + ";oui;" + qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss");
                         qsiConditionRemplie->setText("oui");
                         qsiDateRealisation->setText(qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss"));
                         m_qlLigneProgres << qsiOrigine << qsiTitre << qsiProgreFini << qsiCondition << qsiConditionRemplie << qsiDateRealisation;
@@ -671,19 +792,19 @@ void FRM_Principale::readJSONsVanilla(bool checked) {
                     }
                 } else if (bCriteresPersoExiste) {
                     if (qsDateRealisation != "") {
-                        qDebug() << "Minecraft Vanilla;" + qsTitre + ";" + qsProgresFini + ";" + qsCondition + ";oui;" + qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss");
+                        qDebug() << "Minecraft Vanilla;" + qsTitreAvecDescription + ";" + qsProgresFini + ";" + qsCondition + ";oui;" + qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss");
                         qsiConditionRemplie->setText("oui");
                         qsiDateRealisation->setText(qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss"));
                         m_qlLigneProgres << qsiOrigine << qsiTitre << qsiProgreFini << qsiCondition << qsiConditionRemplie << qsiDateRealisation;
                         m_qsimProgresRealisation->appendRow(m_qlLigneProgres);
                     } else {
-                        qDebug() << "Minecraft Vanilla;" + qsTitre + ";" + qsProgresFini + ";" + qsCondition + ";non;";
+                        qDebug() << "Minecraft Vanilla;" + qsTitreAvecDescription + ";" + qsProgresFini + ";" + qsCondition + ";non;";
                         qsiConditionRemplie->setText("non");
                         m_qlLigneProgres << qsiOrigine << qsiTitre << qsiProgreFini << qsiCondition << qsiConditionRemplie << qsiDateRealisation;
                         m_qsimProgresRealisation->appendRow(m_qlLigneProgres);
                     }
                 } else {
-                    qDebug() << "Minecraft Vanilla;" + qsTitre + ";" + qsProgresFini + ";" + qsCondition + ";non;";
+                    qDebug() << "Minecraft Vanilla;" + qsTitreAvecDescription + ";" + qsProgresFini + ";" + qsCondition + ";non;";
                     qsiConditionRemplie->setText("non");
                     m_qlLigneProgres << qsiOrigine << qsiTitre << qsiProgreFini << qsiCondition << qsiConditionRemplie << qsiDateRealisation;
                     m_qsimProgresRealisation->appendRow(m_qlLigneProgres);
@@ -732,9 +853,53 @@ void FRM_Principale::readJSONsBlazeandcave(bool checked) {
     QString qsTitrePrecedent = "";
     bool bOuvertureJSON = true;
     qslFormatFichier << "*.json";
+    QMessageBox qmbError;
+    qmbError.setTextFormat(Qt::RichText);
+    qmbError.setWindowIcon(QIcon(":/img/icons8_minecraft_logo_48px.png"));
+    qmbError.setStandardButtons(QMessageBox::Ok);
+    qmbError.setDefaultButton(QMessageBox::Ok);
+    qmbError.setIcon(QMessageBox::Critical);
+    QJsonParseError *error = new QJsonParseError();
 
     ui->qcbFiltreOrigine->addItem("Blaze and Cave");
     ui->qcbFiltreTitre->addItem("----- Blaze and Cave -----");
+
+    QString qsJsonLang = "rcs/blazeandcave-fr_fr.json";
+    QFile qfLangUs(qsJsonLang);
+    if(!qfLangUs.open(QIODevice::ReadOnly)){
+        qDebug()<<"Failed to open "<< qsJsonLang;
+        exit(1);
+    }
+
+    QTextStream qtsLang(&qfLangUs);
+    QString qsJsonLangUs;
+    qsJsonLangUs = qtsLang.readAll();
+    qfLangUs.close();
+    QByteArray qbaJsonLang = qsJsonLangUs.toLocal8Bit();
+
+    QJsonDocument qjdJsonLang = QJsonDocument::fromJson(qbaJsonLang, error);
+
+    if(qjdJsonLang.isNull()){
+        qDebug()<<"Failed to create JSON doc.";
+        qmbError.setText("Impossible de récupérer le contenu de <i>" + qsJsonLang + "<i>.");
+        qmbError.setInformativeText("<strong>Le fichier ne sera pas traité...</strong>");
+        qmbError.setDetailedText(error->errorString().replace(0, 1, error->errorString()[0].toUpper()));
+        qmbError.exec();
+        exit(2);
+    }
+    if(!qjdJsonLang.isObject()){
+        qDebug()<<"JSON is not an object.";
+        exit(3);
+    }
+
+    QJsonObject qjsJsonLang = qjdJsonLang.object();
+
+    if(qjsJsonLang.isEmpty()){
+        qDebug()<<"JSON object is empty.";
+        exit(4);
+    }
+
+    QVariantMap qvmJsonLang = qjsJsonLang.toVariantMap();
 
     QDirIterator qdiFichierProgres(m_qdDossierAdvancementsBlazeAndCave.path(), qslFormatFichier, QDir::Files, QDirIterator::Subdirectories);
 
@@ -746,7 +911,7 @@ void FRM_Principale::readJSONsBlazeandcave(bool checked) {
         QFile qfJsonFile(qsJsonFile);
         if(!qfJsonFile.open(QIODevice::ReadOnly)){
             qDebug()<<"Failed to open "<< qsJsonFile;
-            QMessageBox::critical(this, "Ouvrir JSON", "Impossible d'e récupérer le contenu d'ouvrir " + qsJsonFile);
+            QMessageBox::critical(this, "Ouvrir JSON", "Impossible d'e récupérer le contenu d'ouvrir " + qsJsonFile + ".\n\n<strong>Le fichier ne sera pas traité...</strong>");
             bOuvertureJSON = false;
         }
 
@@ -755,25 +920,31 @@ void FRM_Principale::readJSONsBlazeandcave(bool checked) {
         json_string = file_text.readAll();
         qfJsonFile.close();
         QByteArray json_bytes = json_string.toLocal8Bit();
+        QJsonDocument json_doc = QJsonDocument::fromJson(json_bytes, error);
 
-        QJsonDocument json_doc = QJsonDocument::fromJson(json_bytes);
+        if(json_doc.isNull() && bOuvertureJSON){
+            QStringList qslJsonFile = qsJsonFile.split("/");
+            QString qsFauxJsonFile = qslJsonFile.first() + "\\fake_Path\\" + qslJsonFile.last();
 
-        if(json_doc.isNull()){
             qDebug()<<"Failed to create JSON doc." << qsJsonFile;
-            QMessageBox::critical(this, "Traitement JSON", "Impossible de récupérer le contenu de " + qsJsonFile);
+
+            qmbError.setText("Impossible de récupérer le contenu de <i>" + qsFauxJsonFile + "<i>.");
+            qmbError.setInformativeText("<strong>Le fichier ne sera pas traité...</strong>");
+            qmbError.setDetailedText(error->errorString().replace(0, 1, error->errorString()[0].toUpper()) + "\n\n" + json_string);
+            qmbError.exec();
             bOuvertureJSON = false;
         }
-        if(!json_doc.isObject()){
+        if(!json_doc.isObject() && bOuvertureJSON){
             qDebug()<<"JSON is not an object.";
-            QMessageBox::critical(this, "Format JSON", "Le fichier JSON " + qsJsonFile + " n'a pas le bon format");
+            QMessageBox::critical(this, "Format JSON", "Le fichier JSON " + qsJsonFile + " n'a pas le bon format.\nLe fichier ne sera pas traité...");
             bOuvertureJSON = false;
         }
 
         QJsonObject json_obj = json_doc.object();
 
-        if(json_obj.isEmpty()){
+        if(json_obj.isEmpty() && bOuvertureJSON){
             qDebug()<<"JSON object is empty.";
-            QMessageBox::critical(this, "JSON Vide", "Le fichier JSON " + qsJsonFile + " est vide");
+            QMessageBox::critical(this, "JSON Vide", "Le fichier JSON " + qsJsonFile + " est vide.\nLe fichier ne sera pas traité...");
             bOuvertureJSON = false;
         }
 
@@ -784,15 +955,30 @@ void FRM_Principale::readJSONsBlazeandcave(bool checked) {
             QMap<QString, QVariant> qmDescription = qmDisplay["description"].toMap();
             QMap<QString, QVariant> qmCriteres = json_map["criteria"].toMap();
             QString qsIdentifiant = qsJsonFile;
-            QString qsTitre = qmTitle["translate"].toString();
-            QString qsDescription = qmDescription["translate"].toString();
+//            QString qsTitre = qmTitle["translate"].toString();
+//            QString qsTitreAvecDescription = "";
+//            QString qsDescription = qmDescription["translate"].toString();
+            QString qsTitre = qvmJsonLang[qmTitle["translate"].toString()].toString();
+            QString qsTitreAvecDescription = "";
+            QString qsDescription = qvmJsonLang[qmDescription["translate"].toString()].toString();
             qsIdentifiant.replace(m_qdDossierAdvancementsBlazeAndCave.path()+"/", "");
             qsIdentifiant = "blazeandcave:" + qsIdentifiant.split(".").first();
+
+            if (qsTitre == "") {
+                QStringList qslTitre = qsIdentifiant.split("/").last().split("_");
+                for (int a = 0 ; a < qslTitre.count() ; a++) {
+                    QString qsTitreTemp = qslTitre.at(a);
+                    qsTitreTemp.replace(0, 1, qsTitreTemp.at(0).toUpper());
+                    qsTitre += qsTitreTemp + " ";
+                }
+                qsTitre = qsTitre.trimmed();
+            }
 
             if (qsTitre != qsTitrePrecedent) {
                 qsTitrePrecedent = qsTitre;
                 ui->qcbFiltreTitre->addItem(qsTitrePrecedent);
             }
+
 
             bool bCriteresPersoExiste = m_qvmJsonProgresPerso[qsIdentifiant].isValid();
             bool bProgesFini;
@@ -836,10 +1022,14 @@ void FRM_Principale::readJSONsBlazeandcave(bool checked) {
 
                 QStandardItem *qsiOrigine = new QStandardItem("Blaze and Cave");
                 QStandardItem *qsiTitre = new QStandardItem("");
-                if (qsDescription == "")
+                if (qsDescription == "") {
                     qsiTitre->setText(qsTitre);
-                else
+                    qsTitreAvecDescription = qsTitre;
+                }
+                else {
                     qsiTitre->setText(qsTitre + " (" + qsDescription + ")");
+                    qsTitreAvecDescription = qsTitre + " (" + qsDescription + ")";
+                }
                 QStandardItem *qsiProgreFini = new QStandardItem(qsProgresFini);
                 QStandardItem *qsiCondition = new QStandardItem(qsCondition);
                 QStandardItem *qsiConditionRemplie = new QStandardItem("");
@@ -847,7 +1037,7 @@ void FRM_Principale::readJSONsBlazeandcave(bool checked) {
 
                 if (bCriteresPersoExiste && (bProgesFini && iCritereFait <= iCritereAFaire)) {
                     if (qsDateRealisation != "") {
-                        qDebug() << "Blaze and Cave;" + qsTitre + ";" + qsProgresFini + ";" + qsCondition + ";oui;" + qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss");
+                        qDebug() << "Blaze and Cave;" + qsTitreAvecDescription + ";" + qsProgresFini + ";" + qsCondition + ";oui;" + qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss");
                         qsiConditionRemplie->setText("oui");
                         qsiDateRealisation->setText(qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss"));
                         m_qlLigneProgres << qsiOrigine << qsiTitre << qsiProgreFini << qsiCondition << qsiConditionRemplie << qsiDateRealisation;
@@ -855,19 +1045,19 @@ void FRM_Principale::readJSONsBlazeandcave(bool checked) {
                     }
                 } else if (bCriteresPersoExiste) {
                     if (qsDateRealisation != "") {
-                        qDebug() << "Blaze and Cave;" + qsTitre + ";" + qsProgresFini + ";" + qsCondition + ";oui;" + qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss");
+                        qDebug() << "Blaze and Cave;" + qsTitreAvecDescription + ";" + qsProgresFini + ";" + qsCondition + ";oui;" + qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss");
                         qsiConditionRemplie->setText("oui");
                         qsiDateRealisation->setText(qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss"));
                         m_qlLigneProgres << qsiOrigine << qsiTitre << qsiProgreFini << qsiCondition << qsiConditionRemplie << qsiDateRealisation;
                         m_qsimProgresRealisation->appendRow(m_qlLigneProgres);
                     } else {
-                        qDebug() << "Blaze and Cave;" + qsTitre + ";" + qsProgresFini + ";" + qsCondition + ";non;";
+                        qDebug() << "Blaze and Cave;" + qsTitreAvecDescription + ";" + qsProgresFini + ";" + qsCondition + ";non;";
                         qsiConditionRemplie->setText("non");
                         m_qlLigneProgres << qsiOrigine << qsiTitre << qsiProgreFini << qsiCondition << qsiConditionRemplie << qsiDateRealisation;
                         m_qsimProgresRealisation->appendRow(m_qlLigneProgres);
                     }
                 } else {
-                    qDebug() << "Blaze and Cave;" + qsTitre + ";" + qsProgresFini + ";" + qsCondition + ";non;";
+                    qDebug() << "Blaze and Cave;" + qsTitreAvecDescription + ";" + qsProgresFini + ";" + qsCondition + ";non;";
                     qsiConditionRemplie->setText("non");
                     m_qlLigneProgres << qsiOrigine << qsiTitre << qsiProgreFini << qsiCondition << qsiConditionRemplie << qsiDateRealisation;
                     m_qsimProgresRealisation->appendRow(m_qlLigneProgres);
@@ -981,26 +1171,142 @@ void FRM_Principale::filtreTableConditionFait(QString filtre) {
     proxyModelFiltreConditionFaite->setFilterRegExp(QRegExp(filtre, Qt::CaseInsensitive, QRegExp::FixedString));
 }
 
-void FRM_Principale::readJSON(bool checked) {
-    QStringList qslFormatFichier;
-    int iNombreFichiers = 0;
-    qslFormatFichier << "*.json";
+QString FRM_Principale::numeroIndex() {
+    bool bOuvertureJson = true;
+    QVariantMap qvmIndexes;
+    if (QFile::exists(m_qsJSONVersion)) {
+        QString qsAdvancementPerso = m_qsJSONVersion;
+        QFile qfAdvancementPerso(qsAdvancementPerso);
+        if(!qfAdvancementPerso.open(QIODevice::ReadOnly)){
+            qDebug()<<"Failed to open "<< qsAdvancementPerso;
+            bOuvertureJson = false;
+        }
 
-    QDirIterator qdiFichierProgres(m_qdDossierAdvancementsBlazeAndCave.path(), qslFormatFichier, QDir::Files, QDirIterator::Subdirectories);
+        if (bOuvertureJson) {
+            QTextStream file_text(&qfAdvancementPerso);
+            QString qsJsonStringPerso;
+            qsJsonStringPerso = file_text.readAll();
+            qfAdvancementPerso.close();
+            QByteArray qbaJsonPerso = qsJsonStringPerso.toLocal8Bit();
 
-    while (qdiFichierProgres.hasNext()) {
-        qdiFichierProgres.next();
-        iNombreFichiers++;
+            QJsonDocument qjdJsonPerso = QJsonDocument::fromJson(qbaJsonPerso);
+
+            if(qjdJsonPerso.isNull()){
+                qDebug()<<"Failed to create JSON doc.";
+                bOuvertureJson = false;
+            } else {
+                if(!qjdJsonPerso.isObject()){
+                    qDebug()<<"JSON is not an object.";
+                    bOuvertureJson = false;
+                } else {
+                    QJsonObject qjsJsonPerso = qjdJsonPerso.object();
+
+                    if(qjsJsonPerso.isEmpty()){
+                        qDebug()<<"JSON object is empty.";
+                        bOuvertureJson = false;
+                    } else {
+                        qvmIndexes = qjsJsonPerso.toVariantMap();
+                    }
+                }
+            }
+        }
     }
+    QMap<QString, QVariant> qvmAssetIndex = qvmIndexes["assetIndex"].toMap();
+    //QMap<QString, QVariant> qvmLang = qvmObjects[m_qsCleLang].toMap();
 
-    qDebug() << iNombreFichiers;
+    //qDebug() << m_qsCleLang;
+    return qvmAssetIndex["id"].toString();
+}
 
-    qdiFichierProgres.~QDirIterator();
+QString FRM_Principale::hashLangue() {
+    bool bOuvertureJson = true;
+    //qDebug() << m_qsFichierIndex;
+    QVariantMap qvmIndexes;
+    if (QFile::exists(m_qsFichierIndex)) {
+        QString qsAdvancementPerso = m_qsFichierIndex;
+        QFile qfAdvancementPerso(qsAdvancementPerso);
+        if(!qfAdvancementPerso.open(QIODevice::ReadOnly)){
+            qDebug()<<"Failed to open "<< qsAdvancementPerso;
+            bOuvertureJson = false;
+        }
 
-    while (qdiFichierProgres.hasNext()) {
-        qdiFichierProgres.next();
-        iNombreFichiers++;
+        if (bOuvertureJson) {
+            QTextStream file_text(&qfAdvancementPerso);
+            QString qsJsonStringPerso;
+            qsJsonStringPerso = file_text.readAll();
+            qfAdvancementPerso.close();
+            QByteArray qbaJsonPerso = qsJsonStringPerso.toLocal8Bit();
+
+            QJsonDocument qjdJsonPerso = QJsonDocument::fromJson(qbaJsonPerso);
+
+            if(qjdJsonPerso.isNull()){
+                qDebug()<<"Failed to create JSON doc.";
+                bOuvertureJson = false;
+            } else {
+                if(!qjdJsonPerso.isObject()){
+                    qDebug()<<"JSON is not an object.";
+                    bOuvertureJson = false;
+                } else {
+                    QJsonObject qjsJsonPerso = qjdJsonPerso.object();
+
+                    if(qjsJsonPerso.isEmpty()){
+                        qDebug()<<"JSON object is empty.";
+                        bOuvertureJson = false;
+                    } else {
+                        qvmIndexes = qjsJsonPerso.toVariantMap();
+                    }
+                }
+            }
+        }
     }
+    QMap<QString, QVariant> qvmObjects = qvmIndexes["objects"].toMap();
+    QMap<QString, QVariant> qvmLang = qvmObjects[m_qsCleLang].toMap();
 
-    qDebug() << iNombreFichiers;
+    //qDebug() << m_qsCleLang;
+    return qvmLang["hash"].toString();
+}
+
+void FRM_Principale::TEST(bool checked) {
+    bool bOuvertureJson = true;
+    QVariantMap qvmIndexes;
+    if (QFile::exists(m_qsJSONVersion)) {
+        QString qsAdvancementPerso = m_qsJSONVersion;
+        QFile qfAdvancementPerso(qsAdvancementPerso);
+        if(!qfAdvancementPerso.open(QIODevice::ReadOnly)){
+            qDebug()<<"Failed to open "<< qsAdvancementPerso;
+            bOuvertureJson = false;
+        }
+
+        if (bOuvertureJson) {
+            QTextStream file_text(&qfAdvancementPerso);
+            QString qsJsonStringPerso;
+            qsJsonStringPerso = file_text.readAll();
+            qfAdvancementPerso.close();
+            QByteArray qbaJsonPerso = qsJsonStringPerso.toLocal8Bit();
+
+            QJsonDocument qjdJsonPerso = QJsonDocument::fromJson(qbaJsonPerso);
+
+            if(qjdJsonPerso.isNull()){
+                qDebug()<<"Failed to create JSON doc.";
+                bOuvertureJson = false;
+            } else {
+                if(!qjdJsonPerso.isObject()){
+                    qDebug()<<"JSON is not an object.";
+                    bOuvertureJson = false;
+                } else {
+                    QJsonObject qjsJsonPerso = qjdJsonPerso.object();
+
+                    if(qjsJsonPerso.isEmpty()){
+                        qDebug()<<"JSON object is empty.";
+                        bOuvertureJson = false;
+                    } else {
+                        qvmIndexes = qjsJsonPerso.toVariantMap();
+                    }
+                }
+            }
+        }
+    }
+    QMap<QString, QVariant> qvmAssetIndex = qvmIndexes["assetIndex"].toMap();
+
+    qDebug () << qvmAssetIndex["id"].toString();
 }

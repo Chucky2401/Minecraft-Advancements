@@ -39,6 +39,36 @@
       <item>
        <widget class="QComboBox" name="qcbLauncher"/>
       </item>
+      <item>
+       <widget class="Line" name="line_4">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QLabel" name="label_5">
+        <property name="text">
+         <string>Langue</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QComboBox" name="qcbLangue"/>
+      </item>
+      <item>
+       <spacer name="horizontalSpacer_5">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
      </layout>
     </item>
     <item>
@@ -183,7 +213,7 @@
      </widget>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_5">
+     <layout class="QHBoxLayout" name="hlBlazeandCave">
       <property name="topMargin">
        <number>0</number>
       </property>
@@ -342,34 +372,6 @@
         <property name="topMargin">
          <number>0</number>
         </property>
-        <item>
-         <widget class="QPushButton" name="qpbReadJSONsVanilla">
-          <property name="text">
-           <string>Comparer progrès Vanilla (seulement)</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="qpbReadJSONsBlazeandcave">
-          <property name="text">
-           <string>Comparer progrès 'Blaze and Cave' (seulement)</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="qpbReadAllJSONs">
-          <property name="text">
-           <string>Comparer tous les progrès (Vanilla + Blaze and Cave)</string>
-          </property>
-         </widget>
-        </item>
-        <item>
-         <widget class="QPushButton" name="qpbReadJSON">
-          <property name="text">
-           <string>Read JSON (TEST)</string>
-          </property>
-         </widget>
-        </item>
        </layout>
       </item>
       <item>
@@ -384,6 +386,55 @@
          </size>
         </property>
        </spacer>
+      </item>
+     </layout>
+    </item>
+    <item>
+     <layout class="QHBoxLayout" name="horizontalLayout_5">
+      <property name="topMargin">
+       <number>0</number>
+      </property>
+      <item>
+       <widget class="QPushButton" name="qpbReadJSONsVanilla">
+        <property name="text">
+         <string>Comparer progrès Vanilla (seulement)</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="qpbReadJSONsBlazeandcave">
+        <property name="text">
+         <string>Comparer progrès 'Blaze and Cave' (seulement)</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="Line" name="line_5">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="qpbReadAllJSONs">
+        <property name="text">
+         <string>Comparer tous les progrès (Vanilla + Blaze and Cave)</string>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="Line" name="lineInDebug">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="qpbReadJSON">
+        <property name="text">
+         <string>Read JSON (TEST)</string>
+        </property>
+       </widget>
       </item>
      </layout>
     </item>
