@@ -1,4 +1,4 @@
-# Suivis des progrès Minecraft
+# Minecraft Advancements
 
 ## Sommaire
 
