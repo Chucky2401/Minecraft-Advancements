@@ -27,6 +27,9 @@
 #include <QStandardItem>
 #include <QSortFilterProxyModel>
 
+#include <QtPrintSupport/QPrinter>
+#include <QtPrintSupport/QPrintDialog>
+
 #include <QDebug>
 
 QT_BEGIN_NAMESPACE
@@ -107,6 +110,8 @@ private slots:
     void filtreTableTitre(QString filtre);
     void filtreTableProgresFinis(QString filtre);
     void filtreTableConditionFait(QString filtre);
+    // Impression
+    void imprimerTable(bool checked);
     // TEST
     void TEST(bool checked);
 };

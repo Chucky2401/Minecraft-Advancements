@@ -15,6 +15,7 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
         ui->qpbReadJSON->setVisible(test);
         ui->lineInDebug->setVisible(test);
         connect(ui->qpbReadJSON, SIGNAL(clicked(bool)), this, SLOT(TEST(bool)));
+        //connect(ui->qpbReadJSON, SIGNAL(clicked(bool)), this, SLOT(imprimerTable()));
     }
 
     ui->qgbFiltres->setEnabled(false);
@@ -76,6 +77,7 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     connect(ui->qpbReadJSONsVanilla, SIGNAL(clicked(bool)), this, SLOT(readJSONsVanilla(bool)));
     connect(ui->qpbReadJSONsBlazeandcave, SIGNAL(clicked(bool)), this, SLOT(readJSONsBlazeandcave(bool)));
     connect(ui->qpbReadAllJSONs, SIGNAL(clicked(bool)), this, SLOT(readAllJsons(bool)));
+    connect(ui->pbImprimer, SIGNAL(clicked(bool)), this, SLOT(imprimerTable(bool)));
     connect(ui->qcbFiltreProgresFinis, SIGNAL(currentTextChanged(QString)), this, SLOT(filtreTableProgresFinis(QString)));
     connect(ui->qcbFiltreConditionFait, SIGNAL(currentTextChanged(QString)), this, SLOT(filtreTableConditionFait(QString)));
 
@@ -579,7 +581,7 @@ void FRM_Principale::choixFichierAdvancements(bool checked) {
             ui->qpbReadJSONsVanilla->setEnabled(false);
         }
 
-        if (m_bVersionOK && m_bProgresBlazeandcaveOK && m_bProgresPersoOK) {
+        if (m_bProgresBlazeandcaveOK && m_bProgresPersoOK) {
             ui->qpbReadJSONsBlazeandcave->setEnabled(true);
         } else {
             ui->qpbReadJSONsBlazeandcave->setEnabled(false);
@@ -611,6 +613,8 @@ void FRM_Principale::readJSONsVanilla(bool checked) {
     ui->qcbFiltreOrigine->addItem("");
     ui->qcbFiltreTitre->clear();
     ui->qcbFiltreTitre->addItem("");
+
+    ui->qgbFiltres->setEnabled(false);
 
     QStringList qslFormatFichier;
     QString qsTitrePrecedent = "";
@@ -847,6 +851,8 @@ void FRM_Principale::readJSONsBlazeandcave(bool checked) {
         ui->qcbFiltreOrigine->addItem("");
         ui->qcbFiltreTitre->clear();
         ui->qcbFiltreTitre->addItem("");
+
+        ui->qgbFiltres->setEnabled(false);
     }
 
     QStringList qslFormatFichier;
@@ -1134,7 +1140,10 @@ void FRM_Principale::filtreTableOrigine(QString filtre) {
 void FRM_Principale::filtreTableTitre(QString filtre) {
     if (filtre != "----- Minecraft Vanilla -----" && filtre != "----- Blaze and Cave -----") {
         proxyModelFiltreTitre->setFilterKeyColumn(1);
-        proxyModelFiltreTitre->setFilterRegExp(QRegExp(filtre, Qt::CaseInsensitive, QRegExp::FixedString));
+        if (ui->qcbRegExp->isChecked())
+            proxyModelFiltreTitre->setFilterRegExp(QRegExp(filtre, Qt::CaseInsensitive, QRegExp::RegExp));
+        else
+            proxyModelFiltreTitre->setFilterRegExp(QRegExp(filtre, Qt::CaseInsensitive, QRegExp::FixedString));
     }
 
     if (ui->qcbFiltreProgresFinis->currentText() != "") {
@@ -1264,6 +1273,63 @@ QString FRM_Principale::hashLangue() {
 
     //qDebug() << m_qsCleLang;
     return qvmLang["hash"].toString();
+}
+
+void FRM_Principale::imprimerTable(bool checked) {
+    QString strStream;
+    QTextStream out(&strStream);
+
+    const int rowCount = ui->tableView->model()->rowCount();
+    const int columnCount = ui->tableView->model()->columnCount();
+
+    out << "<!DOCTYPE html>\n"
+        "<html>\n"
+        "<head>\n"
+        "<meta Content=\"Text/html; charset=Windows-1251\">\n"
+        <<  QString("<title>%1</title>\n").arg("Minecraft Advancements")
+        <<  "</head>\n"
+        "<body bgcolor=#ffffff link=#5000A0>\n";
+
+    // Titre
+    out << QString("<h1 style=\"text-align: center; margin: auto;\">%1</h1>\n").arg("Minecraft Advancements")
+        << "<br />\n";
+
+    // Tableau
+    out << "<table border=1 cellspacing=0 cellpadding=2>\n";
+
+    // headers
+    out << "<thead><tr bgcolor=#f0f0f0>";
+    for (int column = 0; column < columnCount; column++)
+        if (!ui->tableView->isColumnHidden(column))
+            out << QString("<th>%1</th>").arg(ui->tableView->model()->headerData(column, Qt::Horizontal).toString());
+    out << "</tr></thead>\n";
+
+    // data table
+    for (int row = 0; row < rowCount; row++) {
+        out << "<tr>";
+        for (int column = 0; column < columnCount; column++) {
+            if (!ui->tableView->isColumnHidden(column)) {
+                QString data = ui->tableView->model()->data(ui->tableView->model()->index(row, column)).toString().simplified();
+                out << QString("<td bkcolor=0>%1</td>").arg((!data.isEmpty()) ? data : QString("&nbsp;"));
+            }
+        }
+        out << "</tr>\n";
+    }
+    out <<  "</table>\n"
+        "</body>\n"
+        "</html>\n";
+
+    QTextDocument *document = new QTextDocument();
+    document->setHtml(strStream);
+
+    QPrinter printer;
+
+    QPrintDialog *dialog = new QPrintDialog(&printer, NULL);
+    if (dialog->exec() == QDialog::Accepted) {
+        document->print(&printer);
+    }
+
+    delete document;
 }
 
 void FRM_Principale::TEST(bool checked) {
