@@ -863,8 +863,6 @@ void FRM_Principale::readJSONsBlazeandcave(bool checked) {
 
     ui->qcbFiltreOrigine->addItem("Blaze and Cave");
     ui->qcbFiltreTitre->addItem("----- Blaze and Cave -----");
-    if (bTousLesProgres)
-        ui->qcbFiltreTitre->insertSeparator(ui->qcbFiltreTitre->count()-1);
 
     QString qsJsonLang = "rcs/blazeandcave-fr_fr.json";
     QFile qfLangUs(qsJsonLang);

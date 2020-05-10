@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
 <<<<<<< HEAD
+<<<<<<< HEAD
 <!-- Written by QtCreator 4.12.0, 2020-05-10T10:44:38. -->
 =======
 <!-- Written by QtCreator 4.12.0, 2020-05-04T20:05:25. -->
 >>>>>>> parent of d4c625d... Impression et filtre
+=======
+<!-- Written by QtCreator 4.12.0, 2020-05-08T19:47:33. -->
+>>>>>>> parent of 96b2f6c... Separateur
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -64,10 +68,14 @@
    </valuelist>
 <<<<<<< HEAD
    <value type="bool" key="ClangCodeModel.UseGlobalConfig">false</value>
+<<<<<<< HEAD
 =======
    <value type="bool" key="ClangCodeModel.UseGlobalConfig">true</value>
 >>>>>>> parent of d4c625d... Impression et filtre
    <value type="QString" key="ClangCodeModel.WarningConfigId">Builtin.Questionable</value>
+=======
+   <value type="QString" key="ClangCodeModel.WarningConfigId">{89d74f69-25cc-487b-b1a5-740846896ff4}</value>
+>>>>>>> parent of 96b2f6c... Separateur
    <valuemap type="QVariantMap" key="ClangTools">
     <value type="bool" key="ClangTools.BuildBeforeAnalysis">true</value>
     <value type="QString" key="ClangTools.DiagnosticConfig">Builtin.DefaultTidyAndClazy</value>
