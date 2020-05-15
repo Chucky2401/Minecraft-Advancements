@@ -4,6 +4,7 @@
 #include <Qt>
 #include <QTextDocument>
 #include <QMainWindow>
+#include <QCloseEvent>
 
 #include <QTemporaryDir>
 
@@ -26,8 +27,16 @@
 #include <QStandardItemModel>
 #include <QStandardItem>
 #include <QSortFilterProxyModel>
+#include <QCompleter>
+
+#include <QtPrintSupport/QPrinter>
+#include <QtPrintSupport/QPrintDialog>
 
 #include <QDebug>
+
+#include "settings/settings.h"
+#include "settings/dia_parametres.h"
+#include "dia_apropos.h"
 
 QT_BEGIN_NAMESPACE
 namespace Ui { class FRM_Principale; }
@@ -40,6 +49,9 @@ class FRM_Principale : public QMainWindow
 public:
     FRM_Principale(QWidget *parent = nullptr, bool test = false);
     ~FRM_Principale();
+
+protected:
+    void closeEvent(QCloseEvent *event);
 
 private:
     //GUI
@@ -86,6 +98,13 @@ private:
     QSortFilterProxyModel *proxyModelFiltreTitre;
     QSortFilterProxyModel *proxyModelFiltreProgresFinis;
     QSortFilterProxyModel *proxyModelFiltreConditionFaite;
+    QAbstractItemModel *m_defaultModelCompleter;
+    QCompleter *m_defaultCompleter;
+    QCompleter *m_sansCompleter;
+    // Settings
+    class Settings *param;
+    DIA_Parametres *diaParametres;
+    DIA_apropos *diaAPropos;
     // TEST
     bool m_test;
 
@@ -107,6 +126,12 @@ private slots:
     void filtreTableTitre(QString filtre);
     void filtreTableProgresFinis(QString filtre);
     void filtreTableConditionFait(QString filtre);
+    void etatAutoCompletion(int etat);
+    // Impression
+    void imprimerTable(bool checked);
+    // Fenêtres complémentaire
+    void ouvrirAPropos();
+    void ouvrirParametres();
     // TEST
     void TEST(bool checked);
 };

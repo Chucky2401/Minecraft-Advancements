@@ -5,9 +5,13 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     : QMainWindow(parent)
     , ui(new Ui::FRM_Principale), m_test(test) {
 
+    // Quelques réglages de bases sur la fenêtre
     ui->setupUi(this);
-    qDebug() << test;
 
+    this->setWindowTitle(QApplication::applicationName() + " - " + QApplication::applicationVersion());
+    this->setWindowIcon(QIcon(":/img/icons8_minecraft_logo_48px.png"));
+
+    // Si on est on mode test on masque certaines choses
     if (test == false) {
         ui->qpbReadJSON->setVisible(test);
         ui->lineInDebug->setVisible(test);
@@ -15,23 +19,22 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
         ui->qpbReadJSON->setVisible(test);
         ui->lineInDebug->setVisible(test);
         connect(ui->qpbReadJSON, SIGNAL(clicked(bool)), this, SLOT(TEST(bool)));
+        //connect(ui->qpbReadJSON, SIGNAL(clicked(bool)), this, SLOT(imprimerTable()));
     }
+
+    // On crée le nécessaire pour gérer les paramètres utilisateurs
+    param = new Settings();
+    param->initialisation(m_test);
+
+    // Variable global à toute la fenêtre
+    m_qsAppDataPath = qEnvironmentVariable("APPDATA");
 
     ui->qgbFiltres->setEnabled(false);
 
     ui->qcbLangue->addItem("Français", QVariant("/fr_fr.lang"));
     ui->qcbLangue->addItem("English", QVariant("/en_us.lang"));
-    //ui->qcbLangue->setCurrentIndex(0);
 
-    this->setWindowTitle(QApplication::applicationName());
-    this->setWindowIcon(QIcon(":/img/icons8_minecraft_logo_48px.png"));
-
-    m_qsAppDataPath = qEnvironmentVariable("APPDATA");
-
-    if (m_tempDir.isValid()) {
-        qDebug() << m_tempDir.path();
-    }
-
+    // On initialise certaines variables et champ de la fenêtre
     m_bVersionOK = false;
     m_bProgresVanillaOK = false;
     m_bProgresBlazeandcaveOK = false;
@@ -48,8 +51,6 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     proxyModelFiltreConditionFaite = new QSortFilterProxyModel(this);
 
     bTousLesProgres = false;
-
-    m_qsUserName = qgetenv("USERNAME");
 
     ui->qcbLauncher->addItem("", QVariant("EMPTY"));
     ui->qcbLauncher->addItem("Minecraft Launcher (Officiel Mojang)", QVariant("Mojang"));
@@ -68,6 +69,11 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     ui->qpbTraitementProgres->setVisible(false);
     ui->qpbTraitementProgres->setValue(0);
 
+    m_sansCompleter = new QCompleter();
+    m_defaultCompleter = new QCompleter(this);
+    ui->qcbAutoCompletion->setChecked(true);
+
+    // On connecte tout ce que l'on peut
     connect(ui->qcbLauncher, SIGNAL(currentIndexChanged(int)), this, SLOT(choixLauncher(int)));
     connect(ui->qcbVersion, SIGNAL(currentIndexChanged(int)), this, SLOT(choixVersion(int)));
     connect(ui->qpbSelectionFichierProgres, SIGNAL(clicked(bool)), this, SLOT(choixFichierAdvancements(bool)));
@@ -76,9 +82,15 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     connect(ui->qpbReadJSONsVanilla, SIGNAL(clicked(bool)), this, SLOT(readJSONsVanilla(bool)));
     connect(ui->qpbReadJSONsBlazeandcave, SIGNAL(clicked(bool)), this, SLOT(readJSONsBlazeandcave(bool)));
     connect(ui->qpbReadAllJSONs, SIGNAL(clicked(bool)), this, SLOT(readAllJsons(bool)));
+    connect(ui->pbImprimer, SIGNAL(clicked(bool)), this, SLOT(imprimerTable(bool)));
     connect(ui->qcbFiltreProgresFinis, SIGNAL(currentTextChanged(QString)), this, SLOT(filtreTableProgresFinis(QString)));
     connect(ui->qcbFiltreConditionFait, SIGNAL(currentTextChanged(QString)), this, SLOT(filtreTableConditionFait(QString)));
+    connect(ui->qcbAutoCompletion, SIGNAL(stateChanged(int)), this, SLOT(etatAutoCompletion(int)));
+    connect(ui->qaAbout, SIGNAL(triggered()), this, SLOT(ouvrirAPropos()));
+    connect(ui->qaSettings, SIGNAL(triggered()), this, SLOT(ouvrirParametres()));
+    connect(ui->qaQuitter, SIGNAL(triggered()), this, SLOT(close()));
 
+    // Suite à la connexion on force le launcher et on désactive certains champs pour ne pas avoir de bug
     ui->qcbLauncher->setCurrentIndex(1);
     ui->qpbSelectionDossierLanceur->setVisible(false);
     ui->qpbExtraireProgres->setEnabled(false);
@@ -87,10 +99,41 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     ui->qlProgresPersoOuvert->setVisible(false);
     ui->qpbReadJSONsVanilla->setEnabled(false);
     ui->qpbReadJSONsBlazeandcave->setEnabled(false);
+
+    // On redimensionne la fenêtre dans son dernier état si l'utilisateur la souhaité
+    if (param->getRestoreSizePos()) {
+        if(param->getEtat() != "DNE" && param->getGeometrie() != "DNE") {
+            this->restoreGeometry(param->getGeometrie());
+            this->restoreState(param->getEtat());
+        }
+    }
 }
 
 FRM_Principale::~FRM_Principale() {
     delete ui;
+}
+
+/*
+ * Fonction pour détecter quand la fenêtre est fermé
+ */
+void FRM_Principale::closeEvent(QCloseEvent *event){
+    if (m_test || !param->getMessageConfirmationFermeture()) {
+
+        if (param->getRestoreSizePos())
+            param->setGeometrieEtat(saveGeometry(), saveState());
+
+        event->accept();
+        return;
+    }
+
+    if (QMessageBox::question(this, "Fermeture", "Voulez-vous fermer le programme ?") == QMessageBox::Yes){
+        if (param->getRestoreSizePos())
+            param->setGeometrieEtat(saveGeometry(), saveState());
+
+        event->accept();
+    } else {
+        event->ignore();
+    }
 }
 
 void FRM_Principale::choixLauncher(int index) {
@@ -579,7 +622,7 @@ void FRM_Principale::choixFichierAdvancements(bool checked) {
             ui->qpbReadJSONsVanilla->setEnabled(false);
         }
 
-        if (m_bVersionOK && m_bProgresBlazeandcaveOK && m_bProgresPersoOK) {
+        if (m_bProgresBlazeandcaveOK && m_bProgresPersoOK) {
             ui->qpbReadJSONsBlazeandcave->setEnabled(true);
         } else {
             ui->qpbReadJSONsBlazeandcave->setEnabled(false);
@@ -611,6 +654,8 @@ void FRM_Principale::readJSONsVanilla(bool checked) {
     ui->qcbFiltreOrigine->addItem("");
     ui->qcbFiltreTitre->clear();
     ui->qcbFiltreTitre->addItem("");
+
+    ui->qgbFiltres->setEnabled(false);
 
     QStringList qslFormatFichier;
     QString qsTitrePrecedent = "";
@@ -829,6 +874,11 @@ void FRM_Principale::readJSONsVanilla(bool checked) {
         connect(ui->qcbFiltreTitre, SIGNAL(currentTextChanged(QString)), this, SLOT(filtreTableTitre(QString)));
 
         ui->qgbFiltres->setEnabled(true);
+
+        m_defaultCompleter->setModel(ui->qcbFiltreTitre->model());
+        m_defaultCompleter->setCompletionMode(QCompleter::PopupCompletion);
+        m_defaultCompleter->setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
+        ui->qcbFiltreTitre->setCompleter(m_defaultCompleter);
     }
 }
 
@@ -847,6 +897,8 @@ void FRM_Principale::readJSONsBlazeandcave(bool checked) {
         ui->qcbFiltreOrigine->addItem("");
         ui->qcbFiltreTitre->clear();
         ui->qcbFiltreTitre->addItem("");
+
+        ui->qgbFiltres->setEnabled(false);
     }
 
     QStringList qslFormatFichier;
@@ -863,6 +915,8 @@ void FRM_Principale::readJSONsBlazeandcave(bool checked) {
 
     ui->qcbFiltreOrigine->addItem("Blaze and Cave");
     ui->qcbFiltreTitre->addItem("----- Blaze and Cave -----");
+    if (bTousLesProgres)
+        ui->qcbFiltreTitre->insertSeparator(ui->qcbFiltreTitre->count()-1);
 
     QString qsJsonLang = "rcs/blazeandcave-fr_fr.json";
     QFile qfLangUs(qsJsonLang);
@@ -1083,6 +1137,11 @@ void FRM_Principale::readJSONsBlazeandcave(bool checked) {
         connect(ui->qcbFiltreTitre, SIGNAL(currentTextChanged(QString)), this, SLOT(filtreTableTitre(QString)));
 
         ui->qgbFiltres->setEnabled(true);
+
+        m_defaultCompleter->setModel(ui->qcbFiltreTitre->model());
+        m_defaultCompleter->setCompletionMode(QCompleter::PopupCompletion);
+        m_defaultCompleter->setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
+        ui->qcbFiltreTitre->setCompleter(m_defaultCompleter);
     }
 }
 
@@ -1113,6 +1172,11 @@ void FRM_Principale::readAllJsons(bool checked) {
 
     ui->qgbFiltres->setEnabled(true);
 
+    m_defaultCompleter->setModel(ui->qcbFiltreTitre->model());
+    m_defaultCompleter->setCompletionMode(QCompleter::PopupCompletion);
+    m_defaultCompleter->setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
+    ui->qcbFiltreTitre->setCompleter(m_defaultCompleter);
+
     bTousLesProgres = false;
 }
 
@@ -1134,7 +1198,10 @@ void FRM_Principale::filtreTableOrigine(QString filtre) {
 void FRM_Principale::filtreTableTitre(QString filtre) {
     if (filtre != "----- Minecraft Vanilla -----" && filtre != "----- Blaze and Cave -----") {
         proxyModelFiltreTitre->setFilterKeyColumn(1);
-        proxyModelFiltreTitre->setFilterRegExp(QRegExp(filtre, Qt::CaseInsensitive, QRegExp::FixedString));
+        if (ui->qcbRegExp->isChecked())
+            proxyModelFiltreTitre->setFilterRegExp(QRegExp(filtre, Qt::CaseInsensitive, QRegExp::RegExp));
+        else
+            proxyModelFiltreTitre->setFilterRegExp(QRegExp(filtre, Qt::CaseInsensitive, QRegExp::FixedString));
     }
 
     if (ui->qcbFiltreProgresFinis->currentText() != "") {
@@ -1169,6 +1236,25 @@ void FRM_Principale::filtreTableProgresFinis(QString filtre) {
 void FRM_Principale::filtreTableConditionFait(QString filtre) {
     proxyModelFiltreConditionFaite->setFilterKeyColumn(4);
     proxyModelFiltreConditionFaite->setFilterRegExp(QRegExp(filtre, Qt::CaseInsensitive, QRegExp::FixedString));
+}
+
+void FRM_Principale::etatAutoCompletion(int etat) {
+    if (etat == 0) {
+        // Unchecked
+        qDebug() << "Unchecked !";
+        ui->qcbFiltreTitre->setCompleter(m_sansCompleter);
+        qDebug() << "Désactivation AutoComplétion";
+    } else {
+        QStringList qslListCompleter;
+        // Checked
+        qDebug() << "Checked !";
+        //m_defaultCompleter = new QCompleter(ui->qcbFiltreTitre->model(), this);
+        m_defaultCompleter->setModel(ui->qcbFiltreTitre->model());
+        m_defaultCompleter->setCompletionMode(QCompleter::PopupCompletion);
+        m_defaultCompleter->setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
+        ui->qcbFiltreTitre->setCompleter(m_defaultCompleter);
+        qDebug() << "Activation AutoComplétion";
+    }
 }
 
 QString FRM_Principale::numeroIndex() {
@@ -1264,6 +1350,86 @@ QString FRM_Principale::hashLangue() {
 
     //qDebug() << m_qsCleLang;
     return qvmLang["hash"].toString();
+}
+
+void FRM_Principale::imprimerTable(bool checked) {
+    QString strStream;
+    QTextStream out(&strStream);
+
+    const int rowCount = ui->tableView->model()->rowCount();
+    const int columnCount = ui->tableView->model()->columnCount();
+
+    out << "<!DOCTYPE html>\n"
+        "<html>\n"
+        "<head>\n"
+        "<meta Content=\"Text/html; charset=Windows-1251\">\n"
+        <<  QString("<title>%1</title>\n").arg("Minecraft Advancements")
+        <<  "</head>\n"
+        "<body bgcolor=#ffffff link=#5000A0>\n";
+
+    // Titre
+    out << QString("<h1 style=\"text-align: center; margin: auto;\">%1</h1>\n").arg("Minecraft Advancements")
+        << "<br />\n";
+
+    // Tableau
+    out << "<table border=1 cellspacing=0 cellpadding=2>\n";
+
+    // headers
+    out << "<thead><tr bgcolor=#f0f0f0>";
+    for (int column = 0; column < columnCount; column++)
+        if (!ui->tableView->isColumnHidden(column))
+            out << QString("<th>%1</th>").arg(ui->tableView->model()->headerData(column, Qt::Horizontal).toString());
+    out << "</tr></thead>\n";
+
+    // data table
+    for (int row = 0; row < rowCount; row++) {
+        out << "<tr>";
+        for (int column = 0; column < columnCount; column++) {
+            if (!ui->tableView->isColumnHidden(column)) {
+                QString data = ui->tableView->model()->data(ui->tableView->model()->index(row, column)).toString().simplified();
+                out << QString("<td bkcolor=0>%1</td>").arg((!data.isEmpty()) ? data : QString("&nbsp;"));
+            }
+        }
+        out << "</tr>\n";
+    }
+    out <<  "</table>\n"
+        "</body>\n"
+        "</html>\n";
+
+    QTextDocument *document = new QTextDocument();
+    document->setHtml(strStream);
+
+    QPrinter printer;
+
+    QPrintDialog *dialog = new QPrintDialog(&printer, NULL);
+    if (dialog->exec() == QDialog::Accepted) {
+        document->print(&printer);
+    }
+
+    delete document;
+}
+
+
+
+/*
+ * Ouvrir la fenêtre a propos
+ */
+void FRM_Principale::ouvrirAPropos(){
+    diaAPropos = new DIA_apropos(this);
+    diaAPropos->setStyleSheet("QDialog { border: 1px solid gray }");
+    diaAPropos->exec();
+    delete diaAPropos;
+}
+
+/*
+ * Ouvrir la fenêtre des paramètres
+ */
+void FRM_Principale::ouvrirParametres(){
+    diaParametres = new DIA_Parametres(param, this, m_test);
+    connect(diaParametres, SIGNAL(visibiliteFarming(bool)), this, SLOT(visibiliteFarming(bool)));
+    connect(diaParametres, SIGNAL(visibiliteDeploiementAuto(bool)), this, SLOT(visibiliteDeploiementAuto(bool)));
+    diaParametres->exec();
+    delete diaParametres;
 }
 
 void FRM_Principale::TEST(bool checked) {

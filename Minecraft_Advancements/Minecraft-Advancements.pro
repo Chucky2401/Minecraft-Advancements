@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui printsupport
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -18,14 +18,22 @@ DEFINES += QT_DEPRECATED_WARNINGS
 RC_ICONS = minecraft.ico
 
 SOURCES += \
+    dia_apropos.cpp \
     main.cpp \
-    frm_principale.cpp
+    frm_principale.cpp \
+    settings/dia_parametres.cpp \
+    settings/settings.cpp
 
 HEADERS += \
-    frm_principale.h
+    dia_apropos.h \
+    frm_principale.h \
+    settings/dia_parametres.h \
+    settings/settings.h
 
 FORMS += \
-    frm_principale.ui
+    dia_apropos.ui \
+    frm_principale.ui \
+    settings/dia_parametres.ui
 
 TRANSLATIONS += \
     Minecraft-Advancements_fr_FR.ts
