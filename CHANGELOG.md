@@ -2,7 +2,32 @@
 
 Suivis des version
 
-## **v0.2** - *En cours de développement*
+## **v0.2.4** - *En cours de développement*
+
+### Ajouts
+
++ [Issue#10](https://github.com/Chucky2401/Minecraft-Advancements/issues/10) **Mise à jour auto** Possibilité d'activer la recherche de mise à jour et/ou de faire une recherche de mise à jour manuelle ! Possible de choisir le canal Beta (instable).
++ **Icones** Ajout d'icones sur les boutons du menu :wink:
+
+### Modifications
+
++ **Installeur** Encore des changements sur l'installeur ! Retrait du dépôts *Beta* ce dernier est ajouté temporairement si l'installeur est fait pour installer une version Beta. Et il est aussi ajouter temporairement, si l'utilisateur choisis les mise à jour Beta dans l'application. Plus aucune mention de ce dernier ailleurs, il est *invisible*.
+  Plus facile à gérer pour vous et pour moi :wink:
+
+## **v0.2.3** - *21/05/2020*
+
+### Ajouts
+
++ [Issue#12](https://github.com/Chucky2401/Minecraft-Advancements/issues/12) **Type Condition (ET ou OU)** Si une condition et de type **ET** : *toutes les conditions sont nécessaires au progrès* ; De type **OU** : *une condition est suffisante*
+
++ **Couleurs** Ajout de couleurs en fonction du type ou si le progrès est finis. (cf. [Screenshot](https://github.com/Chucky2401/Minecraft-Advancements/issues/12#issuecomment-631973057))
+
++ **Effacer les filtres** Ajout d'un bouton pour effacer les filtres.
+
++ **Écran de démarrage** ou *Splash Screen* en anglais. Petite funitude :yum:
+  ![SplashScreen](https://i.imgur.com/hwnkLdqm.png)
+
+## **v0.2.1** - *15/05/2020*
 
 ### Ajout
 
@@ -30,18 +55,6 @@ Suivis des version
 
 + **Mémorisation taille et position** En ajoutant la fenêtres des préférences *(repris d'un autre de mes programmes)*, ajout de cette fonctionnalité. Au redémarrage du programme, si cette option est active la fenêtre sera remise à la même taille qu'à la fermeture.
 
-+ [Issue#12](https://github.com/Chucky2401/Minecraft-Advancements/issues/12) **Type Condition (ET ou OU)** Si une condition et de type **ET** : *toutes les conditions sont nécessaires au progrès* ; De type **OU** : *une condition est suffisante*
-
-+ **Couleurs** Ajout de couleurs en fonction du type ou si le progrès est finis. (cf. [Screenshot](https://github.com/Chucky2401/Minecraft-Advancements/issues/12#issuecomment-631973057))
-
-+ **Effacer les filtres** Ajout d'un bouton pour effacer les filtres.
-
-+ **Écran de démarrage** ou *Splash Screen* en anglais. Petite funitude :yum:
-  ![SplashScreen](https://i.imgur.com/hwnkLdqm.png)
-  
-+ [Issue#10](https://github.com/Chucky2401/Minecraft-Advancements/issues/10) **Mise à jour auto** Possibilité d'activer la recherche de mise à jour et/ou de faire une recherche de mise à jour manuelle ! Possible de choisir le canal Beta (instable).
-  
-+ **Icones** Ajout d'icones sur les boutons du menu :wink:
 
 ### Modification
 
@@ -60,10 +73,7 @@ Suivis des version
 
 + **Filtres et Opérations** Déplacement du bouton *Imprimer* dans un group *Opérations* avec le bouton *Effacer les filtres*
   ![Filtres et Opérations](https://i.imgur.com/wQeZGWim.png)
-+ **Installeur** Encore des changements sur l'installeur ! Retrait du dépôts *Beta* ce dernier est ajouté temporairement si l'installeur est fait pour installer une version Beta. Et il est aussi ajouter temporairement, si l'utilisateur choisis les mise à jour Beta dans l'application. Plus aucune mention de ce dernier ailleurs, il est *invisible*.
-  Plus facile à gérer pour vous et pour moi :wink:
-
-
++ **Installeur** Ajout du dépôt *Beta* activable par l'utilisateur
 
 ### Correction
 
