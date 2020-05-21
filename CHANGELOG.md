@@ -14,6 +14,10 @@ Suivis des version
 + **Installeur** Encore des changements sur l'installeur ! Retrait du dépôts *Beta* ce dernier est ajouté temporairement si l'installeur est fait pour installer une version Beta. Et il est aussi ajouter temporairement, si l'utilisateur choisis les mise à jour Beta dans l'application. Plus aucune mention de ce dernier ailleurs, il est *invisible*.
   Plus facile à gérer pour vous et pour moi :wink:
 
+### Correction
+
++ **Colonne Type** La colonne *Type* qui affichait **ET** ou **OU** pour le type de condition, n'était pas masqué pour les progrès *Vanilla* seulement. C'est un oublie, une ligne de code commenté lors d'un test 😲
+
 ## **v0.2.3** - *21/05/2020*
 
 ### Ajouts

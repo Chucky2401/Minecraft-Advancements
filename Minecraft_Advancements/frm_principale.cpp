@@ -980,7 +980,7 @@ void FRM_Principale::readJSONsVanilla(bool checked) {
 
         ui->tableView->setModel(proxyModelFiltreTypeCondition);
         ui->tableView->resizeColumnsToContents();
-        //ui->tableView->hideColumn(6);
+        ui->tableView->hideColumn(6);
 
         connect(ui->qcbFiltreOrigine, SIGNAL(currentTextChanged(QString)), this, SLOT(filtreTableOrigine(QString)));
         connect(ui->qcbFiltreTitre, SIGNAL(currentTextChanged(QString)), this, SLOT(filtreTableTitre(QString)));
