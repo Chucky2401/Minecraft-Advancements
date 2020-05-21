@@ -8,6 +8,7 @@
 #include <QDebug>
 #include <QDate>
 #include <QDir>
+#include <QFile>
 
 
 class Settings
@@ -42,9 +43,14 @@ public:
     QDate getDerniereVerificationMiseAJour();
     QDate getProchaineVerificationMiseAjour();
 
+    void setMiseAJourBeta(bool enabled);
+    bool getIniMiseAJourBeta();
+    bool getMiseAJourBeta();
+
     void setMessageConfirmationFermeture(bool enabled);
     bool getIniMessageConfirmationFermeture();
     bool getMessageConfirmationFermeture();
+
 
 private:
     const QVariant settingDefaultString = "DNE";
@@ -70,6 +76,7 @@ private:
     bool m_verificationAutoMiseAJour;
     int m_nombreJourMiseAJour;
     QDate m_derniereVerificationMiseAJour;
+    bool m_miseAJourBeta;
     bool m_messageConfirmationFermeture;
 
 };

@@ -25,8 +25,16 @@ void Settings::initialisation(bool test) {
         this->setDerniereVerificationMiseAJour(m_derniereVerificationMiseAJour);
     }
 
+    m_miseAJourBeta = this->getIniMiseAJourBeta();
+    this->setMiseAJourBeta(m_miseAJourBeta);
+
     m_messageConfirmationFermeture = this->getIniMessageConfirmationFermeture();
     this->setMessageConfirmationFermeture(m_messageConfirmationFermeture);
+
+    QVariant depot = iniParam->value("miseAJour/DefaultRepositories");
+    QList<QVariant> depotList = depot.toList();
+
+    qDebug() << "Dépôts" << depotList.at(0);
 }
 
 void Settings::setGeometrie(QByteArray geometrie){
@@ -117,6 +125,19 @@ QDate Settings::getDerniereVerificationMiseAJour(){
 
 QDate Settings::getProchaineVerificationMiseAjour() {
     return m_derniereVerificationMiseAJour.addDays(this->m_nombreJourMiseAJour);
+}
+
+void Settings::setMiseAJourBeta(bool enabled) {
+    this->m_miseAJourBeta = enabled;
+    iniParam->setValue("miseAJour/beta", enabled);
+}
+
+bool Settings::getIniMiseAJourBeta() {
+    return iniParam->value("miseAJour/beta", settingDefaultBool).toBool();
+}
+
+bool Settings::getMiseAJourBeta() {
+    return this->m_miseAJourBeta;
 }
 
 void Settings::setMessageConfirmationFermeture(bool enabled){

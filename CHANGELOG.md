@@ -36,7 +36,7 @@ Suivis des version
 
 + **Effacer les filtres** Ajout d'un bouton pour effacer les filtres.
 
-+ Écran de démarrage** ou *Splash Screen* en anglais. Petite funitude :yum:
++ **Écran de démarrage** ou *Splash Screen* en anglais. Petite funitude :yum:
   ![SplashScreen](https://i.imgur.com/hwnkLdqm.png)
 
 ### Modification
