@@ -98,6 +98,7 @@ private:
     QSortFilterProxyModel *proxyModelFiltreTitre;
     QSortFilterProxyModel *proxyModelFiltreProgresFinis;
     QSortFilterProxyModel *proxyModelFiltreConditionFaite;
+    QSortFilterProxyModel *proxyModelFiltreTypeCondition;
     QAbstractItemModel *m_defaultModelCompleter;
     QCompleter *m_defaultCompleter;
     QCompleter *m_sansCompleter;
@@ -126,6 +127,8 @@ private slots:
     void filtreTableTitre(QString filtre);
     void filtreTableProgresFinis(QString filtre);
     void filtreTableConditionFait(QString filtre);
+    void filtreTableTypeCondition(QString filtre);
+    void effacerLesFiltres(bool checked);
     void etatAutoCompletion(int etat);
     // Impression
     void imprimerTable(bool checked);

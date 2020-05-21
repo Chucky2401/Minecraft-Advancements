@@ -30,20 +30,32 @@ Suivis des version
 
 + **Mémorisation taille et position** En ajoutant la fenêtres des préférences *(repris d'un autre de mes programmes)*, ajout de cette fonctionnalité. Au redémarrage du programme, si cette option est active la fenêtre sera remise à la même taille qu'à la fermeture.
 
++ [Issue#12](https://github.com/Chucky2401/Minecraft-Advancements/issues/12) **Type Condition (ET ou OU)** Si une condition et de type **ET** : *toutes les conditions sont nécessaires au progrès* ; De type **OU** : *une condition est suffisante*
+
++ **Couleurs** Ajout de couleurs en fonction du type ou si le progrès est finis. (cf. [Screenshot](https://github.com/Chucky2401/Minecraft-Advancements/issues/12#issuecomment-631973057))
+
++ **Effacer les filtres** Ajout d'un bouton pour effacer les filtres.
+
++ Écran de démarrage** ou *Splash Screen* en anglais. Petite funitude :yum:
+  ![SplashScreen](https://i.imgur.com/hwnkLdqm.png)
+
 ### Modification
 
 + [Issue#8](https://github.com/Chucky2401/Minecraft-Advancements/issues/8)
 
   - **Filtre sur les titres** *Ajout d'une option activable / désactivable pour filtrer sous forme d'Expressions Régulière. [Par ici](https://www.lucaswillems.com/fr/articles/25/tutoriel-pour-maitriser-les-expressions-regulieres) si vous ne connaissez pas.*
 ![Filtre et bouton imprimer](https://i.imgur.com/iZGgNvlm.png)
+- **Taille filtre des titres** Agrandissement sur le nombre d'éléments visibles à la fois
+  ![Taille Filtre Titre](https://i.imgur.com/kEKiI9Im.png)
+- **Affichage autocomplétions** Affichage dans un pop-up. Il est plus facile de voir toutes les propositions lors de la recherche du titre.
+  ![Affichage autocomplétion](https://i.imgur.com/b2OBpeom.png)
+- **Activer/désactiver autocomplétions** Possibilité de l'activé ou non :wink:
+  ![activation](https://i.imgur.com/6FrUSDJm.png)
+- **Ajout d'un séparateur** dans le champ de filtre sur le titre avant *----- Blaze and Cave -----* lors de la comparaison de tous *Vanilla + Blaze and Cave*
++ **Filtres et Opérations** Déplacement du bouton *Imprimer* dans un group *Opérations* avec le bouton *Effacer les filtres*
+  ![Filtres et Opérations](https://i.imgur.com/wQeZGWim.png)
 
-  - **Taille filtre des titres** Agrandissement sur le nombre d'éléments visibles à la fois
-![Taille Filtre Titre](https://i.imgur.com/kEKiI9Im.png)
-  - **Affichage autocomplétions** Affichage dans un pop-up. Il est plus facile de voir toutes les propositions lors de la recherche du titre.
-![Affichage autocomplétion](https://i.imgur.com/b2OBpeom.png)
-  - **Activer/désactiver autocomplétions** Possibilité de l'activé ou non :wink:
-![activation](https://i.imgur.com/6FrUSDJm.png)
-  - **Ajout d'un séparateur** dans le champ de filtre sur le titre avant *----- Blaze and Cave -----* lors de la comparaison de tous *Vanilla + Blaze and Cave*
+
 
 ### Correction
 

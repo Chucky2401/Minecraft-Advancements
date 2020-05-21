@@ -29,8 +29,11 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     // Variable global à toute la fenêtre
     m_qsAppDataPath = qEnvironmentVariable("APPDATA");
 
+    // On désactive certaines choses
     ui->qgbFiltres->setEnabled(false);
+    ui->qgbOperations->setEnabled(false);
 
+    // Langue disponibles
     ui->qcbLangue->addItem("Français", QVariant("/fr_fr.lang"));
     ui->qcbLangue->addItem("English", QVariant("/en_us.lang"));
 
@@ -49,6 +52,7 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     proxyModelFiltreTitre = new QSortFilterProxyModel(this);
     proxyModelFiltreProgresFinis = new QSortFilterProxyModel(this);
     proxyModelFiltreConditionFaite = new QSortFilterProxyModel(this);
+    proxyModelFiltreTypeCondition = new QSortFilterProxyModel(this);
 
     bTousLesProgres = false;
 
@@ -65,10 +69,30 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     ui->qcbFiltreProgresFinis->addItem("");
     ui->qcbFiltreProgresFinis->addItem("oui");
     ui->qcbFiltreProgresFinis->addItem("non");
+    ui->qcbFiltreType->addItem("");
+    ui->qcbFiltreType->addItem("ET");
+    ui->qcbFiltreType->addItem("OU");
+    ui->qcbFiltreType->setToolTip("Filtrer sur le type de condition.\n"
+                                  "ET : toutes les conditions doivent être remplies.\n"
+                                  "OU : une conditions doit être remplie.");
 
+    ui->qcbFiltreTitre->setToolTip("Filtre sur le tire.\n\n"
+                                   "Exemple Expression Régulière :\n"
+                                   " - 'par' : recherche 'par' partout dans le texte\n"
+                                   "    Trouvera 'Partons à l'aventure' et 'Deux par deux'\n\n"
+                                   " - '^par' : recherche 'par' seulement au début du texte.\n"
+                                   "    Trouvera 'Partons à l'aventure' mais pas 'Deux par deux'\n\n"
+                                   " - 'par|monstre' : recherche 'par' OU 'monstre'\n\n"
+                                   "Vous pouvez aussi combiner !\n"
+                                   " - '^par|^monstre' : recherche 'par' OU 'monstre' au début du texte.\n"
+                                   "    Trouvera 'Partons à l'aventure' et 'Monstres chassés'");
+    ui->qcbFiltreTitre->setToolTipDuration(30000);
+
+    // On masque la barre de progression, c'était pour un test
     ui->qpbTraitementProgres->setVisible(false);
     ui->qpbTraitementProgres->setValue(0);
 
+    // Gestion de l'autocomplétion pour les titres
     m_sansCompleter = new QCompleter();
     m_defaultCompleter = new QCompleter(this);
     ui->qcbAutoCompletion->setChecked(true);
@@ -85,6 +109,8 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     connect(ui->pbImprimer, SIGNAL(clicked(bool)), this, SLOT(imprimerTable(bool)));
     connect(ui->qcbFiltreProgresFinis, SIGNAL(currentTextChanged(QString)), this, SLOT(filtreTableProgresFinis(QString)));
     connect(ui->qcbFiltreConditionFait, SIGNAL(currentTextChanged(QString)), this, SLOT(filtreTableConditionFait(QString)));
+    connect(ui->qcbFiltreType, SIGNAL(currentTextChanged(QString)), this, SLOT(filtreTableTypeCondition(QString)));
+    connect(ui->qpbClearFilter, SIGNAL(clicked(bool)), this, SLOT(effacerLesFiltres(bool)));
     connect(ui->qcbAutoCompletion, SIGNAL(stateChanged(int)), this, SLOT(etatAutoCompletion(int)));
     connect(ui->qaAbout, SIGNAL(triggered()), this, SLOT(ouvrirAPropos()));
     connect(ui->qaSettings, SIGNAL(triggered()), this, SLOT(ouvrirParametres()));
@@ -109,6 +135,9 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     }
 }
 
+/*
+ * Destructeur de la classe
+ */
 FRM_Principale::~FRM_Principale() {
     delete ui;
 }
@@ -189,7 +218,7 @@ void FRM_Principale::choixLauncher(int index) {
                     }
                 }
                 ui->qcbVersion->addItem(qsNomVersion, QVariant(qsValeurTemp));
-                qDebug() << "Nom Version" << qsNomVersion << "- qsValeurTemp" << qsValeurTemp;
+                //qDebug() << "Nom Version" << qsNomVersion << "- qsValeurTemp" << qsValeurTemp;
             }
 
         }
@@ -317,6 +346,9 @@ void FRM_Principale::choixVersion(int index) {
 }
 
 void FRM_Principale::extraireProgres(bool checked) {
+    if (checked) {
+        qDebug() << checked;
+    }
     QStringList qslFormatFichier;
     QString qsTempNom, qsNouveauNom;
     bool bErreurDetecteAdvancement = false, bErreurDetecteLang = false;
@@ -518,6 +550,9 @@ void FRM_Principale::extraireProgres(bool checked) {
 }
 
 void FRM_Principale::selectionDossierBlazeandcave(bool checked) {
+    if (checked) {
+        qDebug() << checked;
+    }
     QString qsDossierBlazeandCave = QFileDialog::getExistingDirectory(this, tr("Dossier Blaze And Cave"),
                                                  m_qsDossierMinecraft,
                                                  QFileDialog::ShowDirsOnly
@@ -549,6 +584,9 @@ void FRM_Principale::selectionDossierBlazeandcave(bool checked) {
 }
 
 void FRM_Principale::choixFichierAdvancements(bool checked) {
+    if (checked) {
+        qDebug() << checked;
+    }
     QStringList qslDossierSauvegardeTemp;
     QString qsFauxDossierSauvegarde;
     QStringList qslFormatFichier, qslFauxChemin;
@@ -641,6 +679,9 @@ void FRM_Principale::choixFichierAdvancements(bool checked) {
 }
 
 void FRM_Principale::readJSONsVanilla(bool checked) {
+    if (checked) {
+        qDebug() << checked;
+    }
     ui->qcbFiltreOrigine->disconnect();
     ui->qcbFiltreTitre->disconnect();
 
@@ -656,6 +697,7 @@ void FRM_Principale::readJSONsVanilla(bool checked) {
     ui->qcbFiltreTitre->addItem("");
 
     ui->qgbFiltres->setEnabled(false);
+    ui->qgbOperations->setEnabled(false);
 
     QStringList qslFormatFichier;
     QString qsTitrePrecedent = "";
@@ -695,6 +737,9 @@ void FRM_Principale::readJSONsVanilla(bool checked) {
     }
 
     QVariantMap qvmJsonLang = qjsJsonLang.toVariantMap();
+    /*
+     * Tout stocké dans un QStringList
+     */
 
     QDirIterator qdiFichierProgres(m_qdDossierAdvancedments.path(), qslFormatFichier, QDir::Files, QDirIterator::Subdirectories);
 
@@ -702,178 +747,216 @@ void FRM_Principale::readJSONsVanilla(bool checked) {
 
     while (qdiFichierProgres.hasNext()) {
         QString qsJsonFile = qdiFichierProgres.next();
-        QFile qfJsonFile(qsJsonFile);
-        if(!qfJsonFile.open(QIODevice::ReadOnly)){
-            qDebug()<<"Failed to open "<< qsJsonFile;
-            exit(1);
-        }
+        QStringList qslCheminFichier = qsJsonFile.split("/");
+        if (qslCheminFichier.at(2) != "recipes") {
 
-        QTextStream file_text(&qfJsonFile);
-        QString json_string;
-        json_string = file_text.readAll();
-        qfJsonFile.close();
-        QByteArray json_bytes = json_string.toLocal8Bit();
-
-        QJsonDocument json_doc = QJsonDocument::fromJson(json_bytes);
-
-        if(json_doc.isNull()){
-            qDebug()<<"Failed to create JSON doc.";
-            exit(2);
-        }
-        if(!json_doc.isObject()){
-            qDebug()<<"JSON is not an object.";
-            exit(3);
-        }
-
-        QJsonObject json_obj = json_doc.object();
-
-        if(json_obj.isEmpty()){
-            qDebug()<<"JSON object is empty.";
-            exit(4);
-        }
-
-        QVariantMap json_map = json_obj.toVariantMap();
-        QMap<QString, QVariant> qmDisplay = json_map["display"].toMap();
-        QMap<QString, QVariant> qmTitle = qmDisplay["title"].toMap();
-        QMap<QString, QVariant> qmDescription = qmDisplay["description"].toMap();
-        QMap<QString, QVariant> qmCriteres = json_map["criteria"].toMap();
-        QJsonArray qjaConditionsTemp = json_map["requirements"].toJsonArray();
-        QString qsIdentifiant = qsJsonFile;
-        QString qsTitre = qvmJsonLang[qmTitle["translate"].toString()].toString();
-        QString qsTitreAvecDescription = "";
-        QString qsDescription = qvmJsonLang[qmDescription["translate"].toString()].toString();
-        qsIdentifiant.replace(m_qdDossierAdvancedments.path()+"/", "");
-        qsIdentifiant = "minecraft:" + qsIdentifiant.split(".").first();
-
-        if (qsTitre == "") {
-            QStringList qslIdentifiant = qsIdentifiant.split("/");
-            QString qsValeurDansLang = "minecraft." + qslIdentifiant.last();
-
-            QMapIterator<QString, QVariant> qmiFichierLang(qvmJsonLang);
-            while (qmiFichierLang.hasNext()) {
-                qmiFichierLang.next();
-                QString qsCle = qmiFichierLang.key();
-                if (qsCle.contains(qsValeurDansLang)) {
-                    qsTitre = qmiFichierLang.value().toString();
-                }
+            QFile qfJsonFile(qsJsonFile);
+            if(!qfJsonFile.open(QIODevice::ReadOnly)){
+                qDebug()<<"Failed to open "<< qsJsonFile;
+                exit(1);
             }
+
+            QTextStream file_text(&qfJsonFile);
+            QString json_string;
+            json_string = file_text.readAll();
+            qfJsonFile.close();
+            QByteArray json_bytes = json_string.toLocal8Bit();
+
+            QJsonDocument json_doc = QJsonDocument::fromJson(json_bytes);
+
+            if(json_doc.isNull()){
+                qDebug()<<"Failed to create JSON doc.";
+                exit(2);
+            }
+            if(!json_doc.isObject()){
+                qDebug()<<"JSON is not an object.";
+                exit(3);
+            }
+
+            QJsonObject json_obj = json_doc.object();
+
+            if(json_obj.isEmpty()){
+                qDebug()<<"JSON object is empty.";
+                exit(4);
+            }
+
+            QVariantMap json_map = json_obj.toVariantMap();
+            QMap<QString, QVariant> qmDisplay = json_map["display"].toMap();
+            QMap<QString, QVariant> qmTitle = qmDisplay["title"].toMap();
+            QMap<QString, QVariant> qmDescription = qmDisplay["description"].toMap();
+            QMap<QString, QVariant> qmCriteres = json_map["criteria"].toMap();
+            QJsonArray qjaConditionsTemp = json_map["requirements"].toJsonArray();
+            QJsonArray qjaConditions = qjaConditionsTemp.at(0).toArray();
+            // Si > 1 => OU (||)
+            // Sinon  => ET (&&)
+            int iNombreRequierements = qjaConditions.count();
+            QString qsIdentifiant = qsJsonFile;
+            QString qsTitre = qvmJsonLang[qmTitle["translate"].toString()].toString();
+            QString qsTitreAvecDescription = "";
+            QString qsDescription = qvmJsonLang[qmDescription["translate"].toString()].toString();
+            qsIdentifiant.replace(m_qdDossierAdvancedments.path()+"/", "");
+            qsIdentifiant = "minecraft:" + qsIdentifiant.split(".").first();
+
             if (qsTitre == "") {
-                QStringList qslTitre = qsIdentifiant.split("/").last().split("_");
-                for (int a = 0 ; a < qslTitre.count() ; a++) {
-                    QString qsTitreTemp = qslTitre.at(a);
-                    qsTitreTemp.replace(0, 1, qsTitreTemp.at(0).toUpper());
-                    qsTitre += qsTitreTemp + " ";
-                }
-                qsTitre = qsTitre.trimmed();
-            }
-        }
+                QStringList qslIdentifiant = qsIdentifiant.split("/");
+                QString qsValeurDansLang = "minecraft." + qslIdentifiant.last();
 
-        if (qsTitre != qsTitrePrecedent) {
-            qsTitrePrecedent = qsTitre;
-            ui->qcbFiltreTitre->addItem(qsTitrePrecedent);
-        }
-
-        bool bCriteresPersoExiste = m_qvmJsonProgresPerso[qsIdentifiant].isValid();
-        bool bProgesFini;
-        int iCritereFait = 0;
-        QMap<QString, QVariant> qmIdentifiantPerso;
-        QMap<QString, QVariant> qmCriteresPerso;
-        QString qsDateRealisation;
-        if (bCriteresPersoExiste) {
-            qmIdentifiantPerso = m_qvmJsonProgresPerso[qsIdentifiant].toMap();
-            bProgesFini = qmIdentifiantPerso.value("done").toBool();
-            qmCriteresPerso = qmIdentifiantPerso["criteria"].toMap();
-            iCritereFait = qmCriteresPerso.count();
-        } else {
-            bProgesFini = false;
-
-        }
-            QString qsProgresFini;
-            int iCritereAFaire = qmCriteres.count();
-
-            if (bProgesFini)
-                qsProgresFini = "oui";
-            else
-                qsProgresFini = "non";
-
-            QMapIterator<QString, QVariant> qmiCriteres(qmCriteres);
-            while (qmiCriteres.hasNext()) {
-                qmiCriteres.next();
-                m_qlLigneProgres.clear();
-                QString qsCondition = qmiCriteres.key();
-                QMap<QString, QVariant> qmCritere = qmCriteres[qsCondition].toMap();
-                QString qmTrigger = qmCritere["trigger"].toString();
-                QMap<QString, QVariant> qmConditions = qmCritere["conditions"].toMap();
-                QList<QString> qlsKeysMap = qmConditions.keys();
-                QDateTime qdtDateRealisation = QDateTime();
-                if (bCriteresPersoExiste) {
-                    qsDateRealisation = qmCriteresPerso[qsCondition].toString();
-                    qsDateRealisation = qsDateRealisation.left(qsDateRealisation.length()-6);
-                    qdtDateRealisation = QDateTime::fromString(qsDateRealisation, "yyyy-MM-dd hh:mm:ss");
-                }
-
-                QStandardItem *qsiOrigine = new QStandardItem("Minecraft Vanilla");
-                QStandardItem *qsiTitre = new QStandardItem("");
-                if (qsDescription == "") {
-                    qsiTitre->setText(qsTitre);
-                    qsTitreAvecDescription = qsTitre;
-                }
-                else {
-                    qsiTitre->setText(qsTitre + " (" + qsDescription + ")");
-                    qsTitreAvecDescription = qsTitre + " (" + qsDescription + ")";
-                }
-                QStandardItem *qsiProgreFini = new QStandardItem(qsProgresFini);
-                QStandardItem *qsiCondition = new QStandardItem(qsCondition);
-                QStandardItem *qsiConditionRemplie = new QStandardItem("");
-                QStandardItem *qsiDateRealisation = new QStandardItem("");
-
-                if (bCriteresPersoExiste && (bProgesFini && iCritereFait <= iCritereAFaire)) {
-                    if (qsDateRealisation != "") {
-                        qDebug() << "Minecraft Vanilla;" + qsTitreAvecDescription + ";" + qsProgresFini + ";" + qsCondition + ";oui;" + qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss");
-                        qsiConditionRemplie->setText("oui");
-                        qsiDateRealisation->setText(qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss"));
-                        m_qlLigneProgres << qsiOrigine << qsiTitre << qsiProgreFini << qsiCondition << qsiConditionRemplie << qsiDateRealisation;
-                        m_qsimProgresRealisation->appendRow(m_qlLigneProgres);
+                QMapIterator<QString, QVariant> qmiFichierLang(qvmJsonLang);
+                while (qmiFichierLang.hasNext()) {
+                    qmiFichierLang.next();
+                    QString qsCle = qmiFichierLang.key();
+                    if (qsCle.contains(qsValeurDansLang)) {
+                        qsTitre = qmiFichierLang.value().toString();
                     }
-                } else if (bCriteresPersoExiste) {
-                    if (qsDateRealisation != "") {
-                        qDebug() << "Minecraft Vanilla;" + qsTitreAvecDescription + ";" + qsProgresFini + ";" + qsCondition + ";oui;" + qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss");
-                        qsiConditionRemplie->setText("oui");
-                        qsiDateRealisation->setText(qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss"));
-                        m_qlLigneProgres << qsiOrigine << qsiTitre << qsiProgreFini << qsiCondition << qsiConditionRemplie << qsiDateRealisation;
-                        m_qsimProgresRealisation->appendRow(m_qlLigneProgres);
+                }
+                if (qsTitre == "") {
+                    QStringList qslTitre = qsIdentifiant.split("/").last().split("_");
+                    for (int a = 0 ; a < qslTitre.count() ; a++) {
+                        QString qsTitreTemp = qslTitre.at(a);
+                        qsTitreTemp.replace(0, 1, qsTitreTemp.at(0).toUpper());
+                        qsTitre += qsTitreTemp + " ";
+                    }
+                    qsTitre = qsTitre.trimmed();
+                }
+            }
+
+            if (qsTitre != qsTitrePrecedent) {
+                qsTitrePrecedent = qsTitre;
+                ui->qcbFiltreTitre->addItem(qsTitrePrecedent);
+            }
+
+            bool bCriteresPersoExiste = m_qvmJsonProgresPerso[qsIdentifiant].isValid();
+            bool bProgesFini;
+            int iCritereFait = 0;
+            QMap<QString, QVariant> qmIdentifiantPerso;
+            QMap<QString, QVariant> qmCriteresPerso;
+            QString qsDateRealisation;
+            if (bCriteresPersoExiste) {
+                qmIdentifiantPerso = m_qvmJsonProgresPerso[qsIdentifiant].toMap();
+                bProgesFini = qmIdentifiantPerso.value("done").toBool();
+                qmCriteresPerso = qmIdentifiantPerso["criteria"].toMap();
+                iCritereFait = qmCriteresPerso.count();
+            } else {
+                bProgesFini = false;
+
+            }
+                QString qsProgresFini;
+                int iCritereAFaire = qmCriteres.count();
+
+                if (bProgesFini)
+                    qsProgresFini = "oui";
+                else
+                    qsProgresFini = "non";
+
+                QMapIterator<QString, QVariant> qmiCriteres(qmCriteres);
+                while (qmiCriteres.hasNext()) {
+                    qmiCriteres.next();
+                    m_qlLigneProgres.clear();
+                    QString qsCondition = qmiCriteres.key();
+                    QString qsConditionSimple = qsCondition;
+                    qsConditionSimple.replace(QRegExp("^.+:"), "");
+                    QMap<QString, QVariant> qmCritere = qmCriteres[qsCondition].toMap();
+                    QString qmTrigger = qmCritere["trigger"].toString();
+                    QMap<QString, QVariant> qmConditions = qmCritere["conditions"].toMap();
+                    QList<QString> qlsKeysMap = qmConditions.keys();
+                    QDateTime qdtDateRealisation = QDateTime();
+                    if (bCriteresPersoExiste) {
+                        qsDateRealisation = qmCriteresPerso[qsCondition].toString();
+                        qsDateRealisation = qsDateRealisation.left(qsDateRealisation.length()-6);
+                        qdtDateRealisation = QDateTime::fromString(qsDateRealisation, "yyyy-MM-dd hh:mm:ss");
+                    }
+
+                    QStandardItem *qsiOrigine = new QStandardItem("Minecraft Vanilla");
+                    QStandardItem *qsiTitre = new QStandardItem("");
+                    if (qsDescription == "") {
+                        qsiTitre->setText(qsTitre);
+                        qsTitreAvecDescription = qsTitre;
+                    }
+                    else {
+                        qsiTitre->setText(qsTitre + " (" + qsDescription + ")");
+                        qsTitreAvecDescription = qsTitre + " (" + qsDescription + ")";
+                    }
+                    QStandardItem *qsiProgreFini = new QStandardItem(qsProgresFini);
+                    if (qsProgresFini == "oui") {
+                        qsiTitre->setForeground(QBrush(Qt::darkGreen));
+                    }
+                    QStandardItem *qsiCondition = new QStandardItem("");
+                    /*
+                     * Rechercher la traduction
+                     * Si trouvé : on la met
+                     * Sinon     : on mets qsConditionSimple
+                     */
+                    qsiCondition->setText(qsConditionSimple);
+
+                    // Si le progres n'est pas fait, on mets une couleur sur la condition
+                    // on fonction si une suffit ou toutes
+                    if (qsProgresFini == "non" && iNombreRequierements > 1) {
+                        qsiCondition->setForeground(QBrush(Qt::blue));
+                    } else if (qsProgresFini == "non" && iNombreRequierements == 1) {
+                        qsiCondition->setForeground(QBrush(Qt::darkRed));
+                    }
+                    QStandardItem *qsiConditionRemplie = new QStandardItem("");
+                    QStandardItem *qsiDateRealisation = new QStandardItem("");
+
+                    // On ajoute la colonne type (ET / OU) que l'on masquera pour filtrer
+                    QStandardItem *qsiTypeCondition = new QStandardItem("");
+                    if (iNombreRequierements > 1) {
+                        qsiTypeCondition->setText("OU");
+                    } else {
+                        qsiTypeCondition->setText("ET");
+                    }
+
+                    if (bCriteresPersoExiste && (bProgesFini && iCritereFait <= iCritereAFaire)) {
+                        if (qsDateRealisation != "") {
+                            qDebug() << "Minecraft Vanilla;" + qsTitreAvecDescription + ";" + qsProgresFini + ";" + qsCondition + ";oui;" + qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss");
+                            qsiConditionRemplie->setText("oui");
+                            qsiDateRealisation->setText(qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss"));
+                            m_qlLigneProgres << qsiOrigine << qsiTitre << qsiProgreFini << qsiCondition << qsiConditionRemplie << qsiDateRealisation << qsiTypeCondition;
+                            m_qsimProgresRealisation->appendRow(m_qlLigneProgres);
+                        }
+                    } else if (bCriteresPersoExiste) {
+                        if (qsDateRealisation != "") {
+                            qDebug() << "Minecraft Vanilla;" + qsTitreAvecDescription + ";" + qsProgresFini + ";" + qsCondition + ";oui;" + qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss");
+                            qsiConditionRemplie->setText("oui");
+                            qsiDateRealisation->setText(qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss"));
+                            m_qlLigneProgres << qsiOrigine << qsiTitre << qsiProgreFini << qsiCondition << qsiConditionRemplie << qsiDateRealisation << qsiTypeCondition;
+                            m_qsimProgresRealisation->appendRow(m_qlLigneProgres);
+                        } else {
+                            qDebug() << "Minecraft Vanilla;" + qsTitreAvecDescription + ";" + qsProgresFini + ";" + qsCondition + ";non;";
+                            qsiConditionRemplie->setText("non");
+                            m_qlLigneProgres << qsiOrigine << qsiTitre << qsiProgreFini << qsiCondition << qsiConditionRemplie << qsiDateRealisation << qsiTypeCondition;
+                            m_qsimProgresRealisation->appendRow(m_qlLigneProgres);
+                        }
                     } else {
                         qDebug() << "Minecraft Vanilla;" + qsTitreAvecDescription + ";" + qsProgresFini + ";" + qsCondition + ";non;";
                         qsiConditionRemplie->setText("non");
-                        m_qlLigneProgres << qsiOrigine << qsiTitre << qsiProgreFini << qsiCondition << qsiConditionRemplie << qsiDateRealisation;
+                        m_qlLigneProgres << qsiOrigine << qsiTitre << qsiProgreFini << qsiCondition << qsiConditionRemplie << qsiDateRealisation << qsiTypeCondition;
                         m_qsimProgresRealisation->appendRow(m_qlLigneProgres);
                     }
-                } else {
-                    qDebug() << "Minecraft Vanilla;" + qsTitreAvecDescription + ";" + qsProgresFini + ";" + qsCondition + ";non;";
-                    qsiConditionRemplie->setText("non");
-                    m_qlLigneProgres << qsiOrigine << qsiTitre << qsiProgreFini << qsiCondition << qsiConditionRemplie << qsiDateRealisation;
-                    m_qsimProgresRealisation->appendRow(m_qlLigneProgres);
                 }
-            }
+        }
     }
 
     if (!bTousLesProgres){
         QStringList qslHorizontalLabel;
-        qslHorizontalLabel << "Origine" << "Titre" << "Progres Fini" << "Condition" << "Condition Faite" << "Date Fait";
+        qslHorizontalLabel << "Origine" << "Titre" << "Progres Fini" << "Condition" << "Condition Faite" << "Date Fait" << "Type Condition";
         m_qsimProgresRealisation->setHorizontalHeaderLabels(qslHorizontalLabel);
 
         proxModelFiltreOrigine->setSourceModel(m_qsimProgresRealisation);
         proxyModelFiltreTitre->setSourceModel(proxModelFiltreOrigine);
         proxyModelFiltreProgresFinis->setSourceModel(proxyModelFiltreTitre);
         proxyModelFiltreConditionFaite->setSourceModel(proxyModelFiltreProgresFinis);
+        proxyModelFiltreTypeCondition->setSourceModel(proxyModelFiltreConditionFaite);
 
-        ui->tableView->setModel(proxyModelFiltreConditionFaite);
+        ui->tableView->setModel(proxyModelFiltreTypeCondition);
         ui->tableView->resizeColumnsToContents();
+        //ui->tableView->hideColumn(6);
 
         connect(ui->qcbFiltreOrigine, SIGNAL(currentTextChanged(QString)), this, SLOT(filtreTableOrigine(QString)));
         connect(ui->qcbFiltreTitre, SIGNAL(currentTextChanged(QString)), this, SLOT(filtreTableTitre(QString)));
 
         ui->qgbFiltres->setEnabled(true);
+        ui->qgbOperations->setEnabled(true);
 
         m_defaultCompleter->setModel(ui->qcbFiltreTitre->model());
         m_defaultCompleter->setCompletionMode(QCompleter::PopupCompletion);
@@ -883,6 +966,9 @@ void FRM_Principale::readJSONsVanilla(bool checked) {
 }
 
 void FRM_Principale::readJSONsBlazeandcave(bool checked) {
+    if (checked) {
+        qDebug() << checked;
+    }
     if (!bTousLesProgres) {
         ui->qcbFiltreOrigine->disconnect();
         ui->qcbFiltreTitre->disconnect();
@@ -899,6 +985,7 @@ void FRM_Principale::readJSONsBlazeandcave(bool checked) {
         ui->qcbFiltreTitre->addItem("");
 
         ui->qgbFiltres->setEnabled(false);
+        ui->qgbOperations->setEnabled(false);
     }
 
     QStringList qslFormatFichier;
@@ -960,183 +1047,234 @@ void FRM_Principale::readJSONsBlazeandcave(bool checked) {
     qDebug() << "Origine;Titre;Progres Fini;Condition;Condition Faite;Date Fait";
 
     while (qdiFichierProgres.hasNext()) {
-
         QString qsJsonFile = qdiFichierProgres.next();
-        QFile qfJsonFile(qsJsonFile);
-        if(!qfJsonFile.open(QIODevice::ReadOnly)){
-            qDebug()<<"Failed to open "<< qsJsonFile;
-            QMessageBox::critical(this, "Ouvrir JSON", "Impossible d'e récupérer le contenu d'ouvrir " + qsJsonFile + ".\n\n<strong>Le fichier ne sera pas traité...</strong>");
-            bOuvertureJSON = false;
-        }
-
-        QTextStream file_text(&qfJsonFile);
-        QString json_string;
-        json_string = file_text.readAll();
-        qfJsonFile.close();
-        QByteArray json_bytes = json_string.toLocal8Bit();
-        QJsonDocument json_doc = QJsonDocument::fromJson(json_bytes, error);
-
-        if(json_doc.isNull() && bOuvertureJSON){
-            QStringList qslJsonFile = qsJsonFile.split("/");
-            QString qsFauxJsonFile = qslJsonFile.first() + "\\fake_Path\\" + qslJsonFile.last();
-
-            qDebug()<<"Failed to create JSON doc." << qsJsonFile;
-
-            qmbError.setText("Impossible de récupérer le contenu de <i>" + qsFauxJsonFile + "<i>.");
-            qmbError.setInformativeText("<strong>Le fichier ne sera pas traité...</strong>");
-            qmbError.setDetailedText(error->errorString().replace(0, 1, error->errorString()[0].toUpper()) + "\n\n" + json_string);
-            qmbError.exec();
-            bOuvertureJSON = false;
-        }
-        if(!json_doc.isObject() && bOuvertureJSON){
-            qDebug()<<"JSON is not an object.";
-            QMessageBox::critical(this, "Format JSON", "Le fichier JSON " + qsJsonFile + " n'a pas le bon format.\nLe fichier ne sera pas traité...");
-            bOuvertureJSON = false;
-        }
-
-        QJsonObject json_obj = json_doc.object();
-
-        if(json_obj.isEmpty() && bOuvertureJSON){
-            qDebug()<<"JSON object is empty.";
-            QMessageBox::critical(this, "JSON Vide", "Le fichier JSON " + qsJsonFile + " est vide.\nLe fichier ne sera pas traité...");
-            bOuvertureJSON = false;
-        }
-
-        if (bOuvertureJSON) {
-            QVariantMap json_map = json_obj.toVariantMap();
-            QMap<QString, QVariant> qmDisplay = json_map["display"].toMap();
-            QMap<QString, QVariant> qmTitle = qmDisplay["title"].toMap();
-            QMap<QString, QVariant> qmDescription = qmDisplay["description"].toMap();
-            QMap<QString, QVariant> qmCriteres = json_map["criteria"].toMap();
-            QString qsIdentifiant = qsJsonFile;
-//            QString qsTitre = qmTitle["translate"].toString();
-//            QString qsTitreAvecDescription = "";
-//            QString qsDescription = qmDescription["translate"].toString();
-            QString qsTitre = qvmJsonLang[qmTitle["translate"].toString()].toString();
-            QString qsTitreAvecDescription = "";
-            QString qsDescription = qvmJsonLang[qmDescription["translate"].toString()].toString();
-            qsIdentifiant.replace(m_qdDossierAdvancementsBlazeAndCave.path()+"/", "");
-            qsIdentifiant = "blazeandcave:" + qsIdentifiant.split(".").first();
-
-            if (qsTitre == "") {
-                QStringList qslTitre = qsIdentifiant.split("/").last().split("_");
-                for (int a = 0 ; a < qslTitre.count() ; a++) {
-                    QString qsTitreTemp = qslTitre.at(a);
-                    qsTitreTemp.replace(0, 1, qsTitreTemp.at(0).toUpper());
-                    qsTitre += qsTitreTemp + " ";
-                }
-                qsTitre = qsTitre.trimmed();
+        qDebug() << qsJsonFile;
+        QStringList qslCheminFichier = qsJsonFile.split("/");
+        if (qslCheminFichier.indexOf(QRegExp("recipes|technical")) == -1) {
+            QFile qfJsonFile(qsJsonFile);
+            if(!qfJsonFile.open(QIODevice::ReadOnly)){
+                qDebug()<<"Failed to open "<< qsJsonFile;
+                QMessageBox::critical(this, "Ouvrir JSON", "Impossible d'e récupérer le contenu d'ouvrir " + qsJsonFile + ".\n\n<strong>Le fichier ne sera pas traité...</strong>");
+                bOuvertureJSON = false;
             }
 
-            if (qsTitre != qsTitrePrecedent) {
-                qsTitrePrecedent = qsTitre;
-                ui->qcbFiltreTitre->addItem(qsTitrePrecedent);
+            QTextStream file_text(&qfJsonFile);
+            QString json_string;
+            json_string = file_text.readAll();
+            qfJsonFile.close();
+            QByteArray json_bytes = json_string.toLocal8Bit();
+            QJsonDocument json_doc = QJsonDocument::fromJson(json_bytes, error);
+
+            if(json_doc.isNull() && bOuvertureJSON){
+                QStringList qslJsonFile = qsJsonFile.split("/");
+                QString qsFauxJsonFile = qslJsonFile.first() + "\\fake_Path\\" + qslJsonFile.last();
+
+                qDebug()<<"Failed to create JSON doc." << qsJsonFile;
+
+                qmbError.setText("Impossible de récupérer le contenu de <i>" + qsFauxJsonFile + "<i>.");
+                qmbError.setInformativeText("<strong>Le fichier ne sera pas traité...</strong>");
+                qmbError.setDetailedText(error->errorString().replace(0, 1, error->errorString()[0].toUpper()) + "\n\n" + json_string);
+                qmbError.exec();
+                bOuvertureJSON = false;
+            }
+            if(!json_doc.isObject() && bOuvertureJSON){
+                qDebug()<<"JSON is not an object.";
+                QMessageBox::critical(this, "Format JSON", "Le fichier JSON " + qsJsonFile + " n'a pas le bon format.\nLe fichier ne sera pas traité...");
+                bOuvertureJSON = false;
             }
 
+            QJsonObject json_obj = json_doc.object();
 
-            bool bCriteresPersoExiste = m_qvmJsonProgresPerso[qsIdentifiant].isValid();
-            bool bProgesFini;
-            int iCritereFait = 0;
-            QMap<QString, QVariant> qmIdentifiantPerso;
-            QMap<QString, QVariant> qmCriteresPerso;
-            QString qsDateRealisation;
-            if (bCriteresPersoExiste) {
-                qmIdentifiantPerso = m_qvmJsonProgresPerso[qsIdentifiant].toMap();
-                bProgesFini = qmIdentifiantPerso.value("done").toBool();
-                qmCriteresPerso = qmIdentifiantPerso["criteria"].toMap();
-                iCritereFait = qmCriteresPerso.count();
-            } else {
-                bProgesFini = false;
-
+            if(json_obj.isEmpty() && bOuvertureJSON){
+                qDebug()<<"JSON object is empty.";
+                QMessageBox::critical(this, "JSON Vide", "Le fichier JSON " + qsJsonFile + " est vide.\nLe fichier ne sera pas traité...");
+                bOuvertureJSON = false;
             }
 
-            QString qsProgresFini;
-            int iCritereAFaire = qmCriteres.count();
-
-            if (bProgesFini)
-                qsProgresFini = "oui";
-            else
-                qsProgresFini = "non";
-
-            QMapIterator<QString, QVariant> qmiCriteres(qmCriteres);
-            while (qmiCriteres.hasNext()) {
-                qmiCriteres.next();
-                m_qlLigneProgres.clear();
-                QString qsCondition = qmiCriteres.key();
-                QMap<QString, QVariant> qmCritere = qmCriteres[qsCondition].toMap();
-                QString qmTrigger = qmCritere["trigger"].toString();
-                QMap<QString, QVariant> qmConditions = qmCritere["conditions"].toMap();
-                QList<QString> qlsKeysMap = qmConditions.keys();
-                QDateTime qdtDateRealisation = QDateTime();
-                if (bCriteresPersoExiste) {
-                    qsDateRealisation = qmCriteresPerso[qsCondition].toString();
-                    qsDateRealisation = qsDateRealisation.left(qsDateRealisation.length()-6);
-                    qdtDateRealisation = QDateTime::fromString(qsDateRealisation, "yyyy-MM-dd hh:mm:ss");
-                }
-
-                QStandardItem *qsiOrigine = new QStandardItem("Blaze and Cave");
-                QStandardItem *qsiTitre = new QStandardItem("");
-                if (qsDescription == "") {
-                    qsiTitre->setText(qsTitre);
-                    qsTitreAvecDescription = qsTitre;
-                }
-                else {
-                    qsiTitre->setText(qsTitre + " (" + qsDescription + ")");
-                    qsTitreAvecDescription = qsTitre + " (" + qsDescription + ")";
-                }
-                QStandardItem *qsiProgreFini = new QStandardItem(qsProgresFini);
-                QStandardItem *qsiCondition = new QStandardItem(qsCondition);
-                QStandardItem *qsiConditionRemplie = new QStandardItem("");
-                QStandardItem *qsiDateRealisation = new QStandardItem("");
-
-                if (bCriteresPersoExiste && (bProgesFini && iCritereFait <= iCritereAFaire)) {
-                    if (qsDateRealisation != "") {
-                        qDebug() << "Blaze and Cave;" + qsTitreAvecDescription + ";" + qsProgresFini + ";" + qsCondition + ";oui;" + qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss");
-                        qsiConditionRemplie->setText("oui");
-                        qsiDateRealisation->setText(qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss"));
-                        m_qlLigneProgres << qsiOrigine << qsiTitre << qsiProgreFini << qsiCondition << qsiConditionRemplie << qsiDateRealisation;
-                        m_qsimProgresRealisation->appendRow(m_qlLigneProgres);
+            if (bOuvertureJSON) {
+                QVariantMap json_map = json_obj.toVariantMap();
+                QMap<QString, QVariant> qmDisplay = json_map["display"].toMap();
+                QMap<QString, QVariant> qmTitle = qmDisplay["title"].toMap();
+                QMap<QString, QVariant> qmDescription = qmDisplay["description"].toMap();
+                QMap<QString, QVariant> qmCriteres = json_map["criteria"].toMap();
+                QJsonArray qjaConditionsTemp = json_map["requirements"].toJsonArray();
+                int iNombreRequierements;
+                if (!qjaConditionsTemp.isEmpty()) {
+                    QJsonArray qjaConditions = qjaConditionsTemp.at(0).toArray();
+                    qjaConditionsTemp.at(1).isArray();
+                    // Si > 1 => OU (||)
+                    // Sinon  => ET (&&)
+                    if (qjaConditionsTemp.at(1).isArray()) {
+                        iNombreRequierements = 1;
+                    } else {
+                        iNombreRequierements = qjaConditions.count();
                     }
-                } else if (bCriteresPersoExiste) {
-                    if (qsDateRealisation != "") {
-                        qDebug() << "Blaze and Cave;" + qsTitreAvecDescription + ";" + qsProgresFini + ";" + qsCondition + ";oui;" + qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss");
-                        qsiConditionRemplie->setText("oui");
-                        qsiDateRealisation->setText(qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss"));
-                        m_qlLigneProgres << qsiOrigine << qsiTitre << qsiProgreFini << qsiCondition << qsiConditionRemplie << qsiDateRealisation;
-                        m_qsimProgresRealisation->appendRow(m_qlLigneProgres);
+                    //qDebug() << "##### Requierements" << qjaConditionsTemp << "-" << iNombreRequierements;
+                    //qDebug() << "####2 Requierements" << qjaConditionsTemp.at(1) << "-" << qjaConditionsTemp.at(1).isArray();
+                } else {
+                    //qDebug() << "##### Requierements" << qjaConditionsTemp << "- Empty";
+                    iNombreRequierements = 1;
+                }
+                QString qsIdentifiant = qsJsonFile;
+                QString qsTitre = qvmJsonLang[qmTitle["translate"].toString()].toString();
+                // Parfois il n'y a pas de traduction...
+                if (qsTitre == "") {
+                    qsTitre = qmTitle["translate"].toString();
+                }
+                QString qsTitreAvecDescription = "";
+                QString qsDescription = qvmJsonLang[qmDescription["translate"].toString()].toString();
+                // Parfois il n'y a pas de traduction...
+                if (qsDescription == "") {
+                    qsDescription = qmDescription["translate"].toString();
+                }
+                qsIdentifiant.replace(m_qdDossierAdvancementsBlazeAndCave.path()+"/", "");
+                qsIdentifiant = "blazeandcave:" + qsIdentifiant.split(".").first();
+
+                if (qsTitre == "") {
+                    QStringList qslTitre = qsIdentifiant.split("/").last().split("_");
+                    for (int a = 0 ; a < qslTitre.count() ; a++) {
+                        QString qsTitreTemp = qslTitre.at(a);
+                        qsTitreTemp.replace(0, 1, qsTitreTemp.at(0).toUpper());
+                        qsTitre += qsTitreTemp + " ";
+                    }
+                    qsTitre = qsTitre.trimmed();
+                }
+
+                if (qsTitre != qsTitrePrecedent) {
+                    qsTitrePrecedent = qsTitre;
+                    ui->qcbFiltreTitre->addItem(qsTitrePrecedent);
+                }
+
+                bool bCriteresPersoExiste = m_qvmJsonProgresPerso[qsIdentifiant].isValid();
+                bool bProgesFini;
+                int iCritereFait = 0;
+                QMap<QString, QVariant> qmIdentifiantPerso;
+                QMap<QString, QVariant> qmCriteresPerso;
+                QString qsDateRealisation;
+                if (bCriteresPersoExiste) {
+                    qmIdentifiantPerso = m_qvmJsonProgresPerso[qsIdentifiant].toMap();
+                    bProgesFini = qmIdentifiantPerso.value("done").toBool();
+                    qmCriteresPerso = qmIdentifiantPerso["criteria"].toMap();
+                    iCritereFait = qmCriteresPerso.count();
+                } else {
+                    bProgesFini = false;
+
+                }
+
+                QString qsProgresFini;
+                int iCritereAFaire = qmCriteres.count();
+
+                if (bProgesFini)
+                    qsProgresFini = "oui";
+                else
+                    qsProgresFini = "non";
+
+                QMapIterator<QString, QVariant> qmiCriteres(qmCriteres);
+                while (qmiCriteres.hasNext()) {
+                    qmiCriteres.next();
+                    m_qlLigneProgres.clear();
+                    QString qsCondition = qmiCriteres.key();
+                    QString qsConditionSimple = qsCondition;
+                    qsConditionSimple.replace(QRegExp("^.+:"), "");
+                    QMap<QString, QVariant> qmCritere = qmCriteres[qsCondition].toMap();
+                    QString qmTrigger = qmCritere["trigger"].toString();
+                    QMap<QString, QVariant> qmConditions = qmCritere["conditions"].toMap();
+                    QList<QString> qlsKeysMap = qmConditions.keys();
+                    QDateTime qdtDateRealisation = QDateTime();
+                    if (bCriteresPersoExiste) {
+                        qsDateRealisation = qmCriteresPerso[qsCondition].toString();
+                        qsDateRealisation = qsDateRealisation.left(qsDateRealisation.length()-6);
+                        qdtDateRealisation = QDateTime::fromString(qsDateRealisation, "yyyy-MM-dd hh:mm:ss");
+                    }
+
+                    QStandardItem *qsiOrigine = new QStandardItem("Blaze and Cave");
+                    QStandardItem *qsiTitre = new QStandardItem("");
+                    if (qsDescription == "") {
+                        qsiTitre->setText(qsTitre);
+                        qsTitreAvecDescription = qsTitre;
+                    }
+                    else {
+                        qsiTitre->setText(qsTitre + " (" + qsDescription + ")");
+                        qsTitreAvecDescription = qsTitre + " (" + qsDescription + ")";
+                    }
+
+                    if (qsProgresFini == "oui") {
+                        qsiTitre->setForeground(QBrush(Qt::darkGreen));
+                    }
+
+                    QStandardItem *qsiProgreFini = new QStandardItem(qsProgresFini);
+                    QStandardItem *qsiCondition = new QStandardItem(qsConditionSimple);
+                    // Si le progres n'est pas fait, on mets une couleur sur la condition
+                   // on fonction si une suffit ou toutes
+                   if (qsProgresFini == "non" && iNombreRequierements > 1) {
+                       qsiCondition->setForeground(QBrush(Qt::blue));
+                   } else if (qsProgresFini == "non" && iNombreRequierements == 1) {
+                       qsiCondition->setForeground(QBrush(Qt::darkRed));
+                   }
+
+                    QStandardItem *qsiConditionRemplie = new QStandardItem("");
+                    QStandardItem *qsiDateRealisation = new QStandardItem("");
+                    // On ajoute la colonne type (ET / OU) que l'on masquera pour filtrer
+                    QStandardItem *qsiTypeCondition = new QStandardItem("");
+                    if (iNombreRequierements > 1) {
+                        qsiTypeCondition->setText("OU");
+                    } else {
+                        qsiTypeCondition->setText("ET");
+                    }
+
+                    if (bCriteresPersoExiste && (bProgesFini && iCritereFait <= iCritereAFaire)) {
+                        if (qsDateRealisation != "") {
+                            qDebug() << "Blaze and Cave;" + qsTitreAvecDescription + ";" + qsProgresFini + ";" + qsCondition + ";oui;" + qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss");
+                            qsiConditionRemplie->setText("oui");
+                            qsiDateRealisation->setText(qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss"));
+                            m_qlLigneProgres << qsiOrigine << qsiTitre << qsiProgreFini << qsiCondition << qsiConditionRemplie << qsiDateRealisation << qsiTypeCondition;
+                            m_qsimProgresRealisation->appendRow(m_qlLigneProgres);
+                        }
+                    } else if (bCriteresPersoExiste) {
+                        if (qsDateRealisation != "") {
+                            qDebug() << "Blaze and Cave;" + qsTitreAvecDescription + ";" + qsProgresFini + ";" + qsCondition + ";oui;" + qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss");
+                            qsiConditionRemplie->setText("oui");
+                            qsiDateRealisation->setText(qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss"));
+                            m_qlLigneProgres << qsiOrigine << qsiTitre << qsiProgreFini << qsiCondition << qsiConditionRemplie << qsiDateRealisation << qsiTypeCondition;
+                            m_qsimProgresRealisation->appendRow(m_qlLigneProgres);
+                        } else {
+                            qDebug() << "Blaze and Cave;" + qsTitreAvecDescription + ";" + qsProgresFini + ";" + qsCondition + ";non;";
+                            qsiConditionRemplie->setText("non");
+                            m_qlLigneProgres << qsiOrigine << qsiTitre << qsiProgreFini << qsiCondition << qsiConditionRemplie << qsiDateRealisation << qsiTypeCondition;
+                            m_qsimProgresRealisation->appendRow(m_qlLigneProgres);
+                        }
                     } else {
                         qDebug() << "Blaze and Cave;" + qsTitreAvecDescription + ";" + qsProgresFini + ";" + qsCondition + ";non;";
                         qsiConditionRemplie->setText("non");
-                        m_qlLigneProgres << qsiOrigine << qsiTitre << qsiProgreFini << qsiCondition << qsiConditionRemplie << qsiDateRealisation;
+                        m_qlLigneProgres << qsiOrigine << qsiTitre << qsiProgreFini << qsiCondition << qsiConditionRemplie << qsiDateRealisation << qsiTypeCondition;
                         m_qsimProgresRealisation->appendRow(m_qlLigneProgres);
                     }
-                } else {
-                    qDebug() << "Blaze and Cave;" + qsTitreAvecDescription + ";" + qsProgresFini + ";" + qsCondition + ";non;";
-                    qsiConditionRemplie->setText("non");
-                    m_qlLigneProgres << qsiOrigine << qsiTitre << qsiProgreFini << qsiCondition << qsiConditionRemplie << qsiDateRealisation;
-                    m_qsimProgresRealisation->appendRow(m_qlLigneProgres);
                 }
             }
+
         }
     }
 
     if (!bTousLesProgres){
         QStringList qslHorizontalLabel;
-        qslHorizontalLabel << "Origine" << "Titre" << "Progres Fini" << "Condition" << "Condition Faite" << "Date Fait";
+        qslHorizontalLabel << "Origine" << "Titre" << "Progres Fini" << "Condition" << "Condition Faite" << "Date Fait" << "Type Condition";
         m_qsimProgresRealisation->setHorizontalHeaderLabels(qslHorizontalLabel);
 
         proxModelFiltreOrigine->setSourceModel(m_qsimProgresRealisation);
         proxyModelFiltreTitre->setSourceModel(proxModelFiltreOrigine);
         proxyModelFiltreProgresFinis->setSourceModel(proxyModelFiltreTitre);
         proxyModelFiltreConditionFaite->setSourceModel(proxyModelFiltreProgresFinis);
+        proxyModelFiltreTypeCondition->setSourceModel(proxyModelFiltreConditionFaite);
 
-        ui->tableView->setModel(proxyModelFiltreConditionFaite);
+        ui->tableView->setModel(proxyModelFiltreTypeCondition);
         ui->tableView->resizeColumnsToContents();
+        ui->tableView->hideColumn(6);
 
         connect(ui->qcbFiltreOrigine, SIGNAL(currentTextChanged(QString)), this, SLOT(filtreTableOrigine(QString)));
         connect(ui->qcbFiltreTitre, SIGNAL(currentTextChanged(QString)), this, SLOT(filtreTableTitre(QString)));
 
         ui->qgbFiltres->setEnabled(true);
+        ui->qgbOperations->setEnabled(true);
 
         m_defaultCompleter->setModel(ui->qcbFiltreTitre->model());
         m_defaultCompleter->setCompletionMode(QCompleter::PopupCompletion);
@@ -1146,6 +1284,9 @@ void FRM_Principale::readJSONsBlazeandcave(bool checked) {
 }
 
 void FRM_Principale::readAllJsons(bool checked) {
+    if (checked) {
+        qDebug() << checked;
+    }
     bTousLesProgres = true;
 
     // Vanilla
@@ -1156,21 +1297,24 @@ void FRM_Principale::readAllJsons(bool checked) {
 
     // Connection !
     QStringList qslHorizontalLabel;
-    qslHorizontalLabel << "Origine" << "Titre" << "Progres Fini" << "Condition" << "Condition Faite" << "Date Fait";
+    qslHorizontalLabel << "Origine" << "Titre" << "Progres Fini" << "Condition" << "Condition Faite" << "Date Fait" << "Type Condition";
     m_qsimProgresRealisation->setHorizontalHeaderLabels(qslHorizontalLabel);
 
     proxModelFiltreOrigine->setSourceModel(m_qsimProgresRealisation);
     proxyModelFiltreTitre->setSourceModel(proxModelFiltreOrigine);
     proxyModelFiltreProgresFinis->setSourceModel(proxyModelFiltreTitre);
     proxyModelFiltreConditionFaite->setSourceModel(proxyModelFiltreProgresFinis);
+    proxyModelFiltreTypeCondition->setSourceModel(proxyModelFiltreConditionFaite);
 
-    ui->tableView->setModel(proxyModelFiltreConditionFaite);
+    ui->tableView->setModel(proxyModelFiltreTypeCondition);
     ui->tableView->resizeColumnsToContents();
+    ui->tableView->hideColumn(6);
 
     connect(ui->qcbFiltreOrigine, SIGNAL(currentTextChanged(QString)), this, SLOT(filtreTableOrigine(QString)));
     connect(ui->qcbFiltreTitre, SIGNAL(currentTextChanged(QString)), this, SLOT(filtreTableTitre(QString)));
 
     ui->qgbFiltres->setEnabled(true);
+    ui->qgbOperations->setEnabled(true);
 
     m_defaultCompleter->setModel(ui->qcbFiltreTitre->model());
     m_defaultCompleter->setCompletionMode(QCompleter::PopupCompletion);
@@ -1193,6 +1337,9 @@ void FRM_Principale::filtreTableOrigine(QString filtre) {
     if (ui->qcbFiltreConditionFait->currentText() != "") {
         filtreTableConditionFait(ui->qcbFiltreConditionFait->currentText());
     }
+    if (ui->qcbFiltreType->currentText() != "") {
+        filtreTableTypeCondition(ui->qcbFiltreType->currentText());
+    }
 }
 
 void FRM_Principale::filtreTableTitre(QString filtre) {
@@ -1209,6 +1356,9 @@ void FRM_Principale::filtreTableTitre(QString filtre) {
     }
     if (ui->qcbFiltreConditionFait->currentText() != "") {
         filtreTableConditionFait(ui->qcbFiltreConditionFait->currentText());
+    }
+    if (ui->qcbFiltreType->currentText() != "") {
+        filtreTableTypeCondition(ui->qcbFiltreType->currentText());
     }
 }
 
@@ -1231,11 +1381,34 @@ void FRM_Principale::filtreTableProgresFinis(QString filtre) {
             filtreTableConditionFait(ui->qcbFiltreConditionFait->currentText());
         }
     }
+    if (ui->qcbFiltreType->currentText() != "") {
+        filtreTableTypeCondition(ui->qcbFiltreType->currentText());
+    }
 }
 
 void FRM_Principale::filtreTableConditionFait(QString filtre) {
     proxyModelFiltreConditionFaite->setFilterKeyColumn(4);
     proxyModelFiltreConditionFaite->setFilterRegExp(QRegExp(filtre, Qt::CaseInsensitive, QRegExp::FixedString));
+    if (ui->qcbFiltreType->currentText() != "") {
+        filtreTableTypeCondition(ui->qcbFiltreType->currentText());
+    }
+}
+
+void FRM_Principale::filtreTableTypeCondition(QString filtre) {
+    proxyModelFiltreConditionFaite->setFilterKeyColumn(6);
+    proxyModelFiltreConditionFaite->setFilterRegExp(QRegExp(filtre, Qt::CaseInsensitive, QRegExp::FixedString));
+}
+
+void FRM_Principale::effacerLesFiltres(bool checked) {
+    if (checked) {
+        qDebug() << checked;
+    }
+
+    ui->qcbFiltreOrigine->setCurrentIndex(0);
+    ui->qcbFiltreTitre->setCurrentText(0);
+    ui->qcbFiltreProgresFinis->setCurrentIndex(0);
+    ui->qcbFiltreConditionFait->setCurrentIndex(0);
+    ui->qcbFiltreType->setCurrentIndex(0);
 }
 
 void FRM_Principale::etatAutoCompletion(int etat) {
@@ -1353,6 +1526,9 @@ QString FRM_Principale::hashLangue() {
 }
 
 void FRM_Principale::imprimerTable(bool checked) {
+    if (checked) {
+        qDebug() << checked;
+    }
     QString strStream;
     QTextStream out(&strStream);
 
@@ -1409,8 +1585,6 @@ void FRM_Principale::imprimerTable(bool checked) {
     delete document;
 }
 
-
-
 /*
  * Ouvrir la fenêtre a propos
  */
@@ -1426,13 +1600,17 @@ void FRM_Principale::ouvrirAPropos(){
  */
 void FRM_Principale::ouvrirParametres(){
     diaParametres = new DIA_Parametres(param, this, m_test);
-    connect(diaParametres, SIGNAL(visibiliteFarming(bool)), this, SLOT(visibiliteFarming(bool)));
-    connect(diaParametres, SIGNAL(visibiliteDeploiementAuto(bool)), this, SLOT(visibiliteDeploiementAuto(bool)));
     diaParametres->exec();
     delete diaParametres;
 }
 
+/*
+ * Utiliser dans le bouton de test
+ */
 void FRM_Principale::TEST(bool checked) {
+    if (checked) {
+        qDebug() << checked;
+    }
     bool bOuvertureJson = true;
     QVariantMap qvmIndexes;
     if (QFile::exists(m_qsJSONVersion)) {
