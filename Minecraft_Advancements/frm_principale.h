@@ -29,6 +29,13 @@
 #include <QSortFilterProxyModel>
 #include <QCompleter>
 
+#include <QUrl>
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
+#include <QtXml>
+#include <QProcess>
+
 #include <QtPrintSupport/QPrinter>
 #include <QtPrintSupport/QPrintDialog>
 
@@ -57,6 +64,7 @@ private:
     //GUI
     Ui::FRM_Principale *ui;
     // Booléen
+    bool ouvertureEnCours;
     bool m_bErreurExtraction;
     bool m_bVersionOK;
     bool m_bProgresVanillaOK;
@@ -106,8 +114,15 @@ private:
     class Settings *param;
     DIA_Parametres *diaParametres;
     DIA_apropos *diaAPropos;
+    // Mise à jour
+    QNetworkAccessManager *m_qnamManager;
+    QByteArray m_qbaDonneesTelechargees;
     // TEST
     bool m_test;
+
+signals:
+    void downloaded(bool ecrireFichierUpdate);
+    void fermeture();
 
 private slots:
     //Data
@@ -135,6 +150,10 @@ private slots:
     // Fenêtres complémentaire
     void ouvrirAPropos();
     void ouvrirParametres();
+    // Mise à jour
+    void verifierMiseAJour();
+    void fichierTelecharge(QNetworkReply* pReply);
+    void comparaisonVersion(bool ecrireFichier);
     // TEST
     void TEST(bool checked);
 };

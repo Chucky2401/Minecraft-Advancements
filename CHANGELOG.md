@@ -38,6 +38,10 @@ Suivis des version
 
 + **Écran de démarrage** ou *Splash Screen* en anglais. Petite funitude :yum:
   ![SplashScreen](https://i.imgur.com/hwnkLdqm.png)
+  
++ [Issue#10](https://github.com/Chucky2401/Minecraft-Advancements/issues/10) **Mise à jour auto** Possibilité d'activer la recherche de mise à jour et/ou de faire une recherche de mise à jour manuelle ! Possible de choisir le canal Beta (instable).
+  
++ **Icones** Ajout d'icones sur les boutons du menu :wink:
 
 ### Modification
 
@@ -45,15 +49,19 @@ Suivis des version
 
   - **Filtre sur les titres** *Ajout d'une option activable / désactivable pour filtrer sous forme d'Expressions Régulière. [Par ici](https://www.lucaswillems.com/fr/articles/25/tutoriel-pour-maitriser-les-expressions-regulieres) si vous ne connaissez pas.*
 ![Filtre et bouton imprimer](https://i.imgur.com/iZGgNvlm.png)
-- **Taille filtre des titres** Agrandissement sur le nombre d'éléments visibles à la fois
+  - **Taille filtre des titres** Agrandissement sur le nombre d'éléments visibles à la fois
   ![Taille Filtre Titre](https://i.imgur.com/kEKiI9Im.png)
-- **Affichage autocomplétions** Affichage dans un pop-up. Il est plus facile de voir toutes les propositions lors de la recherche du titre.
+  - **Affichage autocomplétions** Affichage dans un pop-up. Il est plus facile de voir toutes les propositions lors de la recherche du titre.
   ![Affichage autocomplétion](https://i.imgur.com/b2OBpeom.png)
-- **Activer/désactiver autocomplétions** Possibilité de l'activé ou non :wink:
+  - **Activer/désactiver autocomplétions** Possibilité de l'activé ou non :wink:
   ![activation](https://i.imgur.com/6FrUSDJm.png)
-- **Ajout d'un séparateur** dans le champ de filtre sur le titre avant *----- Blaze and Cave -----* lors de la comparaison de tous *Vanilla + Blaze and Cave*
+  - **Ajout d'un séparateur** dans le champ de filtre sur le titre avant *----- Blaze and Cave -----* lors de la comparaison de tous *Vanilla + Blaze and Cave*
+
+
 + **Filtres et Opérations** Déplacement du bouton *Imprimer* dans un group *Opérations* avec le bouton *Effacer les filtres*
   ![Filtres et Opérations](https://i.imgur.com/wQeZGWim.png)
++ **Installeur** Encore des changements sur l'installeur ! Retrait du dépôts *Beta* ce dernier est ajouté temporairement si l'installeur est fait pour installer une version Beta. Et il est aussi ajouter temporairement, si l'utilisateur choisis les mise à jour Beta dans l'application. Plus aucune mention de ce dernier ailleurs, il est *invisible*.
+  Plus facile à gérer pour vous et pour moi :wink:
 
 
 

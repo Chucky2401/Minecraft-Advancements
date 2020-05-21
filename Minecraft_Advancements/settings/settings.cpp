@@ -30,11 +30,6 @@ void Settings::initialisation(bool test) {
 
     m_messageConfirmationFermeture = this->getIniMessageConfirmationFermeture();
     this->setMessageConfirmationFermeture(m_messageConfirmationFermeture);
-
-    QVariant depot = iniParam->value("miseAJour/DefaultRepositories");
-    QList<QVariant> depotList = depot.toList();
-
-    qDebug() << "Dépôts" << depotList.at(0);
 }
 
 void Settings::setGeometrie(QByteArray geometrie){

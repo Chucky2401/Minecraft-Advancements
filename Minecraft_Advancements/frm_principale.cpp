@@ -7,8 +7,13 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
 
     // Quelques réglages de bases sur la fenêtre
     ui->setupUi(this);
+    ouvertureEnCours = true;
 
-    this->setWindowTitle(QApplication::applicationName() + " - " + QApplication::applicationVersion());
+    QString qsWindowTitle = QApplication::applicationName() + " - " + QApplication::applicationVersion();
+    if (QApplication::applicationVersion().right(1) == "b") {
+        qsWindowTitle += " /!\\ BETA /!\\";
+    }
+    this->setWindowTitle(qsWindowTitle);
     this->setWindowIcon(QIcon(":/img/icons8_minecraft_logo_48px.png"));
 
     // Si on est on mode test on masque certaines choses
@@ -97,6 +102,9 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     m_defaultCompleter = new QCompleter(this);
     ui->qcbAutoCompletion->setChecked(true);
 
+    // Pour les mises à jour
+    m_qnamManager = new QNetworkAccessManager();
+
     // On connecte tout ce que l'on peut
     connect(ui->qcbLauncher, SIGNAL(currentIndexChanged(int)), this, SLOT(choixLauncher(int)));
     connect(ui->qcbVersion, SIGNAL(currentIndexChanged(int)), this, SLOT(choixVersion(int)));
@@ -115,6 +123,26 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     connect(ui->qaAbout, SIGNAL(triggered()), this, SLOT(ouvrirAPropos()));
     connect(ui->qaSettings, SIGNAL(triggered()), this, SLOT(ouvrirParametres()));
     connect(ui->qaQuitter, SIGNAL(triggered()), this, SLOT(close()));
+    connect(this, SIGNAL(fermeture()), this, SLOT(close()));
+    // Signaux en dehors de l'interface GUI
+    connect(ui->qaUpdate, SIGNAL(triggered()), this, SLOT(verifierMiseAJour()));
+    connect(m_qnamManager, SIGNAL (finished(QNetworkReply*)), this, SLOT(fichierTelecharge(QNetworkReply*)));
+    connect(this, SIGNAL(downloaded(bool)), this, SLOT(comparaisonVersion(bool)));
+
+    // Avant de finaliser les champs de la fenêtre, on vérifie les mises à jours
+    if(param->getVerificationAutoMiseAJour() && QDate::currentDate() == param->getProchaineVerificationMiseAjour()) {
+        qInfo() << "On vérifie les mises à jour.";
+        qDebug() << "Aujourd'hui : " << QDate::currentDate().toString("dd/MM/yyyy");
+        qInfo() << "Dernière Verif : " << param->getDerniereVerificationMiseAJour();
+        qInfo() << "Prochaine vérification : " << param->getProchaineVerificationMiseAjour();
+        param->setDerniereVerificationMiseAJour(QDate::currentDate());
+        verifierMiseAJour();
+    } else {
+        qInfo() << "On ne vérifie pas les mise à jour";
+        qDebug() << "Aujourd'hui : " << QDate::currentDate().toString("dd/MM/yyyy");
+        qInfo() << "Derniere Verif : " << param->getDerniereVerificationMiseAJour();
+        qInfo() << "Prochaine Verif : " << param->getProchaineVerificationMiseAjour();
+    }
 
     // Suite à la connexion on force le launcher et on désactive certains champs pour ne pas avoir de bug
     ui->qcbLauncher->setCurrentIndex(1);
@@ -133,6 +161,8 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
             this->restoreState(param->getEtat());
         }
     }
+
+    ouvertureEnCours = false;
 }
 
 /*
@@ -1602,6 +1632,138 @@ void FRM_Principale::ouvrirParametres(){
     diaParametres = new DIA_Parametres(param, this, m_test);
     diaParametres->exec();
     delete diaParametres;
+}
+
+/*
+ * Slot de vérification des mises à jour.
+ * Télécharge le fichier Updates.xml du repository pour lecture.
+ */
+void FRM_Principale::verifierMiseAJour(){
+    QUrl url;
+    if (param->getMiseAJourBeta()) {
+        url.setUrl("https://blackwizard.yj.fr/repository/b-advancements/Updates.xml");
+    } else {
+        url.setUrl("https://blackwizard.yj.fr/repository/advancements/Updates.xml");
+    }
+    QNetworkRequest request;
+
+    qDebug() << "On récupère les données du fichier depuis le repository Online";
+    request.setUrl(url);
+    m_qnamManager->get(request);
+
+}
+
+/*
+ * Quand le QNetworkManager (m_qnamManager) émet le signal que le téléchargement est finis,
+ * ce slot est appelé.
+ * Dans ce slot, on lit les données récupéré dans un QByteArray, on marque le QNetworkReply (pReply) à supprimer
+ * et on émet le signal downloaded() pour indiquer que l'on a tout télécharger correctement.
+ */
+void FRM_Principale::fichierTelecharge(QNetworkReply* pReply){
+    qDebug() << "On lit les données téléchargées";
+    m_qbaDonneesTelechargees = pReply->readAll();
+    pReply->deleteLater();
+    emit downloaded(true);
+}
+
+/*
+ * Ce slot est appelé lors de l'émission du signal downloaded().
+ * Ici, on écrit le fichier Updates.xml en local (inutile) et on lis les données XML récupérées
+ * pour récupérer la version du repository.
+ * On compare numéro après numéro pour voir s'il y a une mise à jour.
+ */
+void FRM_Principale::comparaisonVersion(bool ecrireFichier){
+    QFile qfUpdateXml("Updates.xml");
+    QDomDocument qddXmlBOM;
+    QString qsVersionOnline;
+    QString qsVersionLocal = QApplication::applicationVersion();
+    QStringList qslVersionOnline, qslVersionLocal;
+    bool bMiseAJourNecessaire = false;
+
+    qsVersionLocal.replace(QRegExp("[a-z]"), "");
+
+    if(ecrireFichier){
+        if(!qfUpdateXml.open(QIODevice::ReadWrite)){
+            qDebug() << "Fichier Updates.xml non ouvert en lecture/écriture";
+            QMessageBox::critical(this, "Mise à jour", "Erreur lors de la vérification des mises à jour.");
+            return;
+        } else {
+            qDebug() << "Fichier Updates.xml écrit";
+            qfUpdateXml.write(m_qbaDonneesTelechargees);
+            qfUpdateXml.close();
+        }
+    }
+
+    if(qfUpdateXml.open(QIODevice::ReadOnly)){
+        qDebug() << "Contenu de l'object QDomDocument définis";
+        qddXmlBOM.setContent(m_qbaDonneesTelechargees);
+    } else {
+        qDebug() << "Fichier Updates.xml non ouvert en lecture seule";
+        QMessageBox::critical(this, "Mise à jour", "Erreur lors de la vérification des mises à jour.");
+        return;
+    }
+    qfUpdateXml.close();
+
+    // Extract the root markup
+    QDomElement root = qddXmlBOM.documentElement();
+
+    // Get the first child of the root (Markup COMPONENT is expected)
+    QDomElement Component = root.firstChild().toElement();
+
+    while(!Component.isNull()) {
+        if (Component.tagName() == "PackageUpdate") {
+            QDomElement Child = Component.firstChild().toElement();
+
+            while (!Child.isNull()) {
+                if (Child.tagName() == "Version") {
+                    qsVersionOnline = Child.firstChild().toText().data();
+                }
+                Child = Child.nextSibling().toElement();
+            }
+        }
+        Component = Component.nextSibling().toElement();
+    }
+    qslVersionOnline = qsVersionOnline.split(".");
+    qslVersionLocal = qsVersionLocal.split(".");
+
+    qDebug() << qsVersionOnline << qsVersionLocal;
+
+    for(int i = 0; i < qslVersionOnline.size(); i++) {
+        if(!bMiseAJourNecessaire) {
+            if(qslVersionOnline > qslVersionLocal)
+                bMiseAJourNecessaire = true;
+        }
+    }
+
+    // On définis la dernière vérification des mises à jour, même si c'est une vérification manuelle
+    param->setDerniereVerificationMiseAJour(QDate::currentDate());
+
+    if(bMiseAJourNecessaire){
+        if(QMessageBox::question(this, "Mise à jour disponible", "La version " + qsVersionOnline + " est disponible.\n Voulez-vous mettre à jour ?", QMessageBox::Yes|QMessageBox::No) == QMessageBox::Yes){
+            qDebug() << "On lance la mise à jour";
+            QProcess *qpOutilDeMaintenance = new QProcess();
+            QStringList arguments;
+            arguments << "--updated";
+            if (param->getMiseAJourBeta()) {
+                arguments << "--addTempRepository https://blackwizard.yj.fr/repository/b-advancements";
+            }
+            qpOutilDeMaintenance->setProgram("maintenancetool.exe");
+            qpOutilDeMaintenance->setArguments(arguments);
+            qpOutilDeMaintenance->startDetached();
+
+            // Fermer la fenêtre
+            qDebug() << "On ferme la fenêtre";
+            emit fermeture();
+            if(ouvertureEnCours)
+                exit(1);
+        } else {
+            qDebug() << "L'utilisateur ne veut pas mettre à jour";
+        }
+    } else {
+        qDebug() << "Pas de mise à jour";
+        if(!ouvertureEnCours)
+            QMessageBox::information(this, "Pas de nouvelle version", "La version <strong>" + qsVersionLocal + "</strong> est la plus récente.");
+    }
 }
 
 /*

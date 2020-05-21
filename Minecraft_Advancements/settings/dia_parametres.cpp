@@ -14,6 +14,7 @@ DIA_Parametres::DIA_Parametres(Settings *set, QWidget *parent, bool m_test) :
     // CheckBox
     ui->cbRestoreSizePos->setChecked(set->getRestoreSizePos());
     ui->cbMessageFermeture->setChecked(set->getMessageConfirmationFermeture());
+    ui->cbBeta->setChecked(set->getMiseAJourBeta());
 
     /*
      * Connections !
@@ -21,6 +22,7 @@ DIA_Parametres::DIA_Parametres(Settings *set, QWidget *parent, bool m_test) :
     // Général
     connect(ui->cbMiseAJourAuto, SIGNAL(toggled(bool)), this, SLOT(setMiseAJourAuto(bool)));
     connect(ui->sbNombreJourMiseAJour, SIGNAL(valueChanged(int)), this, SLOT(setNombreJourMiseAJour(int)));
+    connect(ui->cbBeta, SIGNAL(toggled(bool)), this, SLOT(setMiseAJourBeta(bool)));
     connect(ui->cbRestorePath, SIGNAL(toggled(bool)), this, SLOT(setRestorePath(bool)));
     connect(ui->cbRestoreSizePos, SIGNAL(toggled(bool)), this, SLOT(setRestoreSizePos(bool)));
     connect(ui->cbMessageFermeture, SIGNAL(toggled(bool)), this, SLOT(setMessageConfirmationFermeture(bool)));
@@ -69,6 +71,7 @@ void DIA_Parametres::setMiseAJourAuto(bool enabled){
     ui->lMiseAJour1->setEnabled(enabled);
     ui->sbNombreJourMiseAJour->setEnabled(enabled);
     ui->lMiseAJour2->setEnabled(enabled);
+    ui->cbBeta->setEnabled(enabled);
 }
 
 void DIA_Parametres::setNombreJourMiseAJour(int nombreJour){
@@ -78,4 +81,8 @@ void DIA_Parametres::setNombreJourMiseAJour(int nombreJour){
     } else {
         ui->lMiseAJour2->setText("jours");
     }
+}
+
+void DIA_Parametres::setMiseAJourBeta(bool checked) {
+    param->setMiseAJourBeta(checked);
 }

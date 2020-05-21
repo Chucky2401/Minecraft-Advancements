@@ -32,6 +32,7 @@ private slots:
     void setMessageConfirmationFermeture(bool state);
     void setMiseAJourAuto(bool enabled);
     void setNombreJourMiseAJour(int nombreJour);
+    void setMiseAJourBeta(bool checked);
 };
 
 #endif // DIA_PARAMETRES_H

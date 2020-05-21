@@ -691,6 +691,7 @@
     <property name="title">
      <string>&amp;?</string>
     </property>
+    <addaction name="qaUpdate"/>
     <addaction name="qaAbout"/>
    </widget>
    <addaction name="qmFichier"/>
@@ -699,6 +700,10 @@
   </widget>
   <widget class="QStatusBar" name="statusbar"/>
   <action name="qaQuitter">
+   <property name="icon">
+    <iconset resource="img.qrc">
+     <normaloff>:/img/close_24.png</normaloff>:/img/close_24.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Quitter</string>
    </property>
@@ -707,6 +712,10 @@
    </property>
   </action>
   <action name="qaSettings">
+   <property name="icon">
+    <iconset resource="img.qrc">
+     <normaloff>:/img/settings_24.png</normaloff>:/img/settings_24.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;Préférences...</string>
    </property>
@@ -715,11 +724,24 @@
    </property>
   </action>
   <action name="qaAbout">
+   <property name="icon">
+    <iconset resource="img.qrc">
+     <normaloff>:/img/about_24.png</normaloff>:/img/about_24.png</iconset>
+   </property>
    <property name="text">
     <string>&amp;A Propos...</string>
    </property>
    <property name="shortcut">
     <string>Ctrl+H</string>
+   </property>
+  </action>
+  <action name="qaUpdate">
+   <property name="icon">
+    <iconset resource="img.qrc">
+     <normaloff>:/img/update_24.png</normaloff>:/img/update_24.png</iconset>
+   </property>
+   <property name="text">
+    <string>Vérifier les mise à jour</string>
    </property>
   </action>
  </widget>
