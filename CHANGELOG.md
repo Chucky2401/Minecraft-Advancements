@@ -8,11 +8,17 @@ Suivis des version
 
 + [Issue#10](https://github.com/Chucky2401/Minecraft-Advancements/issues/10) **Mise à jour auto** Possibilité d'activer la recherche de mise à jour et/ou de faire une recherche de mise à jour manuelle ! Possible de choisir le canal Beta (instable).
 + **Icones** Ajout d'icones sur les boutons du menu :wink:
++ **Légende** Ajout d'une légende pour les couleurs
++ **Images** *Pour les chats seulement* Les chats se voient leurs images ajouté à côté du texte et en plus grand avec la souris dessus.
+  ![Imgur](https://i.imgur.com/DjYZVkPm.png)
 
 ### Modifications
 
 + **Installeur** Encore des changements sur l'installeur ! Retrait du dépôts *Beta* ce dernier est ajouté temporairement si l'installeur est fait pour installer une version Beta. Et il est aussi ajouter temporairement, si l'utilisateur choisis les mise à jour Beta dans l'application. Plus aucune mention de ce dernier ailleurs, il est *invisible*.
   Plus facile à gérer pour vous et pour moi :wink:
++ **Type de condition** Modification des couleurs, du moins ajout d'une couleur pour les conditions unique (jaune foncé).
+  + <span style=" color:#808000;">Condition Unique</span>
++ **Condition pour les chats** Au lieu du chemin vers la texture, seulement le nom est affiché
 
 ### Correction
 
@@ -25,6 +31,9 @@ Suivis des version
 + [Issue#12](https://github.com/Chucky2401/Minecraft-Advancements/issues/12) **Type Condition (ET ou OU)** Si une condition et de type **ET** : *toutes les conditions sont nécessaires au progrès* ; De type **OU** : *une condition est suffisante*
 
 + **Couleurs** Ajout de couleurs en fonction du type ou si le progrès est finis. (cf. [Screenshot](https://github.com/Chucky2401/Minecraft-Advancements/issues/12#issuecomment-631973057))
+  + <span style=" color:#006400;">Progrès réalisé</span>
+  + <span style=" color:#8b0000;">Condition de type ET</span>
+  + <span style="color: blue;">Condition de type OU</span>
 
 + **Effacer les filtres** Ajout d'un bouton pour effacer les filtres.
 

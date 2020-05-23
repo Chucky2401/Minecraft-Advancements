@@ -145,6 +145,7 @@ private slots:
     void filtreTableTypeCondition(QString filtre);
     void effacerLesFiltres(bool checked);
     void etatAutoCompletion(int etat);
+    void dataSelectionnee(const QModelIndex index);
     // Impression
     void imprimerTable(bool checked);
     // Fenêtres complémentaire

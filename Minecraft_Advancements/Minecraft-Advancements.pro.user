@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE QtCreatorProject>
-<!-- Written by QtCreator 4.12.0, 2020-05-21T23:47:59. -->
+<!-- Written by QtCreator 4.12.0, 2020-05-24T00:42:18. -->
 <qtcreator>
  <data>
   <variable>EnvironmentId</variable>
@@ -259,7 +259,7 @@
     <valuelist type="QVariantList" key="PE.EnvironmentAspect.Changes"/>
     <value type="QString" key="ProjectExplorer.ProjectConfiguration.Id">Qt4ProjectManager.Qt4RunConfiguration:D:/Projets_Qt/Minecraft-Advancements/Minecraft_Advancements/Minecraft-Advancements.pro</value>
     <value type="QString" key="ProjectExplorer.RunConfiguration.BuildKey">D:/Projets_Qt/Minecraft-Advancements/Minecraft_Advancements/Minecraft-Advancements.pro</value>
-    <value type="QString" key="RunConfiguration.Arguments">-t false</value>
+    <value type="QString" key="RunConfiguration.Arguments">-t true</value>
     <value type="bool" key="RunConfiguration.Arguments.multi">false</value>
     <value type="QString" key="RunConfiguration.OverrideDebuggerStartup"></value>
     <value type="bool" key="RunConfiguration.UseCppDebugger">false</value>

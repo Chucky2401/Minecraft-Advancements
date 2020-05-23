@@ -77,6 +77,7 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     ui->qcbFiltreType->addItem("");
     ui->qcbFiltreType->addItem("ET");
     ui->qcbFiltreType->addItem("OU");
+    ui->qcbFiltreType->addItem("UNE");
     ui->qcbFiltreType->setToolTip("Filtrer sur le type de condition.\n"
                                   "ET : toutes les conditions doivent être remplies.\n"
                                   "OU : une conditions doit être remplie.");
@@ -120,6 +121,7 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     connect(ui->qcbFiltreType, SIGNAL(currentTextChanged(QString)), this, SLOT(filtreTableTypeCondition(QString)));
     connect(ui->qpbClearFilter, SIGNAL(clicked(bool)), this, SLOT(effacerLesFiltres(bool)));
     connect(ui->qcbAutoCompletion, SIGNAL(stateChanged(int)), this, SLOT(etatAutoCompletion(int)));
+    connect(ui->tableView, SIGNAL(pressed(const QModelIndex)), this, SLOT(dataSelectionnee(const QModelIndex)));
     connect(ui->qaAbout, SIGNAL(triggered()), this, SLOT(ouvrirAPropos()));
     connect(ui->qaSettings, SIGNAL(triggered()), this, SLOT(ouvrirParametres()));
     connect(ui->qaQuitter, SIGNAL(triggered()), this, SLOT(close()));
@@ -901,11 +903,12 @@ void FRM_Principale::readJSONsVanilla(bool checked) {
                     if (qsDescription == "") {
                         qsiTitre->setText(qsTitre);
                         qsTitreAvecDescription = qsTitre;
-                    }
-                    else {
+                    } else {
                         qsiTitre->setText(qsTitre + " (" + qsDescription + ")");
                         qsTitreAvecDescription = qsTitre + " (" + qsDescription + ")";
                     }
+                    qsiTitre->setData(qsJsonFile, Qt::UserRole);
+
                     QStandardItem *qsiProgreFini = new QStandardItem(qsProgresFini);
                     if (qsProgresFini == "oui") {
                         qsiTitre->setForeground(QBrush(Qt::darkGreen));
@@ -916,15 +919,25 @@ void FRM_Principale::readJSONsVanilla(bool checked) {
                      * Si trouvé : on la met
                      * Sinon     : on mets qsConditionSimple
                      */
-                    qsiCondition->setText(qsConditionSimple);
+                    if (qsConditionSimple.contains("/")) {
+                        QStringList qslConditionSansChemin = qsConditionSimple.split("/");
+                        qsiCondition->setText(qslConditionSansChemin.last().split(".").first());
+                        qsiCondition->setIcon(QIcon(qsConditionSimple));
+                        qsiCondition->setToolTip("<img src=\"" + qsConditionSimple + "\" width=\"167\" height=\"100\">");
+                    } else {
+                        qsiCondition->setText(qsConditionSimple);
+                    }
 
                     // Si le progres n'est pas fait, on mets une couleur sur la condition
                     // on fonction si une suffit ou toutes
                     if (qsProgresFini == "non" && iNombreRequierements > 1) {
                         qsiCondition->setForeground(QBrush(Qt::blue));
-                    } else if (qsProgresFini == "non" && iNombreRequierements == 1) {
+                    } else if (qsProgresFini == "non" && iNombreRequierements == 1 && qjaConditionsTemp.count() > 1) {
                         qsiCondition->setForeground(QBrush(Qt::darkRed));
+                    } else if (qsProgresFini == "non") {
+                        qsiCondition->setForeground(QBrush(Qt::darkYellow));
                     }
+
                     QStandardItem *qsiConditionRemplie = new QStandardItem("");
                     QStandardItem *qsiDateRealisation = new QStandardItem("");
 
@@ -932,8 +945,10 @@ void FRM_Principale::readJSONsVanilla(bool checked) {
                     QStandardItem *qsiTypeCondition = new QStandardItem("");
                     if (iNombreRequierements > 1) {
                         qsiTypeCondition->setText("OU");
-                    } else {
+                    } else if (iNombreRequierements == 1 && qjaConditionsTemp.count() > 1) {
                         qsiTypeCondition->setText("ET");
+                    } else {
+                        qsiTypeCondition->setText("UNE");
                     }
 
                     if (bCriteresPersoExiste && (bProgesFini && iCritereFait <= iCritereAFaire)) {
@@ -1139,10 +1154,7 @@ void FRM_Principale::readJSONsBlazeandcave(bool checked) {
                     } else {
                         iNombreRequierements = qjaConditions.count();
                     }
-                    //qDebug() << "##### Requierements" << qjaConditionsTemp << "-" << iNombreRequierements;
-                    //qDebug() << "####2 Requierements" << qjaConditionsTemp.at(1) << "-" << qjaConditionsTemp.at(1).isArray();
                 } else {
-                    //qDebug() << "##### Requierements" << qjaConditionsTemp << "- Empty";
                     iNombreRequierements = 1;
                 }
                 QString qsIdentifiant = qsJsonFile;
@@ -1193,6 +1205,7 @@ void FRM_Principale::readJSONsBlazeandcave(bool checked) {
 
                 QString qsProgresFini;
                 int iCritereAFaire = qmCriteres.count();
+                qDebug() << "Nbr Criteres : " << iCritereAFaire;
 
                 if (bProgesFini)
                     qsProgresFini = "oui";
@@ -1222,11 +1235,11 @@ void FRM_Principale::readJSONsBlazeandcave(bool checked) {
                     if (qsDescription == "") {
                         qsiTitre->setText(qsTitre);
                         qsTitreAvecDescription = qsTitre;
-                    }
-                    else {
+                    } else {
                         qsiTitre->setText(qsTitre + " (" + qsDescription + ")");
                         qsTitreAvecDescription = qsTitre + " (" + qsDescription + ")";
                     }
+                    qsiTitre->setData(qsJsonFile, Qt::UserRole);
 
                     if (qsProgresFini == "oui") {
                         qsiTitre->setForeground(QBrush(Qt::darkGreen));
@@ -1235,21 +1248,33 @@ void FRM_Principale::readJSONsBlazeandcave(bool checked) {
                     QStandardItem *qsiProgreFini = new QStandardItem(qsProgresFini);
                     QStandardItem *qsiCondition = new QStandardItem(qsConditionSimple);
                     // Si le progres n'est pas fait, on mets une couleur sur la condition
-                   // on fonction si une suffit ou toutes
-                   if (qsProgresFini == "non" && iNombreRequierements > 1) {
-                       qsiCondition->setForeground(QBrush(Qt::blue));
-                   } else if (qsProgresFini == "non" && iNombreRequierements == 1) {
-                       qsiCondition->setForeground(QBrush(Qt::darkRed));
-                   }
+                    // on fonction si une suffit ou toutes
+                    if (iCritereAFaire == 1) {
+                        qsiCondition->setForeground(QBrush(Qt::darkYellow));
+                    } else {
+                        if (qsProgresFini == "non" && iNombreRequierements > 1) {
+                           qsiCondition->setForeground(QBrush(Qt::blue));
+                        } else if (qsProgresFini == "non" && iNombreRequierements == 1) {
+                           qsiCondition->setForeground(QBrush(Qt::darkRed));
+                        } else {
+                            qsiCondition->setForeground(QBrush(Qt::darkYellow));
+                        }
+                    }
 
                     QStandardItem *qsiConditionRemplie = new QStandardItem("");
                     QStandardItem *qsiDateRealisation = new QStandardItem("");
                     // On ajoute la colonne type (ET / OU) que l'on masquera pour filtrer
                     QStandardItem *qsiTypeCondition = new QStandardItem("");
-                    if (iNombreRequierements > 1) {
-                        qsiTypeCondition->setText("OU");
+                    if (iCritereAFaire == 1) {
+                        qsiTypeCondition->setText("UNE");
                     } else {
-                        qsiTypeCondition->setText("ET");
+                        if (iNombreRequierements > 1) {
+                            qsiTypeCondition->setText("OU");
+                        } else if (iNombreRequierements == 1) {
+                            qsiTypeCondition->setText("ET");
+                        } else {
+                            qsiTypeCondition->setText("UNE");
+                        }
                     }
 
                     if (bCriteresPersoExiste && (bProgesFini && iCritereFait <= iCritereAFaire)) {
@@ -1458,6 +1483,11 @@ void FRM_Principale::etatAutoCompletion(int etat) {
         ui->qcbFiltreTitre->setCompleter(m_defaultCompleter);
         qDebug() << "Activation AutoComplétion";
     }
+}
+
+void FRM_Principale::dataSelectionnee(const QModelIndex index) {
+    qDebug() << index;
+    qDebug() << proxyModelFiltreTypeCondition->data(index, Qt::UserRole);
 }
 
 QString FRM_Principale::numeroIndex() {
@@ -1773,46 +1803,48 @@ void FRM_Principale::TEST(bool checked) {
     if (checked) {
         qDebug() << checked;
     }
-    bool bOuvertureJson = true;
-    QVariantMap qvmIndexes;
-    if (QFile::exists(m_qsJSONVersion)) {
-        QString qsAdvancementPerso = m_qsJSONVersion;
-        QFile qfAdvancementPerso(qsAdvancementPerso);
-        if(!qfAdvancementPerso.open(QIODevice::ReadOnly)){
-            qDebug()<<"Failed to open "<< qsAdvancementPerso;
-            bOuvertureJson = false;
-        }
+    //QString qsJsonFile = "advancements/20w18a/adventure/kill_a_mob.json";
+    QString qsJsonFile = "advancements/20w18a/nether/fast_travel.json";
+    QStringList qslCheminFichier = qsJsonFile.split("/");
 
-        if (bOuvertureJson) {
-            QTextStream file_text(&qfAdvancementPerso);
-            QString qsJsonStringPerso;
-            qsJsonStringPerso = file_text.readAll();
-            qfAdvancementPerso.close();
-            QByteArray qbaJsonPerso = qsJsonStringPerso.toLocal8Bit();
-
-            QJsonDocument qjdJsonPerso = QJsonDocument::fromJson(qbaJsonPerso);
-
-            if(qjdJsonPerso.isNull()){
-                qDebug()<<"Failed to create JSON doc.";
-                bOuvertureJson = false;
-            } else {
-                if(!qjdJsonPerso.isObject()){
-                    qDebug()<<"JSON is not an object.";
-                    bOuvertureJson = false;
-                } else {
-                    QJsonObject qjsJsonPerso = qjdJsonPerso.object();
-
-                    if(qjsJsonPerso.isEmpty()){
-                        qDebug()<<"JSON object is empty.";
-                        bOuvertureJson = false;
-                    } else {
-                        qvmIndexes = qjsJsonPerso.toVariantMap();
-                    }
-                }
-            }
-        }
+    QFile qfJsonFile(qsJsonFile);
+    if(!qfJsonFile.open(QIODevice::ReadOnly)){
+        qDebug()<<"Failed to open "<< qsJsonFile;
+        exit(1);
     }
-    QMap<QString, QVariant> qvmAssetIndex = qvmIndexes["assetIndex"].toMap();
 
-    qDebug () << qvmAssetIndex["id"].toString();
+    QTextStream file_text(&qfJsonFile);
+    QString json_string;
+    json_string = file_text.readAll();
+    qfJsonFile.close();
+    QByteArray json_bytes = json_string.toLocal8Bit();
+
+    QJsonDocument json_doc = QJsonDocument::fromJson(json_bytes);
+
+    if(json_doc.isNull()){
+        qDebug()<<"Failed to create JSON doc.";
+        exit(2);
+    }
+    if(!json_doc.isObject()){
+        qDebug()<<"JSON is not an object.";
+        exit(3);
+    }
+
+    QJsonObject json_obj = json_doc.object();
+
+    if(json_obj.isEmpty()){
+        qDebug()<<"JSON object is empty.";
+        exit(4);
+    }
+
+    QVariantMap json_map = json_obj.toVariantMap();
+    QJsonArray qjaConditionsTemp = json_map["requirements"].toJsonArray();
+    QJsonArray qjaConditions = qjaConditionsTemp.at(0).toArray();
+
+    qDebug() << "Fichier  :" << qsJsonFile;
+    qDebug() << "Niveau 0 :" << qjaConditionsTemp.count();
+    // Si > 1 => OU (||)
+    // Sinon  => ET (&&)
+    qDebug() << "Niveau 1 :" << qjaConditions.count();
+
 }
