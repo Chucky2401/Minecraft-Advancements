@@ -33,6 +33,7 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
 
     // Variable global à toute la fenêtre
     m_qsAppDataPath = qEnvironmentVariable("APPDATA");
+    m_qsDossierAExclure = "recipes|technical";
 
     // On désactive certaines choses
     ui->qgbFiltres->setEnabled(false);
@@ -58,6 +59,7 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     proxyModelFiltreProgresFinis = new QSortFilterProxyModel(this);
     proxyModelFiltreConditionFaite = new QSortFilterProxyModel(this);
     proxyModelFiltreTypeCondition = new QSortFilterProxyModel(this);
+    proxyModelFiltreDate = new DateEtHeureFilterProxyModel(this);
 
     bTousLesProgres = false;
 
@@ -65,6 +67,10 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     ui->qcbLauncher->addItem("Minecraft Launcher (Officiel Mojang)", QVariant("Mojang"));
     //ui->qcbLauncher->addItem("MultiMC", QVariant("MultiMC"));
     //ui->qcbLauncher->addItem("ATLauncher", QVariant("ATLauncher"));
+
+    ui->qcbMilestones->setCheckState(Qt::Checked);
+    ui->qcbMilestones->setToolTip("Les Milestones sont les progrès liés aux statistiques de jeu.\n"
+                                  "Tel que \"Parcourir 100 Km\", \"Reproduire 2500 animaux\" ou \"Atteindre le niveau 30\", etc.");
 
     ui->qcbFiltreOrigine->addItem("");
     ui->qcbFiltreConditionFait->addItem("");
@@ -94,6 +100,9 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
                                    "    Trouvera 'Partons à l'aventure' et 'Monstres chassés'");
     ui->qcbFiltreTitre->setToolTipDuration(30000);
 
+    ui->qdteFrom->setDateTime(QDateTime(QDate(1970, 01, 01), QTime(0, 0, 0)));
+    ui->qdteTo->setDateTime(QDateTime(QDate(2099, 12, 31), QTime(0, 0, 0)));
+
     // On masque la barre de progression, c'était pour un test
     ui->qpbTraitementProgres->setVisible(false);
     ui->qpbTraitementProgres->setValue(0);
@@ -111,6 +120,7 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     connect(ui->qcbVersion, SIGNAL(currentIndexChanged(int)), this, SLOT(choixVersion(int)));
     connect(ui->qpbSelectionFichierProgres, SIGNAL(clicked(bool)), this, SLOT(choixFichierAdvancements(bool)));
     connect(ui->qpbDossierBlazeandcave, SIGNAL(clicked(bool)), this, SLOT(selectionDossierBlazeandcave(bool)));
+    connect(ui->qcbMilestones, SIGNAL(stateChanged(int)), this, SLOT(exclureMilestone(int)));
     connect(ui->qpbExtraireProgres, SIGNAL(clicked(bool)), this, SLOT(extraireProgres(bool)));
     connect(ui->qpbReadJSONsVanilla, SIGNAL(clicked(bool)), this, SLOT(readJSONsVanilla(bool)));
     connect(ui->qpbReadJSONsBlazeandcave, SIGNAL(clicked(bool)), this, SLOT(readJSONsBlazeandcave(bool)));
@@ -119,6 +129,8 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     connect(ui->qcbFiltreProgresFinis, SIGNAL(currentTextChanged(QString)), this, SLOT(filtreTableProgresFinis(QString)));
     connect(ui->qcbFiltreConditionFait, SIGNAL(currentTextChanged(QString)), this, SLOT(filtreTableConditionFait(QString)));
     connect(ui->qcbFiltreType, SIGNAL(currentTextChanged(QString)), this, SLOT(filtreTableTypeCondition(QString)));
+    connect(ui->qdteFrom, &QDateTimeEdit::dateChanged, this, &FRM_Principale::dateFilterChanged);
+    connect(ui->qdteTo, &QDateTimeEdit::dateChanged, this, &FRM_Principale::dateFilterChanged);
     connect(ui->qpbClearFilter, SIGNAL(clicked(bool)), this, SLOT(effacerLesFiltres(bool)));
     connect(ui->qcbAutoCompletion, SIGNAL(stateChanged(int)), this, SLOT(etatAutoCompletion(int)));
     connect(ui->tableView, SIGNAL(pressed(const QModelIndex)), this, SLOT(dataSelectionnee(const QModelIndex)));
@@ -615,6 +627,14 @@ void FRM_Principale::selectionDossierBlazeandcave(bool checked) {
     }
 }
 
+void FRM_Principale::exclureMilestone(int statut) {
+    if (statut == Qt::Unchecked) {
+        m_qsDossierAExclure = "recipes|technical|statistics";
+    } else if (statut == Qt::Checked) {
+        m_qsDossierAExclure = "recipes|technical";
+    }
+}
+
 void FRM_Principale::choixFichierAdvancements(bool checked) {
     if (checked) {
         qDebug() << checked;
@@ -955,7 +975,8 @@ void FRM_Principale::readJSONsVanilla(bool checked) {
                         if (qsDateRealisation != "") {
                             qDebug() << "Minecraft Vanilla;" + qsTitreAvecDescription + ";" + qsProgresFini + ";" + qsCondition + ";oui;" + qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss");
                             qsiConditionRemplie->setText("oui");
-                            qsiDateRealisation->setText(qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss"));
+                            //qsiDateRealisation->setText(qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss"));
+                            qsiDateRealisation->setData(qdtDateRealisation, Qt::DisplayRole);
                             m_qlLigneProgres << qsiOrigine << qsiTitre << qsiProgreFini << qsiCondition << qsiConditionRemplie << qsiDateRealisation << qsiTypeCondition;
                             m_qsimProgresRealisation->appendRow(m_qlLigneProgres);
                         }
@@ -963,7 +984,8 @@ void FRM_Principale::readJSONsVanilla(bool checked) {
                         if (qsDateRealisation != "") {
                             qDebug() << "Minecraft Vanilla;" + qsTitreAvecDescription + ";" + qsProgresFini + ";" + qsCondition + ";oui;" + qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss");
                             qsiConditionRemplie->setText("oui");
-                            qsiDateRealisation->setText(qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss"));
+                            //qsiDateRealisation->setText(qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss"));
+                            qsiDateRealisation->setData(qdtDateRealisation, Qt::DisplayRole);
                             m_qlLigneProgres << qsiOrigine << qsiTitre << qsiProgreFini << qsiCondition << qsiConditionRemplie << qsiDateRealisation << qsiTypeCondition;
                             m_qsimProgresRealisation->appendRow(m_qlLigneProgres);
                         } else {
@@ -992,8 +1014,9 @@ void FRM_Principale::readJSONsVanilla(bool checked) {
         proxyModelFiltreProgresFinis->setSourceModel(proxyModelFiltreTitre);
         proxyModelFiltreConditionFaite->setSourceModel(proxyModelFiltreProgresFinis);
         proxyModelFiltreTypeCondition->setSourceModel(proxyModelFiltreConditionFaite);
+        proxyModelFiltreDate->setSourceModel(proxyModelFiltreTypeCondition);
 
-        ui->tableView->setModel(proxyModelFiltreTypeCondition);
+        ui->tableView->setModel(proxyModelFiltreDate);
         ui->tableView->resizeColumnsToContents();
         ui->tableView->hideColumn(6);
 
@@ -1095,7 +1118,7 @@ void FRM_Principale::readJSONsBlazeandcave(bool checked) {
         QString qsJsonFile = qdiFichierProgres.next();
         qDebug() << qsJsonFile;
         QStringList qslCheminFichier = qsJsonFile.split("/");
-        if (qslCheminFichier.indexOf(QRegExp("recipes|technical")) == -1) {
+        if (qslCheminFichier.indexOf(QRegExp(m_qsDossierAExclure)) == -1) {
             QFile qfJsonFile(qsJsonFile);
             if(!qfJsonFile.open(QIODevice::ReadOnly)){
                 qDebug()<<"Failed to open "<< qsJsonFile;
@@ -1277,11 +1300,14 @@ void FRM_Principale::readJSONsBlazeandcave(bool checked) {
                         }
                     }
 
+                    QDateTime test(QDateTime::currentDateTime());
+
                     if (bCriteresPersoExiste && (bProgesFini && iCritereFait <= iCritereAFaire)) {
                         if (qsDateRealisation != "") {
                             qDebug() << "Blaze and Cave;" + qsTitreAvecDescription + ";" + qsProgresFini + ";" + qsCondition + ";oui;" + qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss");
                             qsiConditionRemplie->setText("oui");
-                            qsiDateRealisation->setText(qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss"));
+                            //qsiDateRealisation->setText(qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss"));
+                            qsiDateRealisation->setData(qdtDateRealisation, Qt::DisplayRole);
                             m_qlLigneProgres << qsiOrigine << qsiTitre << qsiProgreFini << qsiCondition << qsiConditionRemplie << qsiDateRealisation << qsiTypeCondition;
                             m_qsimProgresRealisation->appendRow(m_qlLigneProgres);
                         }
@@ -1289,7 +1315,8 @@ void FRM_Principale::readJSONsBlazeandcave(bool checked) {
                         if (qsDateRealisation != "") {
                             qDebug() << "Blaze and Cave;" + qsTitreAvecDescription + ";" + qsProgresFini + ";" + qsCondition + ";oui;" + qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss");
                             qsiConditionRemplie->setText("oui");
-                            qsiDateRealisation->setText(qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss"));
+                            //qsiDateRealisation->setText(qdtDateRealisation.toString("dd/MM/yyyy à hh:mm:ss"));
+                            qsiDateRealisation->setData(qdtDateRealisation, Qt::DisplayRole);
                             m_qlLigneProgres << qsiOrigine << qsiTitre << qsiProgreFini << qsiCondition << qsiConditionRemplie << qsiDateRealisation << qsiTypeCondition;
                             m_qsimProgresRealisation->appendRow(m_qlLigneProgres);
                         } else {
@@ -1320,8 +1347,9 @@ void FRM_Principale::readJSONsBlazeandcave(bool checked) {
         proxyModelFiltreProgresFinis->setSourceModel(proxyModelFiltreTitre);
         proxyModelFiltreConditionFaite->setSourceModel(proxyModelFiltreProgresFinis);
         proxyModelFiltreTypeCondition->setSourceModel(proxyModelFiltreConditionFaite);
+        proxyModelFiltreDate->setSourceModel(proxyModelFiltreTypeCondition);
 
-        ui->tableView->setModel(proxyModelFiltreTypeCondition);
+        ui->tableView->setModel(proxyModelFiltreDate);
         ui->tableView->resizeColumnsToContents();
         ui->tableView->hideColumn(6);
 
@@ -1360,8 +1388,9 @@ void FRM_Principale::readAllJsons(bool checked) {
     proxyModelFiltreProgresFinis->setSourceModel(proxyModelFiltreTitre);
     proxyModelFiltreConditionFaite->setSourceModel(proxyModelFiltreProgresFinis);
     proxyModelFiltreTypeCondition->setSourceModel(proxyModelFiltreConditionFaite);
+    proxyModelFiltreDate->setSourceModel(proxyModelFiltreTypeCondition);
 
-    ui->tableView->setModel(proxyModelFiltreTypeCondition);
+    ui->tableView->setModel(proxyModelFiltreDate);
     ui->tableView->resizeColumnsToContents();
     ui->tableView->hideColumn(6);
 
@@ -1450,8 +1479,14 @@ void FRM_Principale::filtreTableConditionFait(QString filtre) {
 }
 
 void FRM_Principale::filtreTableTypeCondition(QString filtre) {
-    proxyModelFiltreConditionFaite->setFilterKeyColumn(6);
-    proxyModelFiltreConditionFaite->setFilterRegExp(QRegExp(filtre, Qt::CaseInsensitive, QRegExp::FixedString));
+    proxyModelFiltreTypeCondition->setFilterKeyColumn(6);
+    proxyModelFiltreTypeCondition->setFilterRegExp(QRegExp(filtre, Qt::CaseInsensitive, QRegExp::FixedString));
+}
+
+void FRM_Principale::dateFilterChanged()
+{
+    proxyModelFiltreDate->setFilterMinimumDate(ui->qdteFrom->dateTime());
+    proxyModelFiltreDate->setFilterMaximumDate(ui->qdteTo->dateTime());
 }
 
 void FRM_Principale::effacerLesFiltres(bool checked) {

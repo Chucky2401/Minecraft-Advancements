@@ -41,12 +41,17 @@
 
 #include <QDebug>
 
+#include "dateetheurefilterproxymodel.h"
 #include "settings/settings.h"
 #include "settings/dia_parametres.h"
 #include "dia_apropos.h"
 
 QT_BEGIN_NAMESPACE
-namespace Ui { class FRM_Principale; }
+
+namespace Ui {
+    class FRM_Principale;
+}
+
 QT_END_NAMESPACE
 
 class FRM_Principale : public QMainWindow
@@ -98,6 +103,7 @@ private:
     QVariantMap m_qvmJsonProgresPerso;
     // BlazeandCave
     QDir m_qdDossierAdvancementsBlazeAndCave;
+    QString m_qsDossierAExclure;
     // Listing Progrés
     bool bTousLesProgres;
     QList<QStandardItem *> m_qlLigneProgres;
@@ -107,6 +113,7 @@ private:
     QSortFilterProxyModel *proxyModelFiltreProgresFinis;
     QSortFilterProxyModel *proxyModelFiltreConditionFaite;
     QSortFilterProxyModel *proxyModelFiltreTypeCondition;
+    DateEtHeureFilterProxyModel *proxyModelFiltreDate;
     QAbstractItemModel *m_defaultModelCompleter;
     QCompleter *m_defaultCompleter;
     QCompleter *m_sansCompleter;
@@ -134,6 +141,7 @@ private slots:
     void choixFichierAdvancements(bool checked);
     void extraireProgres(bool checked);
     void selectionDossierBlazeandcave(bool checked);
+    void exclureMilestone(int statut);
     // Lecture et affichage
     void readJSONsVanilla(bool checked);
     void readJSONsBlazeandcave(bool checked);
@@ -143,6 +151,7 @@ private slots:
     void filtreTableProgresFinis(QString filtre);
     void filtreTableConditionFait(QString filtre);
     void filtreTableTypeCondition(QString filtre);
+    void dateFilterChanged();
     void effacerLesFiltres(bool checked);
     void etatAutoCompletion(int etat);
     void dataSelectionnee(const QModelIndex index);

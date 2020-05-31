@@ -11,6 +11,8 @@ Suivis des version
 + **Légende** Ajout d'une légende pour les couleurs
 + **Images** *Pour les chats seulement* Les chats se voient leurs images ajouté à côté du texte et en plus grand avec la souris dessus.
   ![Imgur](https://i.imgur.com/DjYZVkPm.png)
++ [Issue#16](https://github.com/Chucky2401/Minecraft-Advancements/issues/16) **Filtrer sur la date de réalisation** Il est maintenant possible de filtrer entre deux dates.
+  ![Date Filtre](https://i.imgur.com/vSTXtwQm.png)
 
 ### Modifications
 
@@ -23,6 +25,7 @@ Suivis des version
 ### Correction
 
 + **Colonne Type** La colonne *Type* qui affichait **ET** ou **OU** pour le type de condition, n'était pas masqué pour les progrès *Vanilla* seulement. C'est un oublie, une ligne de code commenté lors d'un test 😲
++ [Issue#15](https://github.com/Chucky2401/Minecraft-Advancements/issues/15) **Filtre sur type et condition fait** Si on filtrer sur la condition fait ou non, puis sur le type, le filtre sur la condition fait sauté et ne pouvais plus être appliqué.
 
 ## **v0.2.3** - *21/05/2020*
 

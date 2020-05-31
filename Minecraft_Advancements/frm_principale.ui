@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>841</width>
+    <width>843</width>
     <height>800</height>
    </rect>
   </property>
@@ -139,13 +139,6 @@
       <property name="topMargin">
        <number>0</number>
       </property>
-      <item row="0" column="2">
-       <widget class="QLineEdit" name="qleCheminVersion">
-        <property name="readOnly">
-         <bool>true</bool>
-        </property>
-       </widget>
-      </item>
       <item row="0" column="1">
        <widget class="QComboBox" name="qcbVersion">
         <property name="minimumSize">
@@ -182,22 +175,22 @@
         </property>
        </widget>
       </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_4">
-      <property name="topMargin">
-       <number>0</number>
-      </property>
-      <item>
-       <widget class="QLabel" name="qlAdvancementsExtrait">
+      <item row="0" column="2">
+       <widget class="QLineEdit" name="qleCheminVersion">
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="1" column="2">
+       <widget class="QLabel" name="qlLangExtraite">
         <property name="text">
          <string>TextLabel</string>
         </property>
        </widget>
       </item>
-      <item>
-       <widget class="QLabel" name="qlLangExtraite">
+      <item row="1" column="0" colspan="2">
+       <widget class="QLabel" name="qlAdvancementsExtrait">
         <property name="text">
          <string>TextLabel</string>
         </property>
@@ -213,11 +206,22 @@
      </widget>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="hlBlazeandCave">
+     <layout class="QGridLayout" name="gridLayout_6">
       <property name="topMargin">
        <number>0</number>
       </property>
-      <item>
+      <item row="0" column="2">
+       <widget class="QPushButton" name="qpbDossierBlazeandcave">
+        <property name="text">
+         <string/>
+        </property>
+        <property name="icon">
+         <iconset resource="img.qrc">
+          <normaloff>:/img/folder_24px_black.png</normaloff>:/img/folder_24px_black.png</iconset>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="0">
        <widget class="QLabel" name="qlDossierBlazeandcave">
         <property name="minimumSize">
          <size>
@@ -236,21 +240,17 @@
         </property>
        </widget>
       </item>
-      <item>
+      <item row="0" column="1">
        <widget class="QLineEdit" name="qleDossierBlazeandcave">
         <property name="placeholderText">
          <string>C:\Users\fake_Utilisateur\AppData\Roaming\.minecraft\saves\Une_Sauvegarde\datapacks\bac_advancements</string>
         </property>
        </widget>
       </item>
-      <item>
-       <widget class="QPushButton" name="qpbDossierBlazeandcave">
+      <item row="1" column="1">
+       <widget class="QCheckBox" name="qcbMilestones">
         <property name="text">
-         <string/>
-        </property>
-        <property name="icon">
-         <iconset resource="img.qrc">
-          <normaloff>:/img/folder_24px_black.png</normaloff>:/img/folder_24px_black.png</iconset>
+         <string>Afficher les Milestones ?</string>
         </property>
        </widget>
       </item>
@@ -323,14 +323,7 @@
         </property>
        </widget>
       </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_6">
-      <property name="topMargin">
-       <number>0</number>
-      </property>
-      <item>
+      <item row="2" column="0">
        <widget class="QLabel" name="qlProgresPersoOuvert">
         <property name="text">
          <string>TextLabel</string>
@@ -475,11 +468,11 @@
          <string>Filtres</string>
         </property>
         <layout class="QGridLayout" name="gridLayout_3">
-         <item row="2" column="2">
-          <widget class="QLabel" name="label_2">
+         <item row="0" column="2">
+          <widget class="QLabel" name="label">
            <property name="minimumSize">
             <size>
-             <width>100</width>
+             <width>0</width>
              <height>0</height>
             </size>
            </property>
@@ -490,14 +483,41 @@
             </size>
            </property>
            <property name="text">
-            <string>Condition Faite</string>
+            <string>Titre</string>
            </property>
           </widget>
          </item>
-         <item row="1" column="4">
-          <widget class="QCheckBox" name="qcbAutoCompletion">
+         <item row="2" column="6">
+          <widget class="QComboBox" name="qcbFiltreType"/>
+         </item>
+         <item row="1" column="7">
+          <widget class="QLabel" name="label_13">
            <property name="text">
-            <string>Autocomplétion</string>
+            <string>Du</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="3">
+          <widget class="QCheckBox" name="qcbRegExp">
+           <property name="text">
+            <string>Expression Régulière</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="5">
+          <widget class="QLabel" name="label_6">
+           <property name="text">
+            <string>Type Condition</string>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="1">
+          <widget class="QComboBox" name="qcbFiltreProgresFinis">
+           <property name="minimumSize">
+            <size>
+             <width>100</width>
+             <height>0</height>
+            </size>
            </property>
           </widget>
          </item>
@@ -520,26 +540,89 @@
            </property>
           </widget>
          </item>
-         <item row="2" column="3" colspan="2">
-          <widget class="QComboBox" name="qcbFiltreConditionFait">
-           <property name="minimumSize">
-            <size>
-             <width>200</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="editable">
-            <bool>false</bool>
-           </property>
-           <property name="insertPolicy">
-            <enum>QComboBox::NoInsert</enum>
+         <item row="1" column="8">
+          <widget class="QDateTimeEdit" name="qdteFrom">
+           <property name="calendarPopup">
+            <bool>true</bool>
            </property>
           </widget>
          </item>
-         <item row="2" column="5">
-          <widget class="QLabel" name="label_6">
+         <item row="2" column="8">
+          <widget class="QDateTimeEdit" name="qdteTo">
+           <property name="calendarPopup">
+            <bool>true</bool>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="7">
+          <widget class="QLabel" name="label_12">
            <property name="text">
-            <string>Type Condition</string>
+            <string>Au</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="0">
+          <widget class="QLabel" name="label_3">
+           <property name="minimumSize">
+            <size>
+             <width>100</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>100</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Origine</string>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="1">
+          <widget class="QComboBox" name="qcbFiltreOrigine">
+           <property name="minimumSize">
+            <size>
+             <width>100</width>
+             <height>0</height>
+            </size>
+           </property>
+          </widget>
+         </item>
+         <item row="0" column="7" colspan="2">
+          <widget class="QLabel" name="label_11">
+           <property name="text">
+            <string>Date réalisation</string>
+           </property>
+           <property name="alignment">
+            <set>Qt::AlignCenter</set>
+           </property>
+          </widget>
+         </item>
+         <item row="2" column="2">
+          <widget class="QLabel" name="label_2">
+           <property name="minimumSize">
+            <size>
+             <width>0</width>
+             <height>0</height>
+            </size>
+           </property>
+           <property name="maximumSize">
+            <size>
+             <width>100</width>
+             <height>16777215</height>
+            </size>
+           </property>
+           <property name="text">
+            <string>Condition Faite</string>
+           </property>
+          </widget>
+         </item>
+         <item row="1" column="4">
+          <widget class="QCheckBox" name="qcbAutoCompletion">
+           <property name="text">
+            <string>Autocomplétion</string>
            </property>
           </widget>
          </item>
@@ -562,71 +645,19 @@
            </property>
           </widget>
          </item>
-         <item row="1" column="3">
-          <widget class="QCheckBox" name="qcbRegExp">
-           <property name="text">
-            <string>Expression Régulière</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="1">
-          <widget class="QComboBox" name="qcbFiltreOrigine">
-           <property name="minimumSize">
-            <size>
-             <width>200</width>
-             <height>0</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="1">
-          <widget class="QComboBox" name="qcbFiltreProgresFinis">
-           <property name="minimumSize">
-            <size>
-             <width>200</width>
-             <height>0</height>
-            </size>
-           </property>
-          </widget>
-         </item>
-         <item row="2" column="6">
-          <widget class="QComboBox" name="qcbFiltreType"/>
-         </item>
-         <item row="0" column="2">
-          <widget class="QLabel" name="label">
+         <item row="2" column="3" colspan="2">
+          <widget class="QComboBox" name="qcbFiltreConditionFait">
            <property name="minimumSize">
             <size>
              <width>100</width>
              <height>0</height>
             </size>
            </property>
-           <property name="maximumSize">
-            <size>
-             <width>100</width>
-             <height>16777215</height>
-            </size>
+           <property name="editable">
+            <bool>false</bool>
            </property>
-           <property name="text">
-            <string>Titre</string>
-           </property>
-          </widget>
-         </item>
-         <item row="0" column="0">
-          <widget class="QLabel" name="label_3">
-           <property name="minimumSize">
-            <size>
-             <width>100</width>
-             <height>0</height>
-            </size>
-           </property>
-           <property name="maximumSize">
-            <size>
-             <width>100</width>
-             <height>16777215</height>
-            </size>
-           </property>
-           <property name="text">
-            <string>Origine</string>
+           <property name="insertPolicy">
+            <enum>QComboBox::NoInsert</enum>
            </property>
           </widget>
          </item>
@@ -747,7 +778,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>841</width>
+     <width>843</width>
      <height>21</height>
     </rect>
    </property>

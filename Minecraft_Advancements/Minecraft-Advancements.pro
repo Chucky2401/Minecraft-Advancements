@@ -18,6 +18,7 @@ DEFINES += QT_DEPRECATED_WARNINGS
 RC_ICONS = minecraft.ico
 
 SOURCES += \
+    dateetheurefilterproxymodel.cpp \
     dia_apropos.cpp \
     main.cpp \
     frm_principale.cpp \
@@ -25,6 +26,7 @@ SOURCES += \
     settings/settings.cpp
 
 HEADERS += \
+    dateetheurefilterproxymodel.h \
     dia_apropos.h \
     frm_principale.h \
     settings/dia_parametres.h \
