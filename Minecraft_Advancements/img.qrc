@@ -3,10 +3,10 @@
         <file>img/folder_24px_black.png</file>
         <file>img/folder_24px_white.png</file>
         <file>img/icons8_minecraft_logo_48px.png</file>
-        <file>img/Splash-Screen.png</file>
         <file>img/about_24.png</file>
         <file>img/close_24.png</file>
         <file>img/settings_24.png</file>
         <file>img/update_24.png</file>
+        <file>img/Splash-Screen.png</file>
     </qresource>
 </RCC>

@@ -1828,7 +1828,7 @@ void FRM_Principale::comparaisonVersion(bool ecrireFichier){
             qDebug() << "On lance la mise à jour";
             QProcess *qpOutilDeMaintenance = new QProcess();
             QStringList arguments;
-            arguments << "--updated";
+            arguments << "--updater";
             if (param->getMiseAJourBeta()) {
                 arguments << "--addTempRepository https://blackwizard.yj.fr/repository/b-advancements";
             }
