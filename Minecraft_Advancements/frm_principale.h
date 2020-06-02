@@ -141,7 +141,7 @@ private slots:
     void choixFichierAdvancements(bool checked);
     void extraireProgres(bool checked);
     void selectionDossierBlazeandcave(bool checked);
-    void exclureMilestone(int statut);
+    void exclureStats(int statut);
     // Lecture et affichage
     void readJSONsVanilla(bool checked);
     void readJSONsBlazeandcave(bool checked);

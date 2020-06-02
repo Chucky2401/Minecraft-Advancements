@@ -68,9 +68,14 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     //ui->qcbLauncher->addItem("MultiMC", QVariant("MultiMC"));
     //ui->qcbLauncher->addItem("ATLauncher", QVariant("ATLauncher"));
 
-    ui->qcbMilestones->setCheckState(Qt::Checked);
-    ui->qcbMilestones->setToolTip("Les Milestones sont les progrès liés aux statistiques de jeu.\n"
+    ui->qcbStatistiques->setCheckState(Qt::Checked);
+    ui->qcbStatistiques->setToolTip("Progrès liés aux statistiques de jeu.\n"
                                   "Tel que \"Parcourir 100 Km\", \"Reproduire 2500 animaux\" ou \"Atteindre le niveau 30\", etc.");
+
+    ui->qcbMilestones->setCheckState(Qt::Checked);
+    ui->qcbMilestones->setToolTip("Progrès liés aux étapes de l'Advancement Pack de Blaze and Cave.\n"
+                                  "Tel que \"Compléter tous les progrès de l'onglet Animal\" ou \"Compléter tous les progrès de l'onglet Super Challenge. Bon courage avec celui-ci ;).\", etc.");
+
 
     ui->qcbFiltreOrigine->addItem("");
     ui->qcbFiltreConditionFait->addItem("");
@@ -101,7 +106,7 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     ui->qcbFiltreTitre->setToolTipDuration(30000);
 
     ui->qdteFrom->setDateTime(QDateTime(QDate(1970, 01, 01), QTime(0, 0, 0)));
-    ui->qdteTo->setDateTime(QDateTime(QDate(2099, 12, 31), QTime(0, 0, 0)));
+    ui->qdteTo->setDateTime(QDateTime(QDate(2099, 12, 31), QTime(23, 59, 59)));
 
     // On masque la barre de progression, c'était pour un test
     ui->qpbTraitementProgres->setVisible(false);
@@ -120,7 +125,8 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     connect(ui->qcbVersion, SIGNAL(currentIndexChanged(int)), this, SLOT(choixVersion(int)));
     connect(ui->qpbSelectionFichierProgres, SIGNAL(clicked(bool)), this, SLOT(choixFichierAdvancements(bool)));
     connect(ui->qpbDossierBlazeandcave, SIGNAL(clicked(bool)), this, SLOT(selectionDossierBlazeandcave(bool)));
-    connect(ui->qcbMilestones, SIGNAL(stateChanged(int)), this, SLOT(exclureMilestone(int)));
+    connect(ui->qcbStatistiques, SIGNAL(stateChanged(int)), this, SLOT(exclureStats(int)));
+    connect(ui->qcbMilestones, SIGNAL(stateChanged(int)), this, SLOT(exclureStats(int)));
     connect(ui->qpbExtraireProgres, SIGNAL(clicked(bool)), this, SLOT(extraireProgres(bool)));
     connect(ui->qpbReadJSONsVanilla, SIGNAL(clicked(bool)), this, SLOT(readJSONsVanilla(bool)));
     connect(ui->qpbReadJSONsBlazeandcave, SIGNAL(clicked(bool)), this, SLOT(readJSONsBlazeandcave(bool)));
@@ -627,11 +633,25 @@ void FRM_Principale::selectionDossierBlazeandcave(bool checked) {
     }
 }
 
-void FRM_Principale::exclureMilestone(int statut) {
-    if (statut == Qt::Unchecked) {
-        m_qsDossierAExclure = "recipes|technical|statistics";
-    } else if (statut == Qt::Checked) {
+void FRM_Principale::exclureStats(int statut) {
+    if (statut) {
+        qDebug() << statut;
+    }
+
+    if (ui->qcbStatistiques->checkState() == Qt::Checked && ui->qcbMilestones->checkState() == Qt::Checked) {
+        // Tout est activé
         m_qsDossierAExclure = "recipes|technical";
+    } else if (ui->qcbStatistiques->checkState() == Qt::Checked && ui->qcbMilestones->checkState() == Qt::Unchecked) {
+        // Seulement les statistiques
+        // Pas les milestones
+        m_qsDossierAExclure = "recipes|technical|bacap";
+    } else if (ui->qcbStatistiques->checkState() == Qt::Unchecked && ui->qcbMilestones->checkState() == Qt::Checked) {
+        // Seulement les milestones
+        // Pas les statistiques
+        m_qsDossierAExclure = "recipes|technical|statistics";
+    } else {
+        // Aucun des deux...
+        m_qsDossierAExclure = "recipes|technical|statistics|bacap";
     }
 }
 

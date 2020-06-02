@@ -2,7 +2,7 @@
 
 Suivis des version
 
-## **v0.2.4** - *En cours de développement*
+## **v0.2.4** - *02/06/2020*
 
 ### Ajouts
 
@@ -13,6 +13,7 @@ Suivis des version
   ![Imgur](https://i.imgur.com/DjYZVkPm.png)
 + [Issue#16](https://github.com/Chucky2401/Minecraft-Advancements/issues/16) **Filtrer sur la date de réalisation** Il est maintenant possible de filtrer entre deux dates.
   ![Date Filtre](https://i.imgur.com/vSTXtwQm.png)
++ [Issue#14](https://github.com/Chucky2401/Minecraft-Advancements/issues/14) **Masquer les milestones** Possibilités de ne pas afficher les progrès sur les milestones et/ou les statistiques.
 
 ### Modifications
 
