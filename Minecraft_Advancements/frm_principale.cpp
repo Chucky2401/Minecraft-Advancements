@@ -1758,7 +1758,9 @@ void FRM_Principale::fichierTelecharge(QNetworkReply* pReply){
  * On compare numéro après numéro pour voir s'il y a une mise à jour.
  */
 void FRM_Principale::comparaisonVersion(bool ecrireFichier){
-    QFile qfUpdateXml("Updates.xml");
+    QString qsCheminUpdate = param->getPath();
+    QString qsFichierUpdate = qsCheminUpdate + "Updates-Minecraft_Advancements.xml";
+    QFile qfUpdateXml(qsFichierUpdate);
     QDomDocument qddXmlBOM;
     QString qsVersionOnline;
     QString qsVersionLocal = QApplication::applicationVersion();
@@ -1808,10 +1810,18 @@ void FRM_Principale::comparaisonVersion(bool ecrireFichier){
         }
         Component = Component.nextSibling().toElement();
     }
+    //qsVersionOnline = "0.2.4.1";
     qslVersionOnline = qsVersionOnline.split(".");
     qslVersionLocal = qsVersionLocal.split(".");
 
+    //TEST
+    //qslVersionOnline << "0" << "2" << "4" << "1";
+
     qDebug() << qsVersionOnline << qsVersionLocal;
+
+    if (qslVersionOnline > qslVersionLocal) {
+        qDebug() << "Test sans for fonctionne aussi !";
+    }
 
     for(int i = 0; i < qslVersionOnline.size(); i++) {
         if(!bMiseAJourNecessaire) {
@@ -1858,48 +1868,49 @@ void FRM_Principale::TEST(bool checked) {
     if (checked) {
         qDebug() << checked;
     }
+
     //QString qsJsonFile = "advancements/20w18a/adventure/kill_a_mob.json";
-    QString qsJsonFile = "advancements/20w18a/nether/fast_travel.json";
-    QStringList qslCheminFichier = qsJsonFile.split("/");
+//    QString qsJsonFile = "advancements/20w18a/nether/fast_travel.json";
+//    QStringList qslCheminFichier = qsJsonFile.split("/");
 
-    QFile qfJsonFile(qsJsonFile);
-    if(!qfJsonFile.open(QIODevice::ReadOnly)){
-        qDebug()<<"Failed to open "<< qsJsonFile;
-        exit(1);
-    }
+//    QFile qfJsonFile(qsJsonFile);
+//    if(!qfJsonFile.open(QIODevice::ReadOnly)){
+//        qDebug()<<"Failed to open "<< qsJsonFile;
+//        exit(1);
+//    }
 
-    QTextStream file_text(&qfJsonFile);
-    QString json_string;
-    json_string = file_text.readAll();
-    qfJsonFile.close();
-    QByteArray json_bytes = json_string.toLocal8Bit();
+//    QTextStream file_text(&qfJsonFile);
+//    QString json_string;
+//    json_string = file_text.readAll();
+//    qfJsonFile.close();
+//    QByteArray json_bytes = json_string.toLocal8Bit();
 
-    QJsonDocument json_doc = QJsonDocument::fromJson(json_bytes);
+//    QJsonDocument json_doc = QJsonDocument::fromJson(json_bytes);
 
-    if(json_doc.isNull()){
-        qDebug()<<"Failed to create JSON doc.";
-        exit(2);
-    }
-    if(!json_doc.isObject()){
-        qDebug()<<"JSON is not an object.";
-        exit(3);
-    }
+//    if(json_doc.isNull()){
+//        qDebug()<<"Failed to create JSON doc.";
+//        exit(2);
+//    }
+//    if(!json_doc.isObject()){
+//        qDebug()<<"JSON is not an object.";
+//        exit(3);
+//    }
 
-    QJsonObject json_obj = json_doc.object();
+//    QJsonObject json_obj = json_doc.object();
 
-    if(json_obj.isEmpty()){
-        qDebug()<<"JSON object is empty.";
-        exit(4);
-    }
+//    if(json_obj.isEmpty()){
+//        qDebug()<<"JSON object is empty.";
+//        exit(4);
+//    }
 
-    QVariantMap json_map = json_obj.toVariantMap();
-    QJsonArray qjaConditionsTemp = json_map["requirements"].toJsonArray();
-    QJsonArray qjaConditions = qjaConditionsTemp.at(0).toArray();
+//    QVariantMap json_map = json_obj.toVariantMap();
+//    QJsonArray qjaConditionsTemp = json_map["requirements"].toJsonArray();
+//    QJsonArray qjaConditions = qjaConditionsTemp.at(0).toArray();
 
-    qDebug() << "Fichier  :" << qsJsonFile;
-    qDebug() << "Niveau 0 :" << qjaConditionsTemp.count();
-    // Si > 1 => OU (||)
-    // Sinon  => ET (&&)
-    qDebug() << "Niveau 1 :" << qjaConditions.count();
+//    qDebug() << "Fichier  :" << qsJsonFile;
+//    qDebug() << "Niveau 0 :" << qjaConditionsTemp.count();
+//    // Si > 1 => OU (||)
+//    // Sinon  => ET (&&)
+//    qDebug() << "Niveau 1 :" << qjaConditions.count();
 
 }

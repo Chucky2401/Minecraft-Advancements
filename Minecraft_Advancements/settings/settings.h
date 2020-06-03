@@ -18,6 +18,7 @@ public:
 
     void initialisation(bool test = false);
 
+    QString getPath();
     void setGeometrie(QByteArray geometrie);
     void setEtat(QByteArray etat);
     void setGeometrieEtat(QByteArray geometrie, QByteArray etat);

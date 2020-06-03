@@ -30,6 +30,21 @@ void Settings::initialisation(bool test) {
 
     m_messageConfirmationFermeture = this->getIniMessageConfirmationFermeture();
     this->setMessageConfirmationFermeture(m_messageConfirmationFermeture);
+
+    qDebug() << getPath();
+}
+
+QString Settings::getPath() {
+    QString qsFichier = iniParam->fileName();
+    QStringList qslCheminComplet = qsFichier.split("/");
+    QString qsChemin;
+
+    for (int i = 0 ; i < qslCheminComplet.count() ; i++) {
+        if (i != qslCheminComplet.count()-1) {
+            qsChemin += qslCheminComplet.at(i) + "/";
+        }
+    }
+    return qsChemin;
 }
 
 void Settings::setGeometrie(QByteArray geometrie){
