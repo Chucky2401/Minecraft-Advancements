@@ -2,6 +2,12 @@
 
 Suivis des version
 
+## **V0.2.4.1** - *03/02/2020*
+
+### Correction
+
++ **Mise à jour automatique** Oublie de fichier DLL et déplacement d'un fichier, car manque d'autorisation.
+
 ## **v0.2.4** - *02/06/2020*
 
 ### Ajouts
@@ -26,7 +32,7 @@ Suivis des version
 ### Correction
 
 + **Colonne Type** La colonne *Type* qui affichait **ET** ou **OU** pour le type de condition, n'était pas masqué pour les progrès *Vanilla* seulement. C'est un oublie, une ligne de code commenté lors d'un test 😲
-+ [Issue#15](https://github.com/Chucky2401/Minecraft-Advancements/issues/15) **Filtre sur type et condition fait** Si on filtrer sur la condition fait ou non, puis sur le type, le filtre sur la condition fait sauté et ne pouvais plus être appliqué.
++ [Issue#15](https://github.com/Chucky2401/Minecraft-Advancements/issues/15) **Filtre sur type et condition fait** Si on filtrait sur la condition fait ou non, puis sur le type, le filtre sur la condition fait sauté et ne pouvait plus être appliquée.
 
 ## **v0.2.3** - *21/05/2020*
 
