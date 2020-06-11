@@ -58,13 +58,24 @@ class FRM_Principale : public QMainWindow
 {
     Q_OBJECT
 
+// Fonction public
 public:
     FRM_Principale(QWidget *parent = nullptr, bool test = false);
     ~FRM_Principale();
 
+// Fonctions privés
+private:
+    // Data
+    QString hashLangue();
+    QString numeroIndex();
+    // Configuration
+    void traitementFichierAdvancements(QString fichier);
+
+// Fonction protéger
 protected:
     void closeEvent(QCloseEvent *event);
 
+// Attributes privés
 private:
     //GUI
     Ui::FRM_Principale *ui;
@@ -127,17 +138,17 @@ private:
     // TEST
     bool m_test;
 
+// Signaux
 signals:
     void downloaded(bool ecrireFichierUpdate);
     void fermeture();
 
+// Slots privés
 private slots:
-    //Data
-    QString hashLangue();
-    QString numeroIndex();
     //Configuration
     void choixLauncher(int index);
-    void choixVersion(int index);
+    //void choixVersion(int index);
+    void choixVersion(QString text);
     void choixFichierAdvancements(bool checked);
     void extraireProgres(bool checked);
     void selectionDossierBlazeandcave(bool checked);

@@ -28,8 +28,14 @@ void Settings::initialisation(bool test) {
     m_miseAJourBeta = this->getIniMiseAJourBeta();
     this->setMiseAJourBeta(m_miseAJourBeta);
 
+    m_restoreData = this->getIniRestoreData();
+    this->setRestoreData(m_restoreData);
+
     m_messageConfirmationFermeture = this->getIniMessageConfirmationFermeture();
     this->setMessageConfirmationFermeture(m_messageConfirmationFermeture);
+
+    m_version = this->getIniVersion();
+    this->setVersion(m_version);
 
     qDebug() << getPath();
 }
@@ -150,6 +156,19 @@ bool Settings::getMiseAJourBeta() {
     return this->m_miseAJourBeta;
 }
 
+void Settings::setRestoreData(bool enabled) {
+    this->m_restoreData = enabled;
+    iniParam->setValue("data/restore", enabled);
+}
+
+bool Settings::getIniRestoreData() {
+    return iniParam->value("data/restore", true).toBool();
+}
+
+bool Settings::getRestoreData() {
+    return m_restoreData;
+}
+
 void Settings::setMessageConfirmationFermeture(bool enabled){
     this->m_messageConfirmationFermeture = enabled;
     iniParam->setValue("fenetre/confirmationFermeture", enabled);
@@ -161,4 +180,17 @@ bool Settings::getIniMessageConfirmationFermeture(){
 
 bool Settings::getMessageConfirmationFermeture(){
     return m_messageConfirmationFermeture;
+}
+
+void Settings::setVersion(QString version) {
+    this->m_version = version;
+    iniParam->setValue("data/version", version);
+}
+
+QString Settings::getIniVersion() {
+    return iniParam->value("data/version", settingDefaultString).toString();
+}
+
+QString Settings::getVersion() {
+    return m_version;
 }

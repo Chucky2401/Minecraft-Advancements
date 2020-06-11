@@ -2,6 +2,44 @@
 
 Suivis des version
 
+## V0.2.5 - *To Be Released*
+
+### Ajout
+
++ Bouton Imprimer dans le menu Outils
+  ![Imgur](https://i.imgur.com/62Lgtfpm.png)
++ [Issue#4](https://github.com/Chucky2401/Minecraft-Advancements/issues/4) **Mémorisation des saisis** Vous pouvez maintenant utiliser ce paramètre ! Il permet pour le moment de mémoriser et restaurer au démarrage :
+  + [x] Version
+  + [ ] Dossier 'Blaze and Cave'
+  + [ ] Afficher les Milestones ?
+  + [ ] Afficher les Statistiques ?
+  + [ ] Fichier Progrès
+
+### Modification
+
++ Ajout d'icônes pour les *Opérations*
+  ![Imgur](https://i.imgur.com/tLQhBJwm.png)
++ Ajout de raccourcis clavier pour le menu
+  + *Ctrl+Q* - **Quitter**
+  + *Ctrl+I* - **Préférences**
+  + *Ctrl+H* - **A Propos**
+  + *Ctrl+U* - **Vérifier les mise à jour**
+  + *Ctrl+P* - **Imprimer la vue**
+
+### Divers
+
++ Gros refactoring du code
+  + Commentaire
+  + Modification de fonction pour l'arriver de la restauration des saisis précédente
+  + Position de certaines fonctions dans le fichier
++ Clôture [Issue#7](https://github.com/Chucky2401/Minecraft-Advancements/issues/7) **Réglages** Car la mémorisation des saisis et fait ! **Quand tout sera cocher dans *Ajout* - Je prends de l'avance sur le Changelog :stuck_out_tongue_closed_eyes:**
++ Je repousse l'[Issue#3](https://github.com/Chucky2401/Minecraft-Advancements/issues/3) **Masquer progrès**, car beaucoup de travail dessus. Et les filtres permettent de se *dépatouiller* pour le moment je pense.
+
+### Notes
+
++ Il reste des commentaires à ajouter
++ ~~Alléger le fichier de la classe à mettre dans plusieurs fichiers pour clarter~~
+
 ## **V0.2.4.1** - *03/02/2020*
 
 ### Correction

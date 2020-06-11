@@ -114,7 +114,7 @@
           <item>
            <widget class="QCheckBox" name="cbBeta">
             <property name="enabled">
-             <bool>false</bool>
+             <bool>true</bool>
             </property>
             <property name="text">
              <string>Rechercher les mises à jour Bêta (Instable) ?</string>

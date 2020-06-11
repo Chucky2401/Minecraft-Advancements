@@ -8,5 +8,7 @@
         <file>img/settings_24.png</file>
         <file>img/update_24.png</file>
         <file>img/Splash-Screen.png</file>
+        <file>img/icons8_print_24px.png</file>
+        <file>img/icons8_broom_24px.png</file>
     </qresource>
 </RCC>

@@ -27,10 +27,6 @@ public:
     QByteArray getIniEtat();
     QByteArray getEtat();
 
-    void setRestoreSizePos(bool enabled);
-    bool getIniRestoreSizePos();
-    bool getRestoreSizePos();
-
     void setVerificationAutoMiseAJour(bool enabled);
     bool getIniVerificationAutoMiseAJour();
     bool getVerificationAutoMiseAJour();
@@ -48,9 +44,22 @@ public:
     bool getIniMiseAJourBeta();
     bool getMiseAJourBeta();
 
+    void setRestoreSizePos(bool enabled);
+    bool getIniRestoreSizePos();
+    bool getRestoreSizePos();
+
+    void setRestoreData(bool enabled);
+    bool getIniRestoreData();
+    bool getRestoreData();
+
     void setMessageConfirmationFermeture(bool enabled);
     bool getIniMessageConfirmationFermeture();
     bool getMessageConfirmationFermeture();
+
+    // Data FRM_PRINCIPALE
+    void setVersion(QString version);
+    QString getIniVersion();
+    QString getVersion();
 
 
 private:
@@ -61,24 +70,18 @@ private:
 
     QString m_qsAppdataPath;
     QSettings *iniParam;
-    QString imagePath;
-    QString bddPath;
-    QString bddName;
-    bool farming;
-    bool autoExpand;
-    bool restoreRecipe;
-    QList<QVariant> lastRecipe;
-    int quantiteLastRecipe;
     QByteArray geometrie;
     QByteArray etat;
     bool restoreSizePos;
-    bool m_visibiliteFarming;
-    bool m_visibiliteDeploiementAuto;
     bool m_verificationAutoMiseAJour;
     int m_nombreJourMiseAJour;
     QDate m_derniereVerificationMiseAJour;
     bool m_miseAJourBeta;
+    bool m_restoreData;
     bool m_messageConfirmationFermeture;
+
+    // Data FRM_PRINCIPALE
+    QString m_version;
 
 };
 

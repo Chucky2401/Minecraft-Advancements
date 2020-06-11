@@ -16,7 +16,7 @@
   <widget class="QWidget" name="centralwidget">
    <layout class="QVBoxLayout" name="verticalLayout">
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout">
+     <layout class="QHBoxLayout" name="hlLanceurLangue">
       <item>
        <widget class="QLabel" name="qlLanceur">
         <property name="minimumSize">
@@ -72,7 +72,7 @@
      </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_2">
+     <layout class="QHBoxLayout" name="hlDossierLanceur">
       <property name="topMargin">
        <number>0</number>
       </property>
@@ -128,14 +128,7 @@
      </layout>
     </item>
     <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_3">
-      <property name="topMargin">
-       <number>0</number>
-      </property>
-     </layout>
-    </item>
-    <item>
-     <layout class="QGridLayout" name="gridLayout_2">
+     <layout class="QGridLayout" name="gdVersion">
       <property name="topMargin">
        <number>0</number>
       </property>
@@ -177,6 +170,9 @@
       </item>
       <item row="0" column="2">
        <widget class="QLineEdit" name="qleCheminVersion">
+        <property name="cursor">
+         <cursorShape>ArrowCursor</cursorShape>
+        </property>
         <property name="readOnly">
          <bool>true</bool>
         </property>
@@ -249,6 +245,12 @@
       </item>
       <item row="0" column="1">
        <widget class="QLineEdit" name="qleDossierBlazeandcave">
+        <property name="cursor">
+         <cursorShape>ArrowCursor</cursorShape>
+        </property>
+        <property name="readOnly">
+         <bool>true</bool>
+        </property>
         <property name="placeholderText">
          <string>C:\Users\fake_Utilisateur\AppData\Roaming\.minecraft\saves\Une_Sauvegarde\datapacks\bac_advancements</string>
         </property>
@@ -305,6 +307,9 @@
           <width>16777215</width>
           <height>16777215</height>
          </size>
+        </property>
+        <property name="cursor">
+         <cursorShape>ArrowCursor</cursorShape>
         </property>
         <property name="inputMask">
          <string/>
@@ -708,12 +713,20 @@
            <property name="text">
             <string>Effacer les filtres</string>
            </property>
+           <property name="icon">
+            <iconset resource="img.qrc">
+             <normaloff>:/img/icons8_broom_24px.png</normaloff>:/img/icons8_broom_24px.png</iconset>
+           </property>
           </widget>
          </item>
          <item row="0" column="1">
           <widget class="QPushButton" name="pbImprimer">
            <property name="text">
             <string>Imprimer</string>
+           </property>
+           <property name="icon">
+            <iconset resource="img.qrc">
+             <normaloff>:/img/icons8_print_24px.png</normaloff>:/img/icons8_print_24px.png</iconset>
            </property>
           </widget>
          </item>
@@ -805,6 +818,7 @@
     <property name="title">
      <string>&amp;Outils</string>
     </property>
+    <addaction name="qaImprimerVue"/>
     <addaction name="qaSettings"/>
    </widget>
    <widget class="QMenu" name="qmAide">
@@ -839,6 +853,9 @@
    <property name="text">
     <string>&amp;Préférences...</string>
    </property>
+   <property name="toolTip">
+    <string>Préférences (Ctrl+I)</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+I</string>
    </property>
@@ -851,6 +868,9 @@
    <property name="text">
     <string>&amp;A Propos...</string>
    </property>
+   <property name="toolTip">
+    <string>A Propos (Ctrl+H)</string>
+   </property>
    <property name="shortcut">
     <string>Ctrl+H</string>
    </property>
@@ -861,7 +881,28 @@
      <normaloff>:/img/update_24.png</normaloff>:/img/update_24.png</iconset>
    </property>
    <property name="text">
-    <string>Vérifier les mise à jour</string>
+    <string>Vérifier les &amp;mise à jour</string>
+   </property>
+   <property name="toolTip">
+    <string>Vérifier les mise à jour (Ctrl+U)</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+U</string>
+   </property>
+  </action>
+  <action name="qaImprimerVue">
+   <property name="icon">
+    <iconset resource="img.qrc">
+     <normaloff>:/img/icons8_print_24px.png</normaloff>:/img/icons8_print_24px.png</iconset>
+   </property>
+   <property name="text">
+    <string>&amp;Imprimer la vue</string>
+   </property>
+   <property name="toolTip">
+    <string>Imprimer la vue (Ctrl+P)</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+P</string>
    </property>
   </action>
  </widget>
