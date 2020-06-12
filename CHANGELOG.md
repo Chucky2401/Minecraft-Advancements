@@ -2,7 +2,14 @@
 
 Suivis des version
 
-## V0.2.5 - *To Be Released*
+## V0.2.5 Hotfix 1 (0.2.5.1) - **13/06/2020**
+
+### Correction
+
++ La recherche de mise à jour ne fonctionne pas du tout depuis la 0.2.4.1. Correction du code.
+  **Il est nécessaire de réinstaller complètement l'applications !**
+
+## V0.2.5 - *Non déployer*
 
 ### Ajout
 
@@ -120,22 +127,25 @@ Attention, cette partie ralenti pas mal lors de la comparaison pour Blaze And Ca
 
   + Menu Principale
     
+
   ![Menu](https://i.imgur.com/htvqUpSm.png)
-    
+
   Contient :
-    
+
     + Fichier -> Quitter (Raccourcis : CTRL + Q)
     + Outils -> Préférences (Raccourcis : CTRL + I)
   + ? -> A Propos
     
   + Par la même occasion, ajout d'une fenêtre *A Propos*. Contient un lien vers *GitHub*, *Discord des GoC*, chaine YouTube de *Olchladir* et *Athlif*
     
+
   ![About](https://i.imgur.com/FvIXU8wm.png)
-    
+
   + Ajout de la fenêtre de préférences **/!\\ En cours d'écriture /!\\**
     
+
   ![Settings](https://i.imgur.com/NhVQ5Zcm.png)
-    
+
   + Ajout d'une confirmation de fermeture
     
     ![Confirmation](https://i.imgur.com/cWujerSm.png)

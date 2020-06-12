@@ -1703,28 +1703,32 @@ void FRM_Principale::comparaisonVersion(bool ecrireFichier){
         }
         Component = Component.nextSibling().toElement();
     }
+    //TEST
+    //qsVersionLocal = "0.2.4.1";
     //qsVersionOnline = "0.2.4.1";
     qslVersionOnline = qsVersionOnline.split(".");
     qslVersionLocal = qsVersionLocal.split(".");
 
-    //TEST
-    //qslVersionOnline << "0" << "2" << "4" << "1";
-
-    //qDebug() << qsVersionOnline << qsVersionLocal;
-
-    if (qslVersionOnline > qslVersionLocal) {
-        qDebug() << "Test sans for fonctionne aussi !" << "Version Online > Local";
-        bMiseAJourNecessaire = true;
-    } else {
-        qDebug() << "Test sans for fonctionne aussi !" << "Version Online < Local";
+    if (qsVersionOnline.count() > qsVersionLocal.count()) {
+        int diff = qsVersionOnline.count() - qsVersionLocal.count();
+        for (int ite = 0 ; ite < diff ; ite++) {
+            qslVersionLocal << "0";
+        }
     }
 
-//    for(int i = 0; i < qslVersionOnline.size(); i++) {
-//        if(!bMiseAJourNecessaire) {
-//            if(qslVersionOnline > qslVersionLocal)
-//                bMiseAJourNecessaire = true;
-//        }
-//    }
+    qDebug() << "qslVersionLocal" << qslVersionLocal;
+    qDebug() << "qslVersionOnline" << qslVersionOnline;
+
+    for(int i = 0; i < qslVersionOnline.size(); i++) {
+        qDebug() << "Je rentre dans la boucle";
+        if(!bMiseAJourNecessaire) {
+            qDebug() << "bMiseAJourNecessaire" << bMiseAJourNecessaire;
+            qDebug() << "qslVersionOnline" << qslVersionOnline.at(i).toInt() << "qslVersionLocal" << qslVersionLocal.at(i).toInt();
+            if(qslVersionOnline.at(i).toInt() > qslVersionLocal.at(i).toInt()) {
+                bMiseAJourNecessaire = true;
+            }
+        }
+    }
 
     // On définis la dernière vérification des mises à jour, même si c'est une vérification manuelle
     param->setDerniereVerificationMiseAJour(QDate::currentDate());
