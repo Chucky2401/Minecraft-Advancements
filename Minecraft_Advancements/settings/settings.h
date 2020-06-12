@@ -61,6 +61,22 @@ public:
     QString getIniVersion();
     QString getVersion();
 
+    void setDossierBlazeAndCave(QString dossier);
+    QString getIniDossierBlazeAndCave();
+    QString getDossierBlazeAndCave();
+
+    void setMilestones(bool enabled);
+    bool getIniMilestones();
+    bool getMilestones();
+
+    void setStatistics(bool enabled);
+    bool getIniStatistics();
+    bool getStatistics();
+
+    void setFichierAdvancementsPerso(QString fichier);
+    QString getIniFichierAdvancementsPerso();
+    QString getFichierAdvancementsPerso();
+
 
 private:
     const QVariant settingDefaultString = "DNE";
@@ -82,6 +98,10 @@ private:
 
     // Data FRM_PRINCIPALE
     QString m_version;
+    QString m_dossierBlazeAndCave;
+    bool m_milestones;
+    bool m_statistics;
+    QString m_fichierAdvancementsPerso;
 
 };
 

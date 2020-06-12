@@ -69,7 +69,10 @@ private:
     QString hashLangue();
     QString numeroIndex();
     // Configuration
+    QVariantMap ouvrirJson(QString fichier);
     void traitementFichierAdvancements(QString fichier);
+    void traitementDossierBac(QString folder);
+    void toutesLesTraductions(QVariantMap jsonLang);
 
 // Fonction protéger
 protected:
@@ -112,6 +115,9 @@ private:
     QStringList m_qslListVersionJar;
     QString m_qsDossierSauvegarde;
     QVariantMap m_qvmJsonProgresPerso;
+    // Traduction
+    QStringList m_qslClesToutesLesTrads;
+    QStringList m_qslToutesLesTrads;
     // BlazeandCave
     QDir m_qdDossierAdvancementsBlazeAndCave;
     QString m_qsDossierAExclure;
@@ -133,6 +139,7 @@ private:
     DIA_Parametres *diaParametres;
     DIA_apropos *diaAPropos;
     // Mise à jour
+    bool m_updateBetaVerifiee;
     QNetworkAccessManager *m_qnamManager;
     QByteArray m_qbaDonneesTelechargees;
     // TEST

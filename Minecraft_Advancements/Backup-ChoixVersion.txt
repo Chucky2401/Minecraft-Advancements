@@ -1,0 +1,119 @@
+﻿void FRM_Principale::choixVersion(int index) {
+    QString qsCheminVersion = ui->qcbVersion->itemData(index).toString();
+    QString qsFauxChemin, qsNumeroIndex = "";
+    QStringList qslFormatFichier;
+    qslFormatFichier << "*.json";
+    int iFicherDejaExtrait = 0;
+
+    if (ui->qcbVersion->currentIndex() != 0) {
+        m_qsJSONVersion = ui->qcbVersion->currentData().toString().replace(".jar", ".json");
+        // Aller chercher id avec la variable m_qsJSONVersion
+        qsNumeroIndex = numeroIndex();
+        // Renseigner fichier index (m_qsFichierIndex
+        m_qsFichierIndex = m_qsDossierIndexes + "\\" + qsNumeroIndex + ".json";
+    }
+    qDebug() << m_qsFichierIndex;
+
+    m_qsNumeroVersion = ui->qcbVersion->currentText();
+    m_qsl7zipArguments.clear();
+    m_qsl7zipArgumentsLang.clear();
+    //ui->qlAdvancementsExtrait->setVisible(false);
+    //ui->qlLangExtraite->setVisible(false);
+
+    if (qsCheminVersion != "EMPTY") {
+        ui->qleCheminVersion->setText("C:\\fake_Path\\" + qsCheminVersion.split("/").last());
+    } else
+        ui->qleCheminVersion->setText("");
+
+    m_qdDossierAdvancedments.setPath("advancements/" + ui->qcbVersion->currentText() + "/");
+    m_qsFichierLang = m_qdDossierAdvancedments.absolutePath() + ui->qcbLangue->currentData().toString();
+    m_qsCleLang = "minecraft/lang" + ui->qcbLangue->currentData().toString().replace(".lang", ".json");
+
+    if (ui->qcbVersion->currentData() != "EMPTY")
+        m_bVersionOK = true;
+    else
+        m_bVersionOK = false;
+
+    if (m_qdDossierAdvancedments.exists() && QFile(m_qsFichierLang).exists() && m_bVersionOK) {
+        ui->qpbExtraireProgres->setText("Update Progrès");
+        ui->qpbExtraireProgres->setEnabled(true);
+        m_bUpdateProgres = true;
+        m_bProgresVanillaOK = true;
+
+        QDirIterator qdiFichierProgresExtrait(m_qdDossierAdvancedments.path(), qslFormatFichier, QDir::Files, QDirIterator::Subdirectories);
+        while (qdiFichierProgresExtrait.hasNext()) {
+            qdiFichierProgresExtrait.next();
+            iFicherDejaExtrait++;
+        }
+
+        if (iFicherDejaExtrait > 1) {
+            ui->qlAdvancementsExtrait->setText("Progrès extrait !");
+            ui->qlAdvancementsExtrait->setStyleSheet("QLabel { color: green; }");
+            ui->qlAdvancementsExtrait->setVisible(true);
+        } else {
+            ui->qlAdvancementsExtrait->setText("Progrès non extrait proprement !");
+            ui->qlAdvancementsExtrait->setStyleSheet("QLabel { color: red; }");
+            ui->qlAdvancementsExtrait->setVisible(true);
+        }
+
+        ui->qlLangExtraite->setText("Langue extraite !");
+        ui->qlLangExtraite->setStyleSheet("QLabel { color: green; }");
+        ui->qlLangExtraite->setVisible(true);
+
+    } else if (m_qdDossierAdvancedments.exists() && !QFile(m_qsFichierLang).exists() && m_bVersionOK) {
+        m_qdDossierAdvancedments.removeRecursively();
+        if (m_qdDossierAdvancedments.mkpath(".")) {
+            ui->qpbExtraireProgres->setEnabled(true);
+            ui->qpbExtraireProgres->setText("Extraire Progrès");
+            m_bUpdateProgres = false;
+            m_bProgresVanillaOK = false;
+
+            QDirIterator qdiFichierProgresExtrait(m_qdDossierAdvancedments.path(), qslFormatFichier, QDir::Files, QDirIterator::Subdirectories);
+            while (qdiFichierProgresExtrait.hasNext()) {
+                qdiFichierProgresExtrait.next();
+                iFicherDejaExtrait++;
+            }
+
+            if (iFicherDejaExtrait > 1) {
+                ui->qlAdvancementsExtrait->setText("Progrès extrait !");
+                ui->qlAdvancementsExtrait->setStyleSheet("QLabel { color: green; }");
+                ui->qlAdvancementsExtrait->setVisible(true);
+            } else {
+                ui->qlAdvancementsExtrait->setText("Progrès non extrait proprement !");
+                ui->qlAdvancementsExtrait->setStyleSheet("QLabel { color: red; }");
+                ui->qlAdvancementsExtrait->setVisible(true);
+            }
+
+            ui->qlLangExtraite->setText("Langue non extraite !");
+            ui->qlLangExtraite->setStyleSheet("QLabel { color: red; }");
+            ui->qlLangExtraite->setVisible(true);
+        }
+    } else if (ui->qcbVersion->currentData() == "EMPTY") {
+        ui->qpbExtraireProgres->setEnabled(false);
+        m_bProgresVanillaOK = false;
+    } else {
+        if (m_qdDossierAdvancedments.mkpath(".")) {
+            ui->qpbExtraireProgres->setEnabled(true);
+            ui->qpbExtraireProgres->setText("Extraire Progrès");
+            m_bUpdateProgres = false;
+            m_bProgresVanillaOK = false;
+        }
+    }
+
+    if (m_bVersionOK && m_bProgresVanillaOK && m_bProgresPersoOK) {
+        ui->qpbReadJSONsVanilla->setEnabled(true);
+    } else {
+        ui->qpbReadJSONsVanilla->setEnabled(false);
+    }
+
+    if (m_bVersionOK && m_bProgresPersoOK && m_bProgresBlazeandcaveOK) {
+        ui->qpbReadAllJSONs->setEnabled(true);
+    } else {
+        ui->qpbReadAllJSONs->setEnabled(false);
+    }
+
+    if (ui->qcbVersion->currentData() != "EMPTY") {
+        m_qsl7zipArguments << "x" << qsCheminVersion << "-o"+m_tempDir.path() << "-ir!data\\minecraft\\advancements\\*.json";
+        m_qsl7zipArgumentsLang << "x" << qsCheminVersion << "-o"+m_tempDir.path() << "-ir!assets\\minecraft\\lang\\*.json";
+    }
+}

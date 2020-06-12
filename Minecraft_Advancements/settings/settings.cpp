@@ -37,6 +37,18 @@ void Settings::initialisation(bool test) {
     m_version = this->getIniVersion();
     this->setVersion(m_version);
 
+    m_dossierBlazeAndCave = this->getIniDossierBlazeAndCave();
+    this->setDossierBlazeAndCave(m_dossierBlazeAndCave);
+
+    m_milestones = this->getIniMilestones();
+    this->setMilestones(m_milestones);
+
+    m_statistics = this->getIniStatistics();
+    this->setStatistics(m_statistics);
+
+    m_fichierAdvancementsPerso = this->getIniFichierAdvancementsPerso();
+    this->setFichierAdvancementsPerso(m_fichierAdvancementsPerso);
+
     qDebug() << getPath();
 }
 
@@ -193,4 +205,56 @@ QString Settings::getIniVersion() {
 
 QString Settings::getVersion() {
     return m_version;
+}
+
+void Settings::setDossierBlazeAndCave(QString dossier) {
+    this->m_dossierBlazeAndCave = dossier;
+    iniParam->setValue("data/dossierBAC", dossier);
+}
+
+QString Settings::getIniDossierBlazeAndCave() {
+    return iniParam->value("data/dossierBAC", settingDefaultString).toString();
+}
+
+QString Settings::getDossierBlazeAndCave() {
+    return m_dossierBlazeAndCave;
+}
+
+void Settings::setMilestones(bool enabled) {
+    this->m_milestones = enabled;
+    iniParam->setValue("data/milestones", enabled);
+}
+
+bool Settings::getIniMilestones() {
+    return iniParam->value("data/milestones", true).toBool();
+}
+
+bool Settings::getMilestones() {
+    return m_milestones;
+}
+
+void Settings::setStatistics(bool enabled) {
+    this->m_statistics = enabled;
+    iniParam->setValue("data/statistics", enabled);
+}
+
+bool Settings::getIniStatistics() {
+    return iniParam->value("data/statistics", true).toBool();
+}
+
+bool Settings::getStatistics() {
+    return m_statistics;
+}
+
+void Settings::setFichierAdvancementsPerso(QString fichier) {
+    this->m_fichierAdvancementsPerso = fichier;
+    iniParam->setValue("data/advancementsPerso", fichier);
+}
+
+QString Settings::getIniFichierAdvancementsPerso() {
+    return iniParam->value("data/advancementsPerso", settingDefaultString).toString();
+}
+
+QString Settings::getFichierAdvancementsPerso() {
+    return m_fichierAdvancementsPerso;
 }

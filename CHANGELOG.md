@@ -7,24 +7,36 @@ Suivis des version
 ### Ajout
 
 + Bouton Imprimer dans le menu Outils
+  
   ![Imgur](https://i.imgur.com/62Lgtfpm.png)
-+ [Issue#4](https://github.com/Chucky2401/Minecraft-Advancements/issues/4) **Mémorisation des saisis** Vous pouvez maintenant utiliser ce paramètre ! Il permet pour le moment de mémoriser et restaurer au démarrage :
-  + [x] Version
-  + [ ] Dossier 'Blaze and Cave'
-  + [ ] Afficher les Milestones ?
-  + [ ] Afficher les Statistiques ?
-  + [ ] Fichier Progrès
+  
++ [Issue#4](https://github.com/Chucky2401/Minecraft-Advancements/issues/4) **Mémorisation des saisis** Vous pouvez maintenant utiliser ce paramètre ! Il permet de mémoriser et restaurer au démarrage :
+  
+  + Version
+  + Dossier 'Blaze and Cave'
+  + Afficher les Milestones ?
+  + Afficher les Statistiques ?
+  + Fichier Progrès
+  
++ [Issue#13](https://github.com/Chucky2401/Minecraft-Advancements/issues/13) **Nettoyage nom condition** Traduction du maximum possible en utilisant les fichiers de Minecraft. Cela ne peut tout traduire, mais plus facile déjà pour tout le monde je pense.
+Attention, cette partie ralenti pas mal lors de la comparaison pour Blaze And Cave
+  
+  ![Imgur](https://i.imgur.com/wt1KvbKm.png)
 
 ### Modification
 
 + Ajout d'icônes pour les *Opérations*
+  
   ![Imgur](https://i.imgur.com/tLQhBJwm.png)
+  
 + Ajout de raccourcis clavier pour le menu
   + *Ctrl+Q* - **Quitter**
   + *Ctrl+I* - **Préférences**
   + *Ctrl+H* - **A Propos**
   + *Ctrl+U* - **Vérifier les mise à jour**
   + *Ctrl+P* - **Imprimer la vue**
+  
++ Même si les mises à jour Bêta sont recherchés. Une vérification sur le canal Release sera effectué en suivant pour être sûr de ne pas louper une version. Car aucun intérêt de mettre à jour un canal Bêta, alors que la Release apporte toutes les fonctionnalitées de ce dernier voir plus.
 
 ### Divers
 
@@ -34,6 +46,8 @@ Suivis des version
   + Position de certaines fonctions dans le fichier
 + Clôture [Issue#7](https://github.com/Chucky2401/Minecraft-Advancements/issues/7) **Réglages** Car la mémorisation des saisis et fait ! **Quand tout sera cocher dans *Ajout* - Je prends de l'avance sur le Changelog :stuck_out_tongue_closed_eyes:**
 + Je repousse l'[Issue#3](https://github.com/Chucky2401/Minecraft-Advancements/issues/3) **Masquer progrès**, car beaucoup de travail dessus. Et les filtres permettent de se *dépatouiller* pour le moment je pense.
++ Modification pour ignorer les commentaires dans les fichiers JSON de langue BACAP qui n'est pas un standard...
++ Utilisation de fonction pour éviter le code répétitif
 
 ### Notes
 
