@@ -65,12 +65,19 @@ Attention, cette partie ralenti pas mal lors de la comparaison pour Blaze And Ca
 ### Ajouts
 
 + [Issue#10](https://github.com/Chucky2401/Minecraft-Advancements/issues/10) **Mise à jour auto** Possibilité d'activer la recherche de mise à jour et/ou de faire une recherche de mise à jour manuelle ! Possible de choisir le canal Beta (instable).
+
 + **Icones** Ajout d'icones sur les boutons du menu :wink:
+
 + **Légende** Ajout d'une légende pour les couleurs
+
 + **Images** *Pour les chats seulement* Les chats se voient leurs images ajouté à côté du texte et en plus grand avec la souris dessus.
+  
   ![Imgur](https://i.imgur.com/DjYZVkPm.png)
+  
 + [Issue#16](https://github.com/Chucky2401/Minecraft-Advancements/issues/16) **Filtrer sur la date de réalisation** Il est maintenant possible de filtrer entre deux dates.
+  
   ![Date Filtre](https://i.imgur.com/vSTXtwQm.png)
+  
 + [Issue#14](https://github.com/Chucky2401/Minecraft-Advancements/issues/14) **Masquer les milestones** Possibilités de ne pas afficher les progrès sur les milestones et/ou les statistiques.
 
 ### Modifications
@@ -100,6 +107,7 @@ Attention, cette partie ralenti pas mal lors de la comparaison pour Blaze And Ca
 + **Effacer les filtres** Ajout d'un bouton pour effacer les filtres.
 
 + **Écran de démarrage** ou *Splash Screen* en anglais. Petite funitude :yum:
+  
   ![SplashScreen](https://i.imgur.com/hwnkLdqm.png)
 
 ## **v0.2.1** - *15/05/2020*
@@ -111,21 +119,25 @@ Attention, cette partie ralenti pas mal lors de la comparaison pour Blaze And Ca
 + [Issue#6](https://github.com/Chucky2401/Minecraft-Advancements/issues/6) **Ajout d'un menu**
 
   + Menu Principale
-    ![Menu](https://i.imgur.com/htvqUpSm.png)
-
-    Contient :
-
+    
+  ![Menu](https://i.imgur.com/htvqUpSm.png)
+    
+  Contient :
+    
     + Fichier -> Quitter (Raccourcis : CTRL + Q)
     + Outils -> Préférences (Raccourcis : CTRL + I)
-    + ? -> A Propos
-
+  + ? -> A Propos
+    
   + Par la même occasion, ajout d'une fenêtre *A Propos*. Contient un lien vers *GitHub*, *Discord des GoC*, chaine YouTube de *Olchladir* et *Athlif*
-    ![About](https://i.imgur.com/FvIXU8wm.png)
-
+    
+  ![About](https://i.imgur.com/FvIXU8wm.png)
+    
   + Ajout de la fenêtre de préférences **/!\\ En cours d'écriture /!\\**
-    ![Settings](https://i.imgur.com/NhVQ5Zcm.png)
-
+    
+  ![Settings](https://i.imgur.com/NhVQ5Zcm.png)
+    
   + Ajout d'une confirmation de fermeture
+    
     ![Confirmation](https://i.imgur.com/cWujerSm.png)
 
 + **Mémorisation taille et position** En ajoutant la fenêtres des préférences *(repris d'un autre de mes programmes)*, ajout de cette fonctionnalité. Au redémarrage du programme, si cette option est active la fenêtre sera remise à la même taille qu'à la fermeture.
@@ -136,18 +148,28 @@ Attention, cette partie ralenti pas mal lors de la comparaison pour Blaze And Ca
 + [Issue#8](https://github.com/Chucky2401/Minecraft-Advancements/issues/8)
 
   - **Filtre sur les titres** *Ajout d'une option activable / désactivable pour filtrer sous forme d'Expressions Régulière. [Par ici](https://www.lucaswillems.com/fr/articles/25/tutoriel-pour-maitriser-les-expressions-regulieres) si vous ne connaissez pas.*
-![Filtre et bouton imprimer](https://i.imgur.com/iZGgNvlm.png)
+
+    ![Filtre et bouton imprimer](https://i.imgur.com/iZGgNvlm.png)
+  
   - **Taille filtre des titres** Agrandissement sur le nombre d'éléments visibles à la fois
-  ![Taille Filtre Titre](https://i.imgur.com/kEKiI9Im.png)
+  
+    ![Taille Filtre Titre](https://i.imgur.com/kEKiI9Im.png)
+  
   - **Affichage autocomplétions** Affichage dans un pop-up. Il est plus facile de voir toutes les propositions lors de la recherche du titre.
-  ![Affichage autocomplétion](https://i.imgur.com/b2OBpeom.png)
+  
+    ![Affichage autocomplétion](https://i.imgur.com/b2OBpeom.png)
+  
   - **Activer/désactiver autocomplétions** Possibilité de l'activé ou non :wink:
-  ![activation](https://i.imgur.com/6FrUSDJm.png)
+  
+    ![activation](https://i.imgur.com/6FrUSDJm.png)
+  
   - **Ajout d'un séparateur** dans le champ de filtre sur le titre avant *----- Blaze and Cave -----* lors de la comparaison de tous *Vanilla + Blaze and Cave*
 
 
 + **Filtres et Opérations** Déplacement du bouton *Imprimer* dans un group *Opérations* avec le bouton *Effacer les filtres*
+  
   ![Filtres et Opérations](https://i.imgur.com/wQeZGWim.png)
+  
 + **Installeur** Ajout du dépôt *Beta* activable par l'utilisateur
 
 ### Correction
