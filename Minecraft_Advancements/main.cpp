@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     QApplication::setApplicationName("Minecraft Advancements");
-    QApplication::setApplicationVersion("0.2.5.2b");
+    QApplication::setApplicationVersion("0.2.5b");
     QCommandLineParser parser;
     bool test = false;
 

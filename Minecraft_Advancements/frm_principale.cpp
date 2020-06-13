@@ -1781,11 +1781,13 @@ void FRM_Principale::comparaisonVersion(bool ecrireFichier){
     if(bMiseAJourNecessaire){
         if(QMessageBox::question(this, "Mise à jour disponible", "La version " + qsVersionOnline + " est disponible.\n Voulez-vous mettre à jour ?", QMessageBox::Yes|QMessageBox::No) == QMessageBox::Yes){
             qDebug() << "On lance la mise à jour";
+            QMessageBox::information(this, "Mise à jour", "L'outils de maintenance va s'ouvrir pour vous guider dans la mise à jour.");
             QProcess *qpOutilDeMaintenance = new QProcess();
             QStringList arguments;
             arguments << "--updater";
             if (param->getMiseAJourBeta()) {
-                arguments << "--addTempRepository https://blackwizard.yj.fr/repository/b-advancements";
+                arguments << "--addTempRepository";
+                arguments << "https://blackwizard.yj.fr/repository/b-advancements";
             }
             qpOutilDeMaintenance->setProgram("maintenancetool.exe");
             qpOutilDeMaintenance->setArguments(arguments);

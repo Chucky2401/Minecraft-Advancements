@@ -2,12 +2,27 @@
 
 Suivis des version
 
-## **V0.2.5 Hotfix 2 (0.2.5.2)** - 13/06/2020
+## **V0.2.5 Hotfix 3 (0.2.5.3)** - 14/06/2020
+
+### Correction
+
++ Si recherche mise à jour Bêta, mauvais paramètre passer à l'outils de maintenance.
+
+  Vous avez deux solutions pour avoir cette mise à jour :
+
+  1. Désinstaller toutes version précédentes et réinstaller cette version.
+  2. Suivre le tuto [ici](https://github.com/Chucky2401/Minecraft-Advancements/wiki/Mise-à-jour-en-bêta-avant-v0.2.5.3) !
+
+### Ajout
+
++ Message indiquant que l'outils de maintenance va démarrer pour guider dans la mise à jour.
+
+## **V0.2.5 Hotfix 2 (0.2.5.2)** - *Non déployer*
 
 ### Correction
 
 + Oublie des dates dans le bouton "Effacer les filtres"
-+ Ajout du *Microsoft Visual C++ 2010 x86 Runtime* pour le support SSL. Sinon la recherche de mise à jour auto ne fonctionne pas sans. Si besoin vous pouvez le télécharger [ici](https://download.microsoft.com/download/5/B/C/5BC5DBB3-652D-4DCE-B14A-475AB85EEF6E/vcredist_x86.exe)
++ Ajout du *Microsoft Visual C++ 2010 x86 Runtime* pour le support SSL. Sinon la recherche de mise à jour auto ne fonctionne pas sans. Si besoin vous pouvez le télécharger [ici](https://download.microsoft.com/download/5/B/C/5BC5DBB3-652D-4DCE-B14A-475AB85EEF6E/vcredist_x86.exe). En gros, le programme dit toujours être dans la version la plus récente, alors que non.
 
 ### Ajout
 
