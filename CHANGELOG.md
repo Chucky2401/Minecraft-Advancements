@@ -7,6 +7,7 @@ Suivis des version
 ### Correction
 
 + Oublie des dates dans le bouton "Effacer les filtres"
++ Ajout du *Microsoft Visual C++ 2010 x86 Runtime* pour le support SSL. Sinon la recherche de mise à jour auto ne fonctionne pas sans. Si besoin vous pouvez le télécharger [ici](https://download.microsoft.com/download/5/B/C/5BC5DBB3-652D-4DCE-B14A-475AB85EEF6E/vcredist_x86.exe)
 
 ### Ajout
 
