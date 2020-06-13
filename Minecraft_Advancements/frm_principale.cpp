@@ -27,6 +27,8 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
         //connect(ui->qpbReadJSON, SIGNAL(clicked(bool)), this, SLOT(imprimerTable()));
     }
 
+    qDebug() << QSslSocket::sslLibraryBuildVersionString(),
+
     // On crée le nécessaire pour gérer les paramètres utilisateurs
     param = new Settings();
     param->initialisation(m_test);
