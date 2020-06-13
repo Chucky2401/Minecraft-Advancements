@@ -73,6 +73,7 @@ private:
     void traitementFichierAdvancements(QString fichier);
     void traitementDossierBac(QString folder);
     void toutesLesTraductions(QVariantMap jsonLang);
+    void effacerFiltreDate();
 
 // Fonction protéger
 protected:
@@ -171,6 +172,7 @@ private slots:
     void filtreTableTypeCondition(QString filtre);
     void dateFilterChanged();
     void effacerLesFiltres(bool checked);
+    void effacerFiltresSurLesDates(bool checked);
     void etatAutoCompletion(int etat);
     void dataSelectionnee(const QModelIndex index);
     // Impression

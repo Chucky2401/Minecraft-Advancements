@@ -22,6 +22,12 @@ void DateEtHeureFilterProxyModel::setFilterMaximumDate(QDateTime date)
     invalidateFilter();
 }
 
+void DateEtHeureFilterProxyModel::effacerFiltreDate() {
+    minDate = QDateTime();
+    maxDate = QDateTime();
+    invalidateFilter();
+}
+
 
 bool DateEtHeureFilterProxyModel::filterAcceptsRow(int sourceRow,
                                               const QModelIndex &sourceParent) const

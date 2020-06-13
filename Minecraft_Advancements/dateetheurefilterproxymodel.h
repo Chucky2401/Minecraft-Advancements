@@ -15,6 +15,8 @@ public:
     QDateTime filterMaximumDate() const { return maxDate; }
     void setFilterMaximumDate(QDateTime date);
 
+    void effacerFiltreDate();
+
 protected:
     bool filterAcceptsRow(int sourceRow, const QModelIndex &sourceParent) const override;
     //bool lessThan(const QModelIndex &left, const QModelIndex &right) const override;

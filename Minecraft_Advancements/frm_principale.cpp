@@ -152,6 +152,7 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     // Outils
     connect(ui->pbImprimer, SIGNAL(clicked(bool)), this, SLOT(imprimerTable(bool)));
     connect(ui->qpbClearFilter, SIGNAL(clicked(bool)), this, SLOT(effacerLesFiltres(bool)));
+    connect(ui->qpbResetDates, SIGNAL(clicked(bool)), this, SLOT(effacerFiltresSurLesDates(bool)));
     // Menu
     connect(ui->qaAbout, SIGNAL(triggered()), this, SLOT(ouvrirAPropos()));
     connect(ui->qaImprimerVue, SIGNAL(triggered(bool)), this, SLOT(imprimerTable(bool)));
@@ -734,6 +735,9 @@ void FRM_Principale::choixFichierAdvancements(bool checked) {
 
 }
 
+/*
+ * Slots pour comparer tous les progrès Vanilla
+ */
 void FRM_Principale::readJSONsVanilla(bool checked) {
     if (checked) {
         qDebug() << checked;
@@ -1017,6 +1021,9 @@ void FRM_Principale::readJSONsVanilla(bool checked) {
     }
 }
 
+/*
+ * Slots pour comparer tous les progrès BACAP
+ */
 void FRM_Principale::readJSONsBlazeandcave(bool checked) {
     if (checked) {
         qDebug() << checked;
@@ -1371,6 +1378,9 @@ void FRM_Principale::readJSONsBlazeandcave(bool checked) {
     }
 }
 
+/*
+ * Slots pour comparer tous les progrès (Vanilla + BCAP)
+ */
 void FRM_Principale::readAllJsons(bool checked) {
     if (checked) {
         qDebug() << checked;
@@ -1414,6 +1424,9 @@ void FRM_Principale::readAllJsons(bool checked) {
     bTousLesProgres = false;
 }
 
+/*
+ * Slots lors de la modification du filtre sur l'origine (Vanilla ou BCAP)
+ */
 void FRM_Principale::filtreTableOrigine(QString filtre) {
     proxModelFiltreOrigine->setFilterKeyColumn(0);
     proxModelFiltreOrigine->setFilterRegExp(QRegExp(filtre, Qt::CaseInsensitive, QRegExp::FixedString));
@@ -1432,6 +1445,9 @@ void FRM_Principale::filtreTableOrigine(QString filtre) {
     }
 }
 
+/*
+ * Slots lors du filtre sur le titre
+ */
 void FRM_Principale::filtreTableTitre(QString filtre) {
     if (filtre != "----- Minecraft Vanilla -----" && filtre != "----- Blaze and Cave -----") {
         proxyModelFiltreTitre->setFilterKeyColumn(1);
@@ -1452,6 +1468,9 @@ void FRM_Principale::filtreTableTitre(QString filtre) {
     }
 }
 
+/*
+ * Slots lors du filtre si progrès finis (oui/non)
+ */
 void FRM_Principale::filtreTableProgresFinis(QString filtre) {
     proxyModelFiltreProgresFinis->setFilterKeyColumn(2);
     proxyModelFiltreProgresFinis->setFilterRegExp(QRegExp(filtre, Qt::CaseInsensitive, QRegExp::FixedString));
@@ -1476,6 +1495,9 @@ void FRM_Principale::filtreTableProgresFinis(QString filtre) {
     }
 }
 
+/*
+ * Slots lors du filtre si condition faite (oui/non)
+ */
 void FRM_Principale::filtreTableConditionFait(QString filtre) {
     proxyModelFiltreConditionFaite->setFilterKeyColumn(4);
     proxyModelFiltreConditionFaite->setFilterRegExp(QRegExp(filtre, Qt::CaseInsensitive, QRegExp::FixedString));
@@ -1484,17 +1506,26 @@ void FRM_Principale::filtreTableConditionFait(QString filtre) {
     }
 }
 
+/*
+ * Slots lors du filtre sur le type de condition (ET/OU/UN)
+ */
 void FRM_Principale::filtreTableTypeCondition(QString filtre) {
     proxyModelFiltreTypeCondition->setFilterKeyColumn(6);
     proxyModelFiltreTypeCondition->setFilterRegExp(QRegExp(filtre, Qt::CaseInsensitive, QRegExp::FixedString));
 }
 
+/*
+ * Slots lors du filtre sur les dates
+ */
 void FRM_Principale::dateFilterChanged()
 {
     proxyModelFiltreDate->setFilterMinimumDate(ui->qdteFrom->dateTime());
     proxyModelFiltreDate->setFilterMaximumDate(ui->qdteTo->dateTime());
 }
 
+/*
+ * Slots lors du clique sur le bouton "Effacer les filtres"
+ */
 void FRM_Principale::effacerLesFiltres(bool checked) {
     if (checked) {
         qDebug() << checked;
@@ -1505,6 +1536,18 @@ void FRM_Principale::effacerLesFiltres(bool checked) {
     ui->qcbFiltreProgresFinis->setCurrentIndex(0);
     ui->qcbFiltreConditionFait->setCurrentIndex(0);
     ui->qcbFiltreType->setCurrentIndex(0);
+    effacerFiltreDate();
+}
+
+/*
+ * Slots lors du clique sur le bouton "Reset dates"
+ */
+void FRM_Principale::effacerFiltresSurLesDates(bool checked) {
+    if (checked) {
+        qDebug() << checked;
+    }
+
+    effacerFiltreDate();
 }
 
 void FRM_Principale::etatAutoCompletion(int etat) {
@@ -2020,6 +2063,9 @@ void FRM_Principale::traitementFichierAdvancements(QString fichier) {
     }
 }
 
+/*
+ * Fonction pour récupérer toutes les traductions de Minecraft dans deux QStringList
+ */
 void FRM_Principale::toutesLesTraductions(QVariantMap jsonLang) {
     m_qslClesToutesLesTrads.clear();
     m_qslToutesLesTrads.clear();
@@ -2030,6 +2076,15 @@ void FRM_Principale::toutesLesTraductions(QVariantMap jsonLang) {
           m_qslClesToutesLesTrads << i.key();
           m_qslToutesLesTrads << i.value().toString();
       }
+}
+
+/*
+ * Fonctions pour effecer le filtre sur les dates
+ */
+void FRM_Principale::effacerFiltreDate() {
+    ui->qdteFrom->setDateTime(QDateTime(QDate(1970, 01, 01), QTime(0, 0, 0)));
+    ui->qdteTo->setDateTime(QDateTime(QDate(2099, 12, 31), QTime(23, 59, 59)));
+    proxyModelFiltreDate->effacerFiltreDate();
 }
 
 /*

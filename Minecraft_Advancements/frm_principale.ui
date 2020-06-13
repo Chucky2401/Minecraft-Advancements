@@ -730,6 +730,17 @@
            </property>
           </widget>
          </item>
+         <item row="1" column="0">
+          <widget class="QPushButton" name="qpbResetDates">
+           <property name="text">
+            <string>Reset dates</string>
+           </property>
+           <property name="icon">
+            <iconset resource="img.qrc">
+             <normaloff>:/img/icons8_day_off_24px.png</normaloff>:/img/icons8_day_off_24px.png</iconset>
+           </property>
+          </widget>
+         </item>
         </layout>
        </widget>
       </item>

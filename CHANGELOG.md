@@ -2,14 +2,26 @@
 
 Suivis des version
 
-## V0.2.5 Hotfix 1 (0.2.5.1) - **13/06/2020**
+## **V0.2.5 Hotfix 2 (0.2.5.2)** - 13/06/2020
+
+### Correction
+
++ Oublie des dates dans le bouton "Effacer les filtres"
+
+### Ajout
+
++ Un bouton pour supprimer le filtre sur les dates seulement
+
+  ![Imgur](https://i.imgur.com/CMExm5mm.png)
+
+## **V0.2.5 Hotfix 1 (0.2.5.1)** - 13/06/2020
 
 ### Correction
 
 + La recherche de mise à jour ne fonctionne pas du tout depuis la 0.2.4.1. Correction du code.
   **Il est nécessaire de réinstaller complètement l'applications !**
 
-## V0.2.5 - *Non déployer*
+## **V0.2.5** - *Non déployer*
 
 ### Ajout
 
