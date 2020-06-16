@@ -381,6 +381,7 @@ void FRM_Principale::choixVersion(QString text) {
             ui->qlAdvancementsExtrait->setText("Progrès extrait !");
             ui->qlAdvancementsExtrait->setStyleSheet("QLabel { color: green; }");
             ui->qlAdvancementsExtrait->setVisible(true);
+
         } else {
             ui->qlAdvancementsExtrait->setText("Progrès non extrait proprement !");
             ui->qlAdvancementsExtrait->setStyleSheet("QLabel { color: red; }");
@@ -437,17 +438,19 @@ void FRM_Principale::choixVersion(QString text) {
         }
     }
 
-    if (m_bVersionOK && m_bProgresVanillaOK && m_bProgresPersoOK) {
-        ui->qpbReadJSONsVanilla->setEnabled(true);
-    } else {
-        ui->qpbReadJSONsVanilla->setEnabled(false);
-    }
+    activationBoutonExtraction();
 
-    if (m_bVersionOK && m_bProgresPersoOK && m_bProgresBlazeandcaveOK) {
-        ui->qpbReadAllJSONs->setEnabled(true);
-    } else {
-        ui->qpbReadAllJSONs->setEnabled(false);
-    }
+//    if (m_bVersionOK && m_bProgresVanillaOK && m_bProgresPersoOK) {
+//        ui->qpbReadJSONsVanilla->setEnabled(true);
+//    } else {
+//        ui->qpbReadJSONsVanilla->setEnabled(false);
+//    }
+
+//    if (m_bVersionOK && m_bProgresPersoOK && m_bProgresBlazeandcaveOK) {
+//        ui->qpbReadAllJSONs->setEnabled(true);
+//    } else {
+//        ui->qpbReadAllJSONs->setEnabled(false);
+//    }
 
     // On prépare les variables pour l'extraction des fichiers advancements
     // et pour les langues
@@ -656,17 +659,19 @@ void FRM_Principale::extraireProgres(bool checked) {
         m_bProgresVanillaOK = true;
     }
 
-    if (m_bVersionOK && m_bProgresVanillaOK && m_bProgresPersoOK) {
-        ui->qpbReadJSONsVanilla->setEnabled(true);
-    } else {
-        ui->qpbReadJSONsVanilla->setEnabled(false);
-    }
+    activationBoutonExtraction();
 
-    if (m_bVersionOK && m_bProgresVanillaOK && m_bProgresPersoOK && m_bProgresBlazeandcaveOK) {
-        ui->qpbReadAllJSONs->setEnabled(true);
-    } else {
-        ui->qpbReadAllJSONs->setEnabled(false);
-    }
+//    if (m_bVersionOK && m_bProgresVanillaOK && m_bProgresPersoOK) {
+//        ui->qpbReadJSONsVanilla->setEnabled(true);
+//    } else {
+//        ui->qpbReadJSONsVanilla->setEnabled(false);
+//    }
+
+//    if (m_bVersionOK && m_bProgresVanillaOK && m_bProgresPersoOK && m_bProgresBlazeandcaveOK) {
+//        ui->qpbReadAllJSONs->setEnabled(true);
+//    } else {
+//        ui->qpbReadAllJSONs->setEnabled(false);
+//    }
 
 }
 
@@ -853,6 +858,7 @@ void FRM_Principale::readJSONsVanilla(bool checked) {
                     qsTitre = qsTitre.trimmed();
                 }
             }
+            qsTitre.replace("’", "'");
 
             if (qsTitre != qsTitrePrecedent) {
                 qsTitrePrecedent = qsTitre;
@@ -1206,6 +1212,8 @@ void FRM_Principale::readJSONsBlazeandcave(bool checked) {
                     }
                     qsTitre = qsTitre.trimmed();
                 }
+
+                qsTitre.replace("’", "'");
 
                 if (qsTitre != qsTitrePrecedent) {
                     qsTitrePrecedent = qsTitre;
@@ -1572,8 +1580,14 @@ void FRM_Principale::etatAutoCompletion(int etat) {
 }
 
 void FRM_Principale::dataSelectionnee(const QModelIndex index) {
-    qDebug() << index;
-    qDebug() << proxyModelFiltreTypeCondition->data(index, Qt::UserRole);
+    QModelIndex qmiTitre = proxyModelFiltreDate->index(index.row(), 1);
+    QString qsTitreDisplay = proxyModelFiltreDate->data(qmiTitre, Qt::DisplayRole).toString();
+    QString qsTitreData = proxyModelFiltreDate->data(qmiTitre, Qt::UserRole).toString();
+
+    qsTitreDisplay.replace(QRegularExpression(" \\(.+\\)"), "");
+
+    qDebug() << qsTitreData;
+    qDebug() << qsTitreDisplay;
 }
 
 void FRM_Principale::imprimerTable(bool checked) {
@@ -1968,17 +1982,19 @@ void FRM_Principale::traitementDossierBac(QString folder) {
         m_bProgresBlazeandcaveOK = false;
     }
 
-    if (m_bProgresBlazeandcaveOK && m_bProgresPersoOK) {
-        ui->qpbReadJSONsBlazeandcave->setEnabled(true);
-    } else {
-        ui->qpbReadJSONsBlazeandcave->setEnabled(false);
-    }
+    activationBoutonExtraction();
 
-    if (m_bVersionOK && m_bProgresVanillaOK && m_bProgresPersoOK && m_bProgresBlazeandcaveOK) {
-        ui->qpbReadAllJSONs->setEnabled(true);
-    } else {
-        ui->qpbReadAllJSONs->setEnabled(false);
-    }
+//    if (m_bProgresBlazeandcaveOK && m_bProgresPersoOK) {
+//        ui->qpbReadJSONsBlazeandcave->setEnabled(true);
+//    } else {
+//        ui->qpbReadJSONsBlazeandcave->setEnabled(false);
+//    }
+
+//    if (m_bVersionOK && m_bProgresVanillaOK && m_bProgresPersoOK && m_bProgresBlazeandcaveOK) {
+//        ui->qpbReadAllJSONs->setEnabled(true);
+//    } else {
+//        ui->qpbReadAllJSONs->setEnabled(false);
+//    }
 }
 
 /*
@@ -2047,23 +2063,45 @@ void FRM_Principale::traitementFichierAdvancements(QString fichier) {
         }
         ui->qlProgresPersoOuvert->setVisible(true);
 
-        if (m_bVersionOK && m_bProgresVanillaOK && m_bProgresPersoOK) {
-            ui->qpbReadJSONsVanilla->setEnabled(true);
-        } else {
-            ui->qpbReadJSONsVanilla->setEnabled(false);
-        }
+        activationBoutonExtraction();
 
-        if (m_bProgresBlazeandcaveOK && m_bProgresPersoOK) {
-            ui->qpbReadJSONsBlazeandcave->setEnabled(true);
-        } else {
-            ui->qpbReadJSONsBlazeandcave->setEnabled(false);
-        }
+//        if (m_bVersionOK && m_bProgresVanillaOK && m_bProgresPersoOK) {
+//            ui->qpbReadJSONsVanilla->setEnabled(true);
+//        } else {
+//            ui->qpbReadJSONsVanilla->setEnabled(false);
+//        }
 
-        if (m_bVersionOK && m_bProgresVanillaOK && m_bProgresPersoOK && m_bProgresBlazeandcaveOK) {
-            ui->qpbReadAllJSONs->setEnabled(true);
-        } else {
-            ui->qpbReadAllJSONs->setEnabled(false);
-        }
+//        if (m_bProgresBlazeandcaveOK && m_bProgresPersoOK) {
+//            ui->qpbReadJSONsBlazeandcave->setEnabled(true);
+//        } else {
+//            ui->qpbReadJSONsBlazeandcave->setEnabled(false);
+//        }
+
+//        if (m_bVersionOK && m_bProgresVanillaOK && m_bProgresPersoOK && m_bProgresBlazeandcaveOK) {
+//            ui->qpbReadAllJSONs->setEnabled(true);
+//        } else {
+//            ui->qpbReadAllJSONs->setEnabled(false);
+//        }
+    }
+}
+
+void FRM_Principale::activationBoutonExtraction() {
+    if (m_bVersionOK && m_bProgresVanillaOK && m_bProgresPersoOK) {
+        ui->qpbReadJSONsVanilla->setEnabled(true);
+    } else {
+        ui->qpbReadJSONsVanilla->setEnabled(false);
+    }
+
+    if (m_bProgresBlazeandcaveOK && m_bProgresPersoOK) {
+        ui->qpbReadJSONsBlazeandcave->setEnabled(true);
+    } else {
+        ui->qpbReadJSONsBlazeandcave->setEnabled(false);
+    }
+
+    if (m_bVersionOK && m_bProgresVanillaOK && m_bProgresPersoOK && m_bProgresBlazeandcaveOK) {
+        ui->qpbReadAllJSONs->setEnabled(true);
+    } else {
+        ui->qpbReadAllJSONs->setEnabled(false);
     }
 }
 

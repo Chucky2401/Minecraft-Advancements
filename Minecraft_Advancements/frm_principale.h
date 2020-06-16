@@ -72,6 +72,7 @@ private:
     QVariantMap ouvrirJson(QString fichier);
     void traitementFichierAdvancements(QString fichier);
     void traitementDossierBac(QString folder);
+    void activationBoutonExtraction();
     void toutesLesTraductions(QVariantMap jsonLang);
     void effacerFiltreDate();
 

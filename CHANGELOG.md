@@ -2,6 +2,12 @@
 
 Suivis des version
 
+## **V0.2.5 Hotfix 4 (0.2.5.4)** - 16/06/2020
+
+### Correction
+
++ Pour certains progrès, ce n'était pas une apostrophe du clavier AZERTY, mais un caractère similaire. Ajout d'un *remplace* pour mettre le caractère de nos claviers.
+
 ## **V0.2.5 Hotfix 3 (0.2.5.3)** - 14/06/2020
 
 ### Correction
@@ -12,6 +18,8 @@ Suivis des version
 
   1. Désinstaller toutes version précédentes et réinstaller cette version.
   2. Suivre le tuto [ici](https://github.com/Chucky2401/Minecraft-Advancements/wiki/Mise-à-jour-en-bêta-avant-v0.2.5.3) !
+  
++ Utilisation d'une fonction pour activation/désactivation des boutons d'extraction, car bug lors de changement de version de Minecraft ou autres.
 
 ### Ajout
 
