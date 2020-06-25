@@ -10,8 +10,15 @@ CONFIG += c++11
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
 
-INCLUDEPATH += "D:\Qt\Tools\OpenSSL\Win_x86\include"
-LIBS += -LD:\Qt\Tools\OpenSSL\Win_x86\lib -llibcrypto -llibssl
+#INCLUDEPATH += "D:\Qt\Tools\OpenSSL\Win_x86\include"
+#LIBS += -LD:\Qt\Tools\OpenSSL\Win_x86\lib -llibcrypto -llibssl
+win32:contains(QMAKE_HOST.arch, x86_64) {
+    INCLUDEPATH += "D:\Qt\Tools\OpenSSL\Win_x64\include"
+    LIBS += -LD:\Qt\Tools\OpenSSL\Win_x64\lib -llibcrypto -llibssl
+} else {
+    INCLUDEPATH += "D:\Qt\Tools\OpenSSL\Win_x86\include"
+    LIBS += -LD:\Qt\Tools\OpenSSL\Win_x86\lib -llibcrypto -llibssl
+}
 
 # You can also make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.

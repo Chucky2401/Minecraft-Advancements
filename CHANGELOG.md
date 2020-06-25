@@ -2,6 +2,27 @@
 
 Suivis des version
 
+## **V0.2.6** - *To Be Announced*
+
+### Correction
+
++ Correction des .dll lors migration **Qt 5.15**
++ Correction des binaires pour être du 32 bits sur l'architecture 32 bits
+
+### Ajout
+
++ Programme disponible en architecture 32 bits (x86) et 64 bits (x64) ! A vous de choisir celle que vous préférez ! Je vous conseil tout de même la 64 bits :wink:
+  [Résultat du sondage](https://docs.google.com/forms/d/e/1FAIpQLSehyTG2_jkLtpeAD-8g2r8esU4IldJcWlvEdIlanZdosfHoeg/viewanalytics)
++ Création d'un dossier **build** pour l'architecture 64 bits avec binaires et dll associées
+
+### Modification
+
++ Passage en **Qt 5.15** *(vivement Qt 6 !)* et utilisation de **MinGW** (compilateur) en **8.1** au lieu de **7.3**
+
+### Divers
+
++ Ajout des fichiers nécessaires pour création package et repository au GitHub.
+
 ## **V0.2.5 Hotfix 4 (0.2.5.4)** - 16/06/2020
 
 ### Correction

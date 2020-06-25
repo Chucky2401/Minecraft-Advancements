@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+    <DisplayName>Minecraft Advancements</DisplayName>
+    <Description>Suivis complet des progrès Minecraft Vanilla et Blaze and Cave.</Description>
+    <Version>0.1.1</Version>
+    <ReleaseDate>2020-05-07</ReleaseDate>
+    <Licenses>
+        <License name="GNU Public License Agreement" file="license.txt" />
+    </Licenses>
+    <Script>installscript.qs</Script>
+    <UserInterfaces>
+        <UserInterface>launchattheend.ui</UserInterface>
+        <UserInterface>startmenushortcutcheckboxform.ui</UserInterface>
+    </UserInterfaces>
+    <Default>true</Default>
+    <ForcedInstallation>true</ForcedInstallation>
+</Package>
