@@ -2,6 +2,7 @@
 
 Settings::Settings() {
     m_qsAppdataPath = qEnvironmentVariable("APPDATA");
+    m_qsPathRoamingBdd = m_qsAppdataPath + "\\BlackWizard Company\\bdd\\";
 
 }
 
@@ -10,6 +11,17 @@ void Settings::initialisation(bool test) {
         qDebug() << test;
     }
     iniParam = new QSettings(QSettings::IniFormat, QSettings::UserScope, "BlackWizard Company", "Minecraft Advancements");
+
+    bddPath = this->getIniBddPath();
+    if (bddPath == settingDefaultString){
+        this->setBddPath(m_qsPathRoamingBdd);
+    }
+
+    if (test){
+        this->setBddName("minecraft_Advancements-TEST.db");
+    } else {
+        this->setBddName("minecraft_Advancements.db");
+    }
 
     geometrie = this->getIniGeometrie();
     etat = this->getIniEtat();
@@ -66,6 +78,28 @@ QString Settings::getPath() {
         }
     }
     return qsChemin;
+}
+
+void Settings::setBddPath(QString path){
+    this->bddPath = path;
+    iniParam->setValue("bdd/path", path);
+}
+
+QString Settings::getBddPath(){
+    return this->bddPath;
+}
+
+QString Settings::getIniBddPath(){
+    return iniParam->value("bdd/path", settingDefaultString).toString();
+}
+
+void Settings::setBddName(QString name){
+    this->bddName = name;
+    //iniParam->setValue("bdd/name", name);
+}
+
+QString Settings::getBddName(){
+    return this->bddName;
 }
 
 void Settings::setGeometrie(QByteArray geometrie){

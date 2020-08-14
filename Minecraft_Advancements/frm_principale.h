@@ -43,6 +43,7 @@
 
 #include "dateetheurefilterproxymodel.h"
 #include "settings/settings.h"
+#include "settings/database.h"
 #include "settings/dia_parametres.h"
 #include "dia_apropos.h"
 
@@ -84,6 +85,8 @@ protected:
 private:
     //GUI
     Ui::FRM_Principale *ui;
+    // Constante
+    const QString connectionName = "principal";
     // Booléen
     bool ouvertureEnCours;
     bool m_bErreurExtraction;
@@ -138,6 +141,7 @@ private:
     QCompleter *m_sansCompleter;
     // Settings
     class Settings *param;
+    class database bdd;
     DIA_Parametres *diaParametres;
     DIA_apropos *diaAPropos;
     // Mise à jour
