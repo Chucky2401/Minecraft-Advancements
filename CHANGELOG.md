@@ -2,7 +2,7 @@
 
 Suivis des version
 
-## **V0.2.5 Hotfix 4 (0.2.5.4)** - 16/06/2020
+## **V1.0.0** - 16/06/2020
 
 ### Correction
 

@@ -29,8 +29,8 @@ Par contre, pour *Blaze and Cave*, il vous faudra le datapack extrait.
 ## Technologies
 
 + C++
-+ Qt 5.14.2 Community Edition
-+ Microsoft Visual C++ 2010 x86 Runtime
++ Qt 5.15.0 Community Edition
++ Microsoft Visual C++ 2010 x86/x64 Runtime
 + *Et c'est tout !*
 
 ## Installation

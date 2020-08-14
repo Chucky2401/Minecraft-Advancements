@@ -493,6 +493,7 @@ void FRM_Principale::extraireProgres(bool checked) {
 
     m_qp7zProcess->start(m_qs7zBin, m_qsl7zipArguments);
     if (m_qp7zProcess->waitForFinished()) {
+        qDebug() << "7z finis";
         QDirIterator qdiFichierProgres(m_tempDir.path()+"/data/minecraft/advancements/", qslFormatFichier, QDir::Files, QDirIterator::Subdirectories);
 
         while (qdiFichierProgres.hasNext() && !bErreurDetecteAdvancement) {

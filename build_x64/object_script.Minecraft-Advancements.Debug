@@ -1,0 +1,10 @@
+debug/dateetheurefilterproxymodel.o
+debug/dia_apropos.o
+debug/main.o
+debug/frm_principale.o
+debug/dia_parametres.o
+debug/settings.o
+debug/qrc_img.o
+debug/moc_dia_apropos.o
+debug/moc_frm_principale.o
+debug/moc_dia_parametres.o

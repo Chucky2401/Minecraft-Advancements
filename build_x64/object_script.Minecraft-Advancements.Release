@@ -1,0 +1,10 @@
+release/dateetheurefilterproxymodel.o
+release/dia_apropos.o
+release/main.o
+release/frm_principale.o
+release/dia_parametres.o
+release/settings.o
+release/qrc_img.o
+release/moc_dia_apropos.o
+release/moc_frm_principale.o
+release/moc_dia_parametres.o

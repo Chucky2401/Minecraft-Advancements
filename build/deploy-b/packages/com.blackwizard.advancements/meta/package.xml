@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+    <DisplayName>Minecraft Advancements</DisplayName>
+    <Description>Suivis complet des progrès Minecraft Vanilla et Blaze and Cave. Version BÊTA</Description>
+    <Version>0.2.6</Version>
+    <ReleaseDate>2020-06-20</ReleaseDate>
+    <Name>com.blackwizard.advancements</Name>
+    <Licenses>
+        <License name="GNU Public License Agreement" file="license.txt" />
+    </Licenses>
+    <Script>installscript.qs</Script>
+    <UserInterfaces>
+        <UserInterface>launchattheend.ui</UserInterface>
+        <UserInterface>startmenushortcutcheckboxform.ui</UserInterface>
+    </UserInterfaces>
+    <UpdateText>Typographie de l'apostrophe</UpdateText>
+    <Default>true</Default>
+    <ForcedInstallation>true</ForcedInstallation>
+</Package>
+

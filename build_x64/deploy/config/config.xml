@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Installer>
+    <Name>Minecraft Advancements</Name>
+    <Version>0.1.1</Version>
+    <Title>Minecraft Advancements</Title>
+    <Publisher>Black Wizard Company</Publisher>
+    <ProductUrl>https://chucky2401.github.io/Minecraft-Advancements/</ProductUrl>
+    <InstallerWindowIcon>minecraft.png</InstallerWindowIcon>
+    <InstallerApplicationIcon>minecraft.ico</InstallerApplicationIcon>
+    <StartMenuDir>BW Company</StartMenuDir>
+    <TargetDir>@ApplicationsDirX64@/Minecraft Advancements</TargetDir>
+    <WizardStyle>Modern</WizardStyle>
+    <InstallActionColumnVisible>true</InstallActionColumnVisible>
+    <RemoteRepositories>
+        <Repository>
+             <Url>https://blackwizard.yj.fr/repository/advancements-x64</Url>
+             <Enabled>1</Enabled>
+             <DisplayName>Release</DisplayName>
+        </Repository>
+</RemoteRepositories>
+</Installer>

@@ -6,6 +6,9 @@ Settings::Settings() {
 }
 
 void Settings::initialisation(bool test) {
+    if (test) {
+        qDebug() << test;
+    }
     iniParam = new QSettings(QSettings::IniFormat, QSettings::UserScope, "BlackWizard Company", "Minecraft Advancements");
 
     geometrie = this->getIniGeometrie();
