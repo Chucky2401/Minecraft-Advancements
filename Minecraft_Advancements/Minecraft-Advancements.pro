@@ -1,4 +1,4 @@
-QT       += core gui printsupport network xml
+QT       += core gui printsupport network xml sql
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -32,6 +32,7 @@ SOURCES += \
     dia_apropos.cpp \
     main.cpp \
     frm_principale.cpp \
+    settings/database.cpp \
     settings/dia_parametres.cpp \
     settings/settings.cpp
 
@@ -39,6 +40,7 @@ HEADERS += \
     dateetheurefilterproxymodel.h \
     dia_apropos.h \
     frm_principale.h \
+    settings/database.h \
     settings/dia_parametres.h \
     settings/settings.h
 

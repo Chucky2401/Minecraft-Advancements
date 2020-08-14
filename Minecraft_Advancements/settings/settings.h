@@ -19,6 +19,14 @@ public:
     void initialisation(bool test = false);
 
     QString getPath();
+
+    void setBddPath(QString path);
+    QString getBddPath();
+    QString getIniBddPath();
+
+    void setBddName(QString name);
+    QString getBddName();
+
     void setGeometrie(QByteArray geometrie);
     void setEtat(QByteArray etat);
     void setGeometrieEtat(QByteArray geometrie, QByteArray etat);
@@ -85,7 +93,10 @@ private:
     const QVariant settingDefaultByteArray = "DNE";
 
     QString m_qsAppdataPath;
+    QString m_qsPathRoamingBdd;
     QSettings *iniParam;
+    QString bddPath;
+    QString bddName;
     QByteArray geometrie;
     QByteArray etat;
     bool restoreSizePos;

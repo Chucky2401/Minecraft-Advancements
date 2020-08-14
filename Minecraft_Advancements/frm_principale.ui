@@ -161,6 +161,13 @@
         </property>
        </widget>
       </item>
+      <item row="1" column="2">
+       <widget class="QLabel" name="qlLangExtraite">
+        <property name="text">
+         <string>TextLabel</string>
+        </property>
+       </widget>
+      </item>
       <item row="0" column="4">
        <widget class="QPushButton" name="qpbExtraireProgres">
         <property name="text">
@@ -178,17 +185,29 @@
         </property>
        </widget>
       </item>
-      <item row="1" column="2">
-       <widget class="QLabel" name="qlLangExtraite">
+      <item row="1" column="0" colspan="2">
+       <widget class="QLabel" name="qlAdvancementsExtrait">
         <property name="text">
          <string>TextLabel</string>
         </property>
        </widget>
       </item>
-      <item row="1" column="0" colspan="2">
-       <widget class="QLabel" name="qlAdvancementsExtrait">
-        <property name="text">
-         <string>TextLabel</string>
+      <item row="2" column="0" colspan="5">
+       <widget class="QProgressBar" name="qpbExtraireProgresVanilla">
+        <property name="maximumSize">
+         <size>
+          <width>16777215</width>
+          <height>10</height>
+         </size>
+        </property>
+        <property name="value">
+         <number>24</number>
+        </property>
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="invertedAppearance">
+         <bool>false</bool>
         </property>
        </widget>
       </item>
@@ -448,13 +467,6 @@
        </widget>
       </item>
      </layout>
-    </item>
-    <item>
-     <widget class="QProgressBar" name="qpbTraitementProgres">
-      <property name="value">
-       <number>24</number>
-      </property>
-     </widget>
     </item>
     <item>
      <widget class="QTableView" name="tableView">
