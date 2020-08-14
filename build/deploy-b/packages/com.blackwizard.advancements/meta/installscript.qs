@@ -28,7 +28,7 @@
 
 function Component()
 {
-    var tempRepo = ["https://blackwizard.yj.fr/repository/b-advancements"]
+    var tempRepo = ["https://advancements.blackwizard.fr/repository/beta"]
     installer.setTemporaryRepositories(tempRepo, false)
     
     if (installer.isUpdater()) {
