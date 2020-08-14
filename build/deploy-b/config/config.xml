@@ -13,7 +13,7 @@
     <InstallActionColumnVisible>true</InstallActionColumnVisible>
     <RemoteRepositories>
         <Repository>
-             <Url>https://blackwizard.yj.fr/repository/advancements</Url>
+             <Url>https://advancements.blackwizard.fr/repository/release</Url>
              <Enabled>1</Enabled>
              <DisplayName>Release</DisplayName>
         </Repository>

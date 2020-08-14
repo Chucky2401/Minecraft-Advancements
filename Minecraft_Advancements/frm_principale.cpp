@@ -1677,10 +1677,10 @@ void FRM_Principale::ouvrirParametres(){
 void FRM_Principale::verifierMiseAJour(){
     QUrl url;
     if (param->getMiseAJourBeta() && !m_updateBetaVerifiee) {
-        url.setUrl("https://blackwizard.yj.fr/repository/b-advancements/Updates.xml");
+        url.setUrl("https://advancements.blackwizard.fr/repository/beta/Updates.xml");
         m_updateBetaVerifiee = true;
     } else {
-        url.setUrl("https://blackwizard.yj.fr/repository/advancements/Updates.xml");
+        url.setUrl("https://advancements.blackwizard.fr/repository/release/Updates.xml");
         m_updateBetaVerifiee = false;
     }
     QNetworkRequest request;
@@ -1802,7 +1802,7 @@ void FRM_Principale::comparaisonVersion(bool ecrireFichier){
             arguments << "--updater";
             if (param->getMiseAJourBeta()) {
                 arguments << "--addTempRepository";
-                arguments << "https://blackwizard.yj.fr/repository/b-advancements";
+                arguments << "https://advancements.blackwizard.fr/repository/beta";
             }
             qpOutilDeMaintenance->setProgram("maintenancetool.exe");
             qpOutilDeMaintenance->setArguments(arguments);

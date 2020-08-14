@@ -8,6 +8,10 @@ Suivis des version
 
 + Pour certains progrès, ce n'était pas une apostrophe du clavier AZERTY, mais un caractère similaire. Ajout d'un *remplace* pour mettre le caractère de nos claviers.
 
+### Modification
+
++ Suite à l'achat d'un serveur avec nom de domaine, modification des repository :wink:
+
 ## **V0.2.5 Hotfix 3 (0.2.5.3)** - 14/06/2020
 
 ### Correction
