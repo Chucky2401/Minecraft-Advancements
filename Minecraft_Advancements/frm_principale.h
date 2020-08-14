@@ -4,6 +4,7 @@
 #include <Qt>
 #include <QTextDocument>
 #include <QMainWindow>
+#include <QCloseEvent>
 
 #include <QTemporaryDir>
 
@@ -26,25 +27,65 @@
 #include <QStandardItemModel>
 #include <QStandardItem>
 #include <QSortFilterProxyModel>
+#include <QCompleter>
+
+#include <QUrl>
+#include <QNetworkAccessManager>
+#include <QNetworkRequest>
+#include <QNetworkReply>
+#include <QtXml>
+#include <QProcess>
+
+#include <QtPrintSupport/QPrinter>
+#include <QtPrintSupport/QPrintDialog>
 
 #include <QDebug>
 
+#include "dateetheurefilterproxymodel.h"
+#include "settings/settings.h"
+#include "settings/dia_parametres.h"
+#include "dia_apropos.h"
+
 QT_BEGIN_NAMESPACE
-namespace Ui { class FRM_Principale; }
+
+namespace Ui {
+    class FRM_Principale;
+}
+
 QT_END_NAMESPACE
 
 class FRM_Principale : public QMainWindow
 {
     Q_OBJECT
 
+// Fonction public
 public:
     FRM_Principale(QWidget *parent = nullptr, bool test = false);
     ~FRM_Principale();
 
+// Fonctions privés
+private:
+    // Data
+    QString hashLangue();
+    QString numeroIndex();
+    // Configuration
+    QVariantMap ouvrirJson(QString fichier);
+    void traitementFichierAdvancements(QString fichier);
+    void traitementDossierBac(QString folder);
+    void activationBoutonExtraction();
+    void toutesLesTraductions(QVariantMap jsonLang);
+    void effacerFiltreDate();
+
+// Fonction protéger
+protected:
+    void closeEvent(QCloseEvent *event);
+
+// Attributes privés
 private:
     //GUI
     Ui::FRM_Principale *ui;
     // Booléen
+    bool ouvertureEnCours;
     bool m_bErreurExtraction;
     bool m_bVersionOK;
     bool m_bProgresVanillaOK;
@@ -76,8 +117,12 @@ private:
     QStringList m_qslListVersionJar;
     QString m_qsDossierSauvegarde;
     QVariantMap m_qvmJsonProgresPerso;
+    // Traduction
+    QStringList m_qslClesToutesLesTrads;
+    QStringList m_qslToutesLesTrads;
     // BlazeandCave
     QDir m_qdDossierAdvancementsBlazeAndCave;
+    QString m_qsDossierAExclure;
     // Listing Progrés
     bool bTousLesProgres;
     QList<QStandardItem *> m_qlLigneProgres;
@@ -86,19 +131,37 @@ private:
     QSortFilterProxyModel *proxyModelFiltreTitre;
     QSortFilterProxyModel *proxyModelFiltreProgresFinis;
     QSortFilterProxyModel *proxyModelFiltreConditionFaite;
+    QSortFilterProxyModel *proxyModelFiltreTypeCondition;
+    DateEtHeureFilterProxyModel *proxyModelFiltreDate;
+    QAbstractItemModel *m_defaultModelCompleter;
+    QCompleter *m_defaultCompleter;
+    QCompleter *m_sansCompleter;
+    // Settings
+    class Settings *param;
+    DIA_Parametres *diaParametres;
+    DIA_apropos *diaAPropos;
+    // Mise à jour
+    bool m_updateBetaVerifiee;
+    QNetworkAccessManager *m_qnamManager;
+    QByteArray m_qbaDonneesTelechargees;
     // TEST
     bool m_test;
 
+// Signaux
+signals:
+    void downloaded(bool ecrireFichierUpdate);
+    void fermeture();
+
+// Slots privés
 private slots:
-    //Data
-    QString hashLangue();
-    QString numeroIndex();
     //Configuration
     void choixLauncher(int index);
-    void choixVersion(int index);
+    //void choixVersion(int index);
+    void choixVersion(QString text);
     void choixFichierAdvancements(bool checked);
     void extraireProgres(bool checked);
     void selectionDossierBlazeandcave(bool checked);
+    void exclureStats(int statut);
     // Lecture et affichage
     void readJSONsVanilla(bool checked);
     void readJSONsBlazeandcave(bool checked);
@@ -107,6 +170,21 @@ private slots:
     void filtreTableTitre(QString filtre);
     void filtreTableProgresFinis(QString filtre);
     void filtreTableConditionFait(QString filtre);
+    void filtreTableTypeCondition(QString filtre);
+    void dateFilterChanged();
+    void effacerLesFiltres(bool checked);
+    void effacerFiltresSurLesDates(bool checked);
+    void etatAutoCompletion(int etat);
+    void dataSelectionnee(const QModelIndex index);
+    // Impression
+    void imprimerTable(bool checked);
+    // Fenêtres complémentaire
+    void ouvrirAPropos();
+    void ouvrirParametres();
+    // Mise à jour
+    void verifierMiseAJour();
+    void fichierTelecharge(QNetworkReply* pReply);
+    void comparaisonVersion(bool ecrireFichier);
     // TEST
     void TEST(bool checked);
 };

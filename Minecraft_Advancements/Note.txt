@@ -3,5 +3,12 @@
 Variable qui contient le partie du chemin à supprimer pour les advancements : m_qdDossierAdvancedments
 
 Origine;Titre;Progres Fini;Condition;Condition Faite;Date Fait
+=> Origine;Titre;Progres Fini;Condition;Type;Condition Faite;Date Fait
+Vanilla;Titre;Progres Fini;Condition;ET;non;
+Vanilla;Titre;Progres Fini;Condition;OU;non;
 
 /en_us.lang
+
+Traduire condition :
+ Test 1 : .+\.minecraft.{condition} => .+\.minecraft(\..+)?\.{condition}$
+             Pour les non trouvés, on laisse tel quel

@@ -1,4 +1,4 @@
-QT       += core gui
+QT       += core gui printsupport network xml
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
@@ -10,6 +10,16 @@ CONFIG += c++11
 # deprecated API in order to know how to port your code away from it.
 DEFINES += QT_DEPRECATED_WARNINGS
 
+#INCLUDEPATH += "D:\Qt\Tools\OpenSSL\Win_x86\include"
+#LIBS += -LD:\Qt\Tools\OpenSSL\Win_x86\lib -llibcrypto -llibssl
+win32:contains(QMAKE_HOST.arch, x86_64) {
+    INCLUDEPATH += "D:\Qt\Tools\OpenSSL\Win_x64\include"
+    LIBS += -LD:\Qt\Tools\OpenSSL\Win_x64\lib -llibcrypto -llibssl
+} else {
+    INCLUDEPATH += "D:\Qt\Tools\OpenSSL\Win_x86\include"
+    LIBS += -LD:\Qt\Tools\OpenSSL\Win_x86\lib -llibcrypto -llibssl
+}
+
 # You can also make your code fail to compile if it uses deprecated APIs.
 # In order to do so, uncomment the following line.
 # You can also select to disable deprecated APIs only up to a certain version of Qt.
@@ -18,14 +28,24 @@ DEFINES += QT_DEPRECATED_WARNINGS
 RC_ICONS = minecraft.ico
 
 SOURCES += \
+    dateetheurefilterproxymodel.cpp \
+    dia_apropos.cpp \
     main.cpp \
-    frm_principale.cpp
+    frm_principale.cpp \
+    settings/dia_parametres.cpp \
+    settings/settings.cpp
 
 HEADERS += \
-    frm_principale.h
+    dateetheurefilterproxymodel.h \
+    dia_apropos.h \
+    frm_principale.h \
+    settings/dia_parametres.h \
+    settings/settings.h
 
 FORMS += \
-    frm_principale.ui
+    dia_apropos.ui \
+    frm_principale.ui \
+    settings/dia_parametres.ui
 
 TRANSLATIONS += \
     Minecraft-Advancements_fr_FR.ts
@@ -36,6 +56,7 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 !isEmpty(target.path): INSTALLS += target
 
 DISTFILES += \
+    Backup-ChoixVersion.txt \
     Backup-ReadJson.txt \
     Note.txt
 

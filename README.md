@@ -18,7 +18,7 @@ Suivis des progrès Minecraft Vanilla et Blaze and Cave
 
 ## Capture d'écran
 
-![Illustration](./img/screen.png)
+![Illustration](https://i.imgur.com/e3Wn8aj.png)
 
 ## Pré-Requis
 
@@ -29,7 +29,8 @@ Par contre, pour *Blaze and Cave*, il vous faudra le datapack extrait.
 ## Technologies
 
 + C++
-+ Qt 5.14.2 Community Edition
++ Qt 5.15.0 Community Edition
++ Microsoft Visual C++ 2010 x86/x64 Runtime
 + *Et c'est tout !*
 
 ## Installation
