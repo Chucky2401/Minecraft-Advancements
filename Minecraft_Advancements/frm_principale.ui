@@ -162,16 +162,9 @@
        </widget>
       </item>
       <item row="1" column="2">
-       <widget class="QLabel" name="qlLangExtraite">
+       <widget class="QLabel" name="qlDernierImport">
         <property name="text">
          <string>TextLabel</string>
-        </property>
-       </widget>
-      </item>
-      <item row="0" column="4">
-       <widget class="QPushButton" name="qpbExtraireProgres">
-        <property name="text">
-         <string>Extraire Progrès</string>
         </property>
        </widget>
       </item>
@@ -208,6 +201,13 @@
         </property>
         <property name="invertedAppearance">
          <bool>false</bool>
+        </property>
+       </widget>
+      </item>
+      <item row="0" column="3" colspan="2">
+       <widget class="QPushButton" name="qpbExtraireProgres">
+        <property name="text">
+         <string>Extraire Progrès</string>
         </property>
        </widget>
       </item>
@@ -467,6 +467,12 @@
        </widget>
       </item>
      </layout>
+    </item>
+    <item>
+     <widget class="QStackedWidget" name="stackedWidget">
+      <widget class="QWidget" name="page"/>
+      <widget class="QWidget" name="page_2"/>
+     </widget>
     </item>
     <item>
      <widget class="QTableView" name="tableView">

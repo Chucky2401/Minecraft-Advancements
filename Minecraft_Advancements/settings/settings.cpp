@@ -8,7 +8,6 @@ Settings::Settings() {
 
 void Settings::initialisation(bool test) {
     if (test) {
-        qDebug() << test;
     }
     iniParam = new QSettings(QSettings::IniFormat, QSettings::UserScope, "BlackWizard Company", "Minecraft Advancements");
 
@@ -63,8 +62,6 @@ void Settings::initialisation(bool test) {
 
     m_fichierAdvancementsPerso = this->getIniFichierAdvancementsPerso();
     this->setFichierAdvancementsPerso(m_fichierAdvancementsPerso);
-
-    qDebug() << getPath();
 }
 
 QString Settings::getPath() {

@@ -76,6 +76,7 @@ private:
     void activationBoutonExtraction();
     void toutesLesTraductions(QVariantMap jsonLang);
     void effacerFiltreDate();
+    void afficherMessage(int type, QString text, QString information, QString detail = "");
 
 // Fonction protéger
 protected:
@@ -98,6 +99,7 @@ private:
     QTemporaryDir m_tempDir;
     QString m_qsAppDataPath;
     QString m_qsUserName;
+    QMessageBox m_qmbMessage;
     // Cache
     bool m_bUpdateProgres;
     QDir m_qdDossierAdvancedments;

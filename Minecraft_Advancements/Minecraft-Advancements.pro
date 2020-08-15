@@ -60,7 +60,8 @@ else: unix:!android: target.path = /opt/$${TARGET}/bin
 DISTFILES += \
     Backup-ChoixVersion.txt \
     Backup-ReadJson.txt \
-    Note.txt
+    Note.txt \
+    Old_Slots_avant_2.0.0
 
 RESOURCES += \
     img.qrc

@@ -6,6 +6,7 @@
 #include <QVariant>
 #include <QSqlDatabase>
 #include <QSqlQuery>
+#include <QSqlRecord>
 #include <QSqlError>
 #include <QMessageBox>
 #include <QSqlDriver>
@@ -25,6 +26,7 @@ public:
     void closeConnection(QString name);
     bool isOpen(QString name);
     QSqlDatabase getBase();
+    QSqlDriver* getDriver();
     void resetAll();
     void resetError();
     QString getError();

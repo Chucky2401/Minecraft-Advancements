@@ -113,6 +113,10 @@ QSqlDatabase database::getBase(){
     return this->base;
 }
 
+QSqlDriver* database::getDriver() {
+    return this->base.driver();
+}
+
 void database::resetAll(){
     resetError();
 }
