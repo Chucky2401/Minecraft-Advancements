@@ -13,7 +13,7 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     QApplication::setApplicationName("Minecraft Advancements");
-    QApplication::setApplicationVersion("2.0.0");
+    QApplication::setApplicationVersion("2.0.0b");
     QCommandLineParser parser;
     bool test = false;
 
@@ -36,7 +36,7 @@ int main(int argc, char *argv[])
     QSplashScreen splash(pixmap);
     splash.show();
     //app.processEvents();
-    QTime dieTime= QTime::currentTime().addSecs(1);
+    QTime dieTime = QTime::currentTime().addSecs(1);
     while (QTime::currentTime() < dieTime)
         QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
 

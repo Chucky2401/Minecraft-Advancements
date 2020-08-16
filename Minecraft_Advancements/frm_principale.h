@@ -4,6 +4,8 @@
 #include <Qt>
 #include <QTextDocument>
 #include <QMainWindow>
+#include <QStatusBar>
+#include <QProgressBar>
 #include <QCloseEvent>
 
 #include <QTemporaryDir>
@@ -75,6 +77,7 @@ private:
     void traitementDossierBac(QString folder);
     void activationBoutonExtraction();
     void toutesLesTraductions(QVariantMap jsonLang);
+    void toutesLesTraductionsListe();
     void effacerFiltreDate();
     void afficherMessage(int type, QString text, QString information, QString detail = "");
 
@@ -86,10 +89,14 @@ protected:
 private:
     //GUI
     Ui::FRM_Principale *ui;
+    QStatusBar *m_statusBar;
+    QProgressBar *m_progressExtractionProgresVanilla;
+    QLabel *m_labelExtractionProgresVanilla;
     // Constante
     const QString connectionName = "principal";
     // Booléen
     bool ouvertureEnCours;
+    bool m_ouvertureJson;
     bool m_bErreurExtraction;
     bool m_bVersionOK;
     bool m_bProgresVanillaOK;
@@ -160,6 +167,8 @@ signals:
 
 // Slots privés
 private slots:
+    // GUI
+    void dockWidgetOperationFloating(bool floating);
     //Configuration
     void choixLauncher(int index);
     //void choixVersion(int index);
@@ -167,6 +176,7 @@ private slots:
     void choixFichierAdvancements(bool checked);
     void extraireProgres(bool checked);
     void selectionDossierBlazeandcave(bool checked);
+    void importProgresBlazeandcave(bool checked);
     void exclureStats(int statut);
     // Lecture et affichage
     void readJSONsVanilla(bool checked);

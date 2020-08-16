@@ -8,19 +8,30 @@ Suivis des version
 
 + Correction des .dll lors migration **Qt 5.15**
 + Correction des binaires pour être du 32 bits sur l'architecture 32 bits
++ Lors de l'ajout de la langue en base de données, plantage lors de l'import du BACAP. Ajout d'une fonction qui prend tout de la base pour stocker.
 
 ### Ajout
 
 + Programme disponible en architecture 32 bits (x86) et 64 bits (x64) ! A vous de choisir celle que vous préférez ! Je vous conseil tout de même la 64 bits :wink:
   [Résultat du sondage](https://docs.google.com/forms/d/e/1FAIpQLSehyTG2_jkLtpeAD-8g2r8esU4IldJcWlvEdIlanZdosfHoeg/viewanalytics)
 + Création d'un dossier **build** pour l'architecture 64 bits avec binaires et dll associées
++ Si les traductions ne sont pas en base, blocage import BACAP
++ **EN TEST** - Ajout d'un Dock pour les opérations et filtres
 
 ### Modification
 
-+ Passage en **Qt 5.15** *(vivement Qt 6 !)* et utilisation de **MinGW** (compilateur) en **8.1** au lieu de **7.3**
-+ Utilisation d'une base de données **SQLite 3** pour gérer les progrès.
++ **La plus grosse modification, retour arrière impossible**, utilisation d'une base de données **SQLIte 3** pour stocker toutes les données !
   Avantages : 2 ou 3 long chargement 1 fois, et à chaque changement de version de Minecraft ou du BACAP, puis des affichages rapide pour suivre ses progrès ; Permet de mieux gérer les filtres ; Permet des filtres non possibles avant
   Inconvénient : demande d'actualiser manuellement les progrès en cas de changement
+  **Etat : 30 %**
++ Ajout de barre de progression lors de chargement long
++ Les chargements longs ne bloque plus la fenêtre. Windows ne vous dira plus *Ne répond pas*
++ Dû au deux modifications du dessus, blocage complet des boutons pendant les traitements longs
++ Ajout d'un titre au dessus de la liste des progrès
++ Ajout d'une image de fond
++ Passage des boutons pour comparer et lors de mes tests sous la liste des progrès
++ Passage en **Qt 5.15** *(vivement Qt 6 !)* et utilisation de **MinGW** (compilateur) en **8.1** au lieu de **7.3**
+  
 
 ### Divers
 

@@ -7,25 +7,36 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
 
     // Quelques réglages de bases sur la fenêtre
     ui->setupUi(this);
+    m_statusBar = this->statusBar();
+    m_statusBar->setStyleSheet("QStatusBar { background: #E0E0E0; }");
+    this->setStatusBar(m_statusBar);
+    m_statusBar->showMessage("Bonjour et bienvenue dans Minecraft Advancements !", 5000);
+    m_progressExtractionProgresVanilla = new QProgressBar();
+    m_progressExtractionProgresVanilla->setStyleSheet("QProgressBar { border: 2px solid #8BC34A; border-radius: 5px; text-align: center; height: 10px; } QProgressBar::chunk { background-color: #33cc33; }");
+    m_labelExtractionProgresVanilla = new QLabel("");
+    this->setStyleSheet("QMainWindow { background-image: url(:/img/wallpaper.png); background-position: bottom right; background-repeat: none; }");
     ouvertureEnCours = true;
 
     QString qsWindowTitle = QApplication::applicationName() + " - " + QApplication::applicationVersion();
     if (QApplication::applicationVersion().right(1) == "b") {
         qsWindowTitle += " /!\\ BETA /!\\";
     }
-    this->setWindowTitle(qsWindowTitle);
-    this->setWindowIcon(QIcon(":/img/icons8_minecraft_logo_48px.png"));
 
     // Si on est on mode test on masque certaines choses
     if (test == false) {
         ui->qpbReadJSON->setVisible(test);
-        ui->lineInDebug->setVisible(test);
+        //ui->lineInDebug->setVisible(test);
     } else {
         ui->qpbReadJSON->setVisible(test);
-        ui->lineInDebug->setVisible(test);
+        //ui->lineInDebug->setVisible(test);
+        qsWindowTitle += " - TEST MODE";
         connect(ui->qpbReadJSON, SIGNAL(clicked(bool)), this, SLOT(TEST(bool)));
         //connect(ui->qpbReadJSON, SIGNAL(clicked(bool)), this, SLOT(imprimerTable()));
     }
+
+    this->setWindowTitle(qsWindowTitle);
+    this->setWindowIcon(QIcon(":/img/icons8_minecraft_logo_48px.png"));
+
 
     // On crée le nécessaire pour gérer les paramètres utilisateurs
     param = new Settings();
@@ -34,6 +45,7 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
 
     // Variable global à toute la fenêtre
     m_qsAppDataPath = qEnvironmentVariable("APPDATA");
+    m_ouvertureJson = false;
     m_qsDossierAExclure = "recipes|technical";
     m_qmbMessage.setTextFormat(Qt::RichText);
     m_qmbMessage.setWindowIcon(QIcon(":/img/icons8_minecraft_logo_48px.png"));
@@ -44,6 +56,7 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     ui->qgbFiltres->setEnabled(false);
     ui->qgbOperations->setEnabled(false);
     ui->qaImprimerVue->setEnabled(false);
+    ui->qpbExtraireProgresBacap->setEnabled(false);
 
     // Langue disponibles
     ui->qcbLangue->addItem("Français", QVariant("/fr_fr.lang"));
@@ -124,11 +137,6 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
         QMessageBox::critical(this, "Connexion à la BDD", "Echec de la connexion à la Base de Données.\nDétails:\n"+bdd.getError());
     }
 
-    // On masque la barre de progression, c'était pour un test
-    // A voir si on la garde
-    // ui->qpbTraitementProgres->setVisible(false);
-    // ui->qpbTraitementProgres->setValue(0);
-
     // Gestion de l'autocomplétion pour les titres
     m_sansCompleter = new QCompleter();
     m_defaultCompleter = new QCompleter(this);
@@ -138,16 +146,19 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     m_qnamManager = new QNetworkAccessManager();
 
     // On connecte tout ce que l'on peut
+    // GUI
+    connect(ui->qdwOpe, SIGNAL(topLevelChanged(bool)), this, SLOT(dockWidgetOperationFloating(bool)));
     // Configuration
     connect(ui->qcbLauncher, SIGNAL(currentIndexChanged(int)), this, SLOT(choixLauncher(int)));
     //connect(ui->qcbVersion, SIGNAL(currentIndexChanged(int)), this, SLOT(choixVersion(int)));
     connect(ui->qcbVersion, SIGNAL(currentIndexChanged(QString)), this, SLOT(choixVersion(QString)));
     connect(ui->qpbSelectionFichierProgres, SIGNAL(clicked(bool)), this, SLOT(choixFichierAdvancements(bool)));
     connect(ui->qpbDossierBlazeandcave, SIGNAL(clicked(bool)), this, SLOT(selectionDossierBlazeandcave(bool)));
+    connect(ui->qpbExtraireProgresBacap, SIGNAL(clicked(bool)), this, SLOT(importProgresBlazeandcave(bool)));
     connect(ui->qcbStatistiques, SIGNAL(stateChanged(int)), this, SLOT(exclureStats(int)));
     connect(ui->qcbMilestones, SIGNAL(stateChanged(int)), this, SLOT(exclureStats(int)));
     // Lecture fichiers
-    connect(ui->qpbExtraireProgres, SIGNAL(clicked(bool)), this, SLOT(extraireProgres(bool)));
+    connect(ui->qpbExtraireProgresVanilla, SIGNAL(clicked(bool)), this, SLOT(extraireProgres(bool)));
     connect(ui->qpbReadJSONsVanilla, SIGNAL(clicked(bool)), this, SLOT(readJSONsVanilla(bool)));
     connect(ui->qpbReadJSONsBlazeandcave, SIGNAL(clicked(bool)), this, SLOT(readJSONsBlazeandcave(bool)));
     connect(ui->qpbReadAllJSONs, SIGNAL(clicked(bool)), this, SLOT(readAllJsons(bool)));
@@ -193,12 +204,13 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     // Suite à la connexion on force le launcher et on désactive certains champs pour ne pas avoir de bug
     ui->qcbLauncher->setCurrentIndex(1);
     ui->qpbSelectionDossierLanceur->setVisible(false);
-    ui->qpbExtraireProgres->setEnabled(false);
-    ui->qlAdvancementsExtrait->setVisible(false);
-    ui->qlDernierImport->setVisible(false);
+    ui->qpbExtraireProgresVanilla->setEnabled(false);
+    ui->qlAdvancementsVanillaExtrait->setVisible(false);
+    ui->qlDernierImportVanilla->setVisible(false);
     ui->qlProgresPersoOuvert->setVisible(false);
     ui->qpbReadJSONsVanilla->setEnabled(false);
     ui->qpbReadJSONsBlazeandcave->setEnabled(false);
+    ui->qpbReadAllJSONs->setEnabled(false);
 
     // On redimensionne la fenêtre dans son dernier état si l'utilisateur la souhaité
     if (param->getRestoreSizePos()) {
@@ -382,28 +394,31 @@ void FRM_Principale::choixVersion(QString text) {
             if (qsqDernierImporteVanilla.exec("SELECT valeur FROM statistics WHERE nom = \"progres_update\" AND version = \"" + m_qsNumeroVersion + "\"")) {
                 qsqDernierImporteVanilla.next();
                 QString qsDernierImport = qsqDernierImporteVanilla.value("valeur").toString();
-                QDateTime qdtDernierImport = QDateTime::fromString(qsDernierImport, "dd/MM/yyyy hh:mm:ss");
+                QDateTime qdtDernierImport = QDateTime::fromString(qsDernierImport, "yyyy-MM-dd hh:mm:ss");
                 if (qdtDernierImport.isValid()) {
+                    ui->qlDernierImportVanilla->setText("Dernier Import : " + qdtDernierImport.toString("dd/MM/yyyy hh:mm:ss"));
+                    ui->qlDernierImportVanilla->setVisible(true);
                     // Modification du bouton
-                    ui->qpbExtraireProgres->setText("Update Progrès");
-                    ui->qpbExtraireProgres->setEnabled(true);
+                    ui->qpbExtraireProgresVanilla->setText("Ré-Importer Progrès");
+                    ui->qpbExtraireProgresVanilla->setEnabled(true);
                     m_bUpdateProgres = true;
                     m_bProgresVanillaOK = true;
                     // Info utilisateur
-                    ui->qlAdvancementsExtrait->setText("Progrès importé !");
-                    ui->qlAdvancementsExtrait->setStyleSheet("QLabel { color: green; }");
-                    ui->qlAdvancementsExtrait->setVisible(true);
+                    ui->qlAdvancementsVanillaExtrait->setText("Progrès importé !");
+                    ui->qlAdvancementsVanillaExtrait->setStyleSheet("QLabel { color: green; }");
+                    ui->qlAdvancementsVanillaExtrait->setVisible(true);
                     m_bProgresVanillaOK = true;
                 } else {
+                    ui->qlDernierImportVanilla->setVisible(false);
                     // Modification du bouton
-                    ui->qpbExtraireProgres->setText("Update Progrès");
-                    ui->qpbExtraireProgres->setEnabled(true);
+                    ui->qpbExtraireProgresVanilla->setText("Ré-Importer Progrès");
+                    ui->qpbExtraireProgresVanilla->setEnabled(true);
                     m_bUpdateProgres = true;
                     m_bProgresVanillaOK = true;
                     // Info utilisateur
-                    ui->qlAdvancementsExtrait->setText("Import progrès incomplet !");
-                    ui->qlAdvancementsExtrait->setStyleSheet("QLabel { color: orange; }");
-                    ui->qlAdvancementsExtrait->setVisible(true);
+                    ui->qlAdvancementsVanillaExtrait->setText("Import progrès incomplet !");
+                    ui->qlAdvancementsVanillaExtrait->setStyleSheet("QLabel { color: orange; }");
+                    ui->qlAdvancementsVanillaExtrait->setVisible(true);
                     m_bProgresVanillaOK = false;
                 }
             } else {
@@ -411,17 +426,19 @@ void FRM_Principale::choixVersion(QString text) {
                 afficherMessage(QMessageBox::Warning, "Impossible de récupérer la date de dernier import des progrès Minecraft Vanilla.", \
                                             "Voir les détails pour plus d'informations.", \
                                             qsqDernierImporteVanilla.lastError().text());
+                ui->qlDernierImportVanilla->setVisible(false);
             }
         } else {
+            ui->qlDernierImportVanilla->setVisible(false);
             // Modification du bouton
-            ui->qpbExtraireProgres->setText("Extraire Progrès");
-            ui->qpbExtraireProgres->setEnabled(true);
+            ui->qpbExtraireProgresVanilla->setText("Importer Progrès");
+            ui->qpbExtraireProgresVanilla->setEnabled(true);
             m_bUpdateProgres = true;
             m_bProgresVanillaOK = true;
             // Info utilisateur
-            ui->qlAdvancementsExtrait->setText("Progrès non importé !");
-            ui->qlAdvancementsExtrait->setStyleSheet("QLabel { color: red; }");
-            ui->qlAdvancementsExtrait->setVisible(true);
+            ui->qlAdvancementsVanillaExtrait->setText("Progrès non importé !");
+            ui->qlAdvancementsVanillaExtrait->setStyleSheet("QLabel { color: red; }");
+            ui->qlAdvancementsVanillaExtrait->setVisible(true);
             m_bProgresVanillaOK = false;
         }
     } else {
@@ -429,6 +446,7 @@ void FRM_Principale::choixVersion(QString text) {
         afficherMessage(QMessageBox::Critical, "Impossible de vérifier si les progrès ont déjà étés importés.", \
                                     "Contacter <a href=\"https://github.com/Chucky2401/Minecraft-Advancements/issues/new?title=Erreur contrôle import progrès&body=" + qsqDernierImporteVanilla.lastError().text() + "\n\nRemarque personnel :\n\">le développeur</a>.", \
                                     qsqDernierImporteVanilla.lastError().text());
+        ui->qlDernierImportVanilla->setVisible(false);
     }
 
     activationBoutonExtraction();
@@ -447,18 +465,40 @@ void FRM_Principale::choixVersion(QString text) {
 /*
  * Slots pour extraire les fichiers .json sur les advancements
  * Ainsi que le fichier de langue
+ * Importe le tout dans la base de données
  */
 void FRM_Principale::extraireProgres(bool checked) {
     if (checked) {
     }
+
     QStringList qslFormatFichier;
     QString qsTitrePrecedent = "";
     QString qsTempNom, qsNouveauNom;
     QString qsLastErrorBdd = "", qsDernierImport = "", qsDerniereRequete = "";
     bool bErreurDetecteAdvancement = false, bErreurDetecteLang = false, bErreurDelete = false, bErreurInsertionAdvancement = false;
     QString qsErreurExtractionProgres = "", qsErreurExtractionLang = "";
+    int iNombreFichierATraiter = 0, iNombreFichierTraiter = 0;
 
     qslFormatFichier << "*.json";
+
+    m_progressExtractionProgresVanilla->setMinimum(0);
+    m_progressExtractionProgresVanilla->setMaximum(0);
+    m_progressExtractionProgresVanilla->setValue(0);
+    m_labelExtractionProgresVanilla->setText("(\?\?/\?\?)");
+    m_statusBar->clearMessage();
+    m_statusBar->addWidget(m_progressExtractionProgresVanilla, 1);
+    m_statusBar->insertWidget(99, m_labelExtractionProgresVanilla);
+    m_progressExtractionProgresVanilla->show();
+    m_labelExtractionProgresVanilla->show();
+
+    ui->qcbLauncher->setEnabled(false);
+    ui->qcbLangue->setEnabled(false);
+    ui->qcbVersion->setEnabled(false);
+    ui->qpbExtraireProgresVanilla->setEnabled(false);
+    ui->qpbExtraireProgresBacap->setEnabled(false);
+    ui->qpbReadJSONsVanilla->setEnabled(false);
+    ui->qpbReadJSONsBlazeandcave->setEnabled(false);
+    ui->qpbReadAllJSONs->setEnabled(false);
 
     /*
      * On extrait les progrès du fichier .jar de la version de Minecraft
@@ -473,6 +513,7 @@ void FRM_Principale::extraireProgres(bool checked) {
             qsNouveauNom.replace(m_tempDir.path()+"/data/minecraft/advancements/", m_qdDossierAdvancedments.absolutePath() + "/");
 
             QString qsCheminCompletTemp = qdiFichierProgres.filePath();
+            QStringList qslCheminFichier = qsCheminCompletTemp.split("/");
             QString qsNomDuFichierTemp = qdiFichierProgres.fileName();
             QString qsDossierTemp = qsCheminCompletTemp.replace(qsNomDuFichierTemp, "");
             QString qsDossierFinal = qsDossierTemp.replace(m_tempDir.path()+"/data/minecraft/advancements/", m_qdDossierAdvancedments.absolutePath() + "/");
@@ -480,6 +521,7 @@ void FRM_Principale::extraireProgres(bool checked) {
             QFile qfFichierFinal(qsNouveauNom);
             QDir qdDossierFinal(qsDossierFinal);
 
+            iNombreFichierATraiter++;
 
             if (!(qdDossierFinal.exists()))
                 qdDossierFinal.mkpath(".");
@@ -493,7 +535,6 @@ void FRM_Principale::extraireProgres(bool checked) {
                         bErreurDetecteAdvancement = true;
                     } else {
                         QByteArray qbaContenuFichierTemp = qfFichierTemporaire.readAll();
-
                         qfFichierFinal.write(qbaContenuFichierTemp);
                     }
                 }
@@ -502,6 +543,7 @@ void FRM_Principale::extraireProgres(bool checked) {
             qfFichierFinal.close();
             qfFichierTemporaire.close();
             qfFichierTemporaire.remove();
+            QCoreApplication::processEvents();
         }
 
         QDir qdDossierTemporaire(m_tempDir.path()+"/data");
@@ -545,7 +587,7 @@ void FRM_Principale::extraireProgres(bool checked) {
                         }
                     }
                 }
-
+                QCoreApplication::processEvents();
             }
         }
     /*
@@ -602,6 +644,10 @@ void FRM_Principale::extraireProgres(bool checked) {
             QVariantMap qvmJsonLang = ouvrirJson(m_qsFichierLang);
             // Traduction dans une liste
             toutesLesTraductions(qvmJsonLang);
+            toutesLesTraductionsListe();
+
+            m_progressExtractionProgresVanilla->setMaximum(iNombreFichierATraiter);
+            m_labelExtractionProgresVanilla->setText("(0/" + QString::number(iNombreFichierATraiter) + ")");
 
             QDirIterator qdiFichierProgres(m_qdDossierAdvancedments.path(), qslFormatFichier, QDir::Files, QDirIterator::Subdirectories);
 
@@ -622,35 +668,55 @@ void FRM_Principale::extraireProgres(bool checked) {
                     // Sinon  => ET (&&)
                     int iNombreRequierements = qjaConditions.count();
                     QString qsIdentifiant = qsJsonFile;
-                    QString qsTitre = qvmJsonLang[qmTitle["translate"].toString()].toString();
-                    QString qsTitreAvecDescription = "";
-                    QString qsDescription = qvmJsonLang[qmDescription["translate"].toString()].toString();
+//                    QString qsTitre = qvmJsonLang[qmTitle["translate"].toString()].toString();
+                    QString qsTitre = qmTitle["translate"].toString();
+//                    QString qsDescription = qvmJsonLang[qmDescription["translate"].toString()].toString();
+                    QString qsDescription = qmDescription["translate"].toString();
+                    QSqlQuery qsqSelectTraductionTitreCompteur(bdd.getBase()), qsqSelectTraductionTitreValeur(bdd.getBase());
+                    QSqlQuery qsqSelectTraductionDescriptionCompteur(bdd.getBase()), qsqSelectTraductionDescriptionValeur(bdd.getBase());
                     qsIdentifiant.replace(m_qdDossierAdvancedments.path()+"/", "");
                     qsIdentifiant = "minecraft:" + qsIdentifiant.split(".").first();
 
-                    // Récupération du titre
-                    if (qsTitre == "") {
-                        QStringList qslIdentifiant = qsIdentifiant.split("/");
-                        QString qsValeurDansLang = "minecraft." + qslIdentifiant.last();
-
-                        QMapIterator<QString, QVariant> qmiFichierLang(qvmJsonLang);
-                        while (qmiFichierLang.hasNext()) {
-                            qmiFichierLang.next();
-                            QString qsCle = qmiFichierLang.key();
-                            if (qsCle.contains(qsValeurDansLang)) {
-                                qsTitre = qmiFichierLang.value().toString();
+                    // Récupération du titre traduit
+                    if (qsqSelectTraductionTitreCompteur.exec("SELECT COUNT(1) nbrTraduction FROM traduction_vanilla WHERE version = '" + m_qsNumeroVersion + "' AND key = '" + qsTitre + "'")) {
+                        qsqSelectTraductionTitreCompteur.next();
+                        if (qsqSelectTraductionTitreCompteur.value("nbrTraduction").toInt() != 0) {
+                            if (qsqSelectTraductionTitreValeur.exec("SELECT value FROM traduction_vanilla WHERE version = '" + m_qsNumeroVersion + "' AND key = '" + qsTitre + "'")) {
+                                qsqSelectTraductionTitreValeur.next();
+                                qsTitre = qsqSelectTraductionTitreValeur.value("value").toString();
                             }
-                        }
-                        if (qsTitre == "") {
-                            QStringList qslTitre = qsIdentifiant.split("/").last().split("_");
-                            for (int a = 0 ; a < qslTitre.count() ; a++) {
-                                QString qsTitreTemp = qslTitre.at(a);
-                                qsTitreTemp.replace(0, 1, qsTitreTemp.at(0).toUpper());
-                                qsTitre += qsTitreTemp + " ";
+                        } else {
+                            QStringList qslIdentifiant = qsIdentifiant.split("/");
+                            QString qsValeurDansLang = "minecraft." + qslIdentifiant.last();
+                            if (qsqSelectTraductionTitreValeur.exec("SELECT value FROM traduction_vanilla WHERE version = '" + m_qsNumeroVersion + "' AND key LIKE '%" + qsTitre + "%'")) {
+                                qsqSelectTraductionTitreValeur.next();
+                                qsTitre = qsqSelectTraductionTitreValeur.value("value").toString();
                             }
-                            qsTitre = qsTitre.trimmed();
+                            if (qsTitre == "") {
+                                QStringList qslTitre = qsIdentifiant.split("/").last().split("_");
+                                for (int a = 0 ; a < qslTitre.count() ; a++) {
+                                    QString qsTitreTemp = qslTitre.at(a);
+                                    qsTitreTemp.replace(0, 1, qsTitreTemp.at(0).toUpper());
+                                    qsTitre += qsTitreTemp + " ";
+                                }
+                                qsTitre = qsTitre.trimmed();
+                            }
                         }
                     }
+
+                    // Récupération description traduit
+                    if (qsqSelectTraductionDescriptionCompteur.exec("SELECT COUNT(1) nbrTraduction FROM traduction_vanilla WHERE version = '" + m_qsNumeroVersion + "' AND key = '" + qsDescription + "'")) {
+                        qsqSelectTraductionDescriptionCompteur.next();
+                        if (qsqSelectTraductionDescriptionCompteur.value("nbrTraduction").toInt() != 0) {
+                            if (qsqSelectTraductionDescriptionValeur.exec("SELECT value FROM traduction_vanilla WHERE version = '" + m_qsNumeroVersion + "' AND key = '" + qsDescription + "'")) {
+                                qsqSelectTraductionDescriptionValeur.next();
+                                qsDescription = qsqSelectTraductionDescriptionValeur.value("value").toString();
+                            }
+                        } else {
+                            qsDescription = "";
+                        }
+                    }
+
                     qsTitre.replace("’", "'");
 
                     QMapIterator<QString, QVariant> qmiCriteres(qmCriteres);
@@ -671,12 +737,6 @@ void FRM_Principale::extraireProgres(bool checked) {
                         QDateTime qdtDateRealisation = QDateTime();
 
                         qsConditionSimple.replace(QRegExp("^.+:"), "");
-
-                        if (qsDescription == "") {
-                            qsTitreAvecDescription = qsTitre;
-                        } else {
-                            qsTitreAvecDescription = qsTitre + " (" + qsDescription + ")";
-                        }
 
                         /*
                          * Rechercher la traduction
@@ -718,60 +778,83 @@ void FRM_Principale::extraireProgres(bool checked) {
                                 qsDerniereRequete = queryInsert.executedQuery();
                             }
                         }
+                        QCoreApplication::processEvents();
                     }
                 }
+                iNombreFichierTraiter++;
+                m_progressExtractionProgresVanilla->setValue(m_progressExtractionProgresVanilla->value()+1);
+                m_labelExtractionProgresVanilla->setText("(" + QString::number(iNombreFichierTraiter) + "/" + QString::number(iNombreFichierATraiter) + ")");
             }
         }
-    }
-
-    if (!bErreurDelete && !bErreurInsertionAdvancement) {
-        QSqlQuery queryDeleteStats(bdd.getBase());
-        if(!queryDeleteStats.exec("DELETE FROM statistics WHERE nom = \"progres_update\" AND version = \"" + m_qsNumeroVersion + "\"")) {
-            afficherMessage(QMessageBox::Warning, "Impossible de mettre à jour la date d'import des progrès.\nLes progrès ont bien été importés dans la base.", \
-                                        "Voir les détails pour plus d'informations.", \
-                                        queryDeleteStats.lastError().text());
-        } else {
-            qsDernierImport = QDateTime::currentDateTime().toString("dd/MM/yyyy hh:mm:ss");
-            QSqlQuery queryInsertStats(bdd.getBase());
-            if(!queryInsertStats.exec("INSERT INTO statistics (nom, valeur, version) VALUES (\"progres_update\", \"" + qsDernierImport + "\", \"" + m_qsNumeroVersion + "\")")) {
+        if (!bErreurDelete && !bErreurInsertionAdvancement) {
+            QSqlQuery queryDeleteStats(bdd.getBase());
+            if(!queryDeleteStats.exec("DELETE FROM statistics WHERE nom = \"progres_update\" AND version = \"" + m_qsNumeroVersion + "\"")) {
+                ui->qlDernierImportVanilla->setVisible(false);
                 afficherMessage(QMessageBox::Warning, "Impossible de mettre à jour la date d'import des progrès.\nLes progrès ont bien été importés dans la base.", \
                                             "Voir les détails pour plus d'informations.", \
-                                            queryInsertStats.lastError().text());
+                                            queryDeleteStats.lastError().text());
             } else {
-                afficherMessage(QMessageBox::Information, "Tous les progrès ont été inséré avec succès !", \
-                                            "Les progrès de Minecraft Vanilla sont maintenant en base");
+                qsDernierImport = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+                QDateTime qdtDernierImportFR = QDateTime::fromString(qsDernierImport, "yyyy-MM-dd hh:mm:ss");
+                QSqlQuery queryInsertStats(bdd.getBase());
+                if(!queryInsertStats.exec("INSERT INTO statistics (nom, valeur, version) VALUES (\"progres_update\", \"" + qsDernierImport + "\", \"" + m_qsNumeroVersion + "\")")) {
+                    ui->qlDernierImportVanilla->setVisible(false);
+                    afficherMessage(QMessageBox::Warning, "Impossible de mettre à jour la date d'import des progrès.\nLes progrès ont bien été importés dans la base.", \
+                                                "Voir les détails pour plus d'informations.", \
+                                                queryInsertStats.lastError().text());
+                } else {
+                    ui->qlDernierImportVanilla->setText("Dernier Import : " + qdtDernierImportFR.toString("dd/MM/yyyy hh:mm:ss"));
+                    ui->qlDernierImportVanilla->setVisible(true);
+                    afficherMessage(QMessageBox::Information, "Tous les progrès ont été inséré avec succès !", \
+                                                "Les progrès de Minecraft Vanilla sont maintenant en base");
+                }
             }
+
+            // Modification du bouton
+            ui->qpbExtraireProgresVanilla->setText("Ré-Importer Progrès");
+            ui->qpbExtraireProgresVanilla->setEnabled(true);
+            m_bUpdateProgres = true;
+            m_bProgresVanillaOK = true;
+            // Info utilisateur
+            ui->qlAdvancementsVanillaExtrait->setText("Progrès importé !");
+            ui->qlAdvancementsVanillaExtrait->setStyleSheet("QLabel { color: green; }");
+            ui->qlAdvancementsVanillaExtrait->setVisible(true);
+            m_bProgresVanillaOK = true;
+        } else if (!bErreurDelete && bErreurInsertionAdvancement) {
+            afficherMessage(QMessageBox::Critical, "Impossible d'insérer tous les progrès.", \
+                                        "Voir les détails pour plus d'informations.", \
+                                        qsLastErrorBdd + "\nDernières Requêtes :\n" + qsDerniereRequete);
+            ui->qlDernierImportVanilla->setVisible(false);
+            // Modification du bouton
+            ui->qpbExtraireProgresVanilla->setText("Importer Progrès");
+            ui->qpbExtraireProgresVanilla->setEnabled(true);
+            m_bUpdateProgres = true;
+            m_bProgresVanillaOK = true;
+            // Info utilisateur
+            ui->qlAdvancementsVanillaExtrait->setText("Progrès non importé !");
+            ui->qlAdvancementsVanillaExtrait->setStyleSheet("QLabel { color: red; }");
+            ui->qlAdvancementsVanillaExtrait->setVisible(true);
+            m_bProgresVanillaOK = false;
         }
-        // Modification du bouton
-        ui->qpbExtraireProgres->setText("Extraire Progrès");
-        ui->qpbExtraireProgres->setEnabled(true);
-        m_bUpdateProgres = true;
-        m_bProgresVanillaOK = true;
-        // Info utilisateur
-        ui->qlAdvancementsExtrait->setText("Progrès importé !");
-        ui->qlAdvancementsExtrait->setStyleSheet("QLabel { color: green; }");
-        ui->qlAdvancementsExtrait->setVisible(true);
-        m_bProgresVanillaOK = true;
-    } else if (!bErreurDelete && bErreurInsertionAdvancement) {
-        afficherMessage(QMessageBox::Critical, "Impossible d'insérer tous les progrès.", \
-                                    "Voir les détails pour plus d'informations.", \
-                                    qsLastErrorBdd + "\nDernières Requêtes :\n" + qsDerniereRequete);
-        // Modification du bouton
-        ui->qpbExtraireProgres->setText("Extraire Progrès");
-        ui->qpbExtraireProgres->setEnabled(true);
-        m_bUpdateProgres = true;
-        m_bProgresVanillaOK = true;
-        // Info utilisateur
-        ui->qlAdvancementsExtrait->setText("Progrès non importé !");
-        ui->qlAdvancementsExtrait->setStyleSheet("QLabel { color: red; }");
-        ui->qlAdvancementsExtrait->setVisible(true);
-        m_bProgresVanillaOK = false;
+
+        // On supprime les dossiers ont en a plus besoin...
+        m_qdDossierAdvancedments.removeRecursively();
+        // On remet les boutons actifs
+        ui->qcbLauncher->setEnabled(true);
+        ui->qcbLangue->setEnabled(true);
+        ui->qcbVersion->setEnabled(true);
+        ui->qpbExtraireProgresVanilla->setEnabled(true);
+        ui->qpbExtraireProgresBacap->setEnabled(true);
+        // On supprime les widgets de la status bar
+        m_statusBar->removeWidget(m_progressExtractionProgresVanilla);
+        m_statusBar->removeWidget(m_labelExtractionProgresVanilla);
+        m_statusBar->clearMessage();
+
+        activationBoutonExtraction();
+    } else {
+        afficherMessage(QMessageBox::Critical, "Erreur avec les fichiers", "Les fichier progrès ou la langue n'ont pas pu être extrait.");
     }
 
-    // On supprime les dossiers ont en a plus besoin...
-    m_qdDossierAdvancedments.removeRecursively();
-
-    activationBoutonExtraction();
 }
 
 /*
@@ -788,6 +871,265 @@ void FRM_Principale::selectionDossierBlazeandcave(bool checked) {
     traitementDossierBac(qsDossierBlazeandCave);
 
     param->setDossierBlazeAndCave(qsDossierBlazeandCave);
+}
+
+/*
+ * Slots pour importer les progrès BACAP
+ */
+void FRM_Principale::importProgresBlazeandcave(bool checked) {
+    if (checked) {
+    }
+    QStringList qslFormatFichier;
+    QString qsTitrePrecedent = "";
+    int iNombreFichierATraiter = 0, iNombreFichierTraiter = 0;
+    QString qsLastErrorBdd = "", qsDernierImport = "", qsDerniereRequete = "";
+    bool bErreurDelete = false, bErreurInsertionAdvancement = false;
+
+    qslFormatFichier << "*.json";
+
+    m_progressExtractionProgresVanilla->setMinimum(0);
+    m_progressExtractionProgresVanilla->setMaximum(0);
+    m_progressExtractionProgresVanilla->setValue(0);
+    m_labelExtractionProgresVanilla->setText("(\?\?/\?\?)");
+    m_statusBar->clearMessage();
+    m_statusBar->addWidget(m_progressExtractionProgresVanilla, 1);
+    m_statusBar->insertWidget(99, m_labelExtractionProgresVanilla);
+    m_progressExtractionProgresVanilla->show();
+    m_labelExtractionProgresVanilla->show();
+
+    ui->qcbLauncher->setEnabled(false);
+    ui->qcbLangue->setEnabled(false);
+    ui->qcbVersion->setEnabled(false);
+    ui->qpbExtraireProgresVanilla->setEnabled(false);
+    ui->qpbExtraireProgresBacap->setEnabled(false);
+    ui->qpbReadJSONsVanilla->setEnabled(false);
+    ui->qpbReadJSONsBlazeandcave->setEnabled(false);
+    ui->qpbReadAllJSONs->setEnabled(false);
+
+    // On les supprimes avant
+    QSqlQuery queryDelete(bdd.getBase());
+    if (!queryDelete.exec("DELETE FROM list_advancements WHERE origine = \"BACAP\" AND version = \"" + m_qsNumeroVersion + "\"")) {
+        bErreurDelete = true;
+        afficherMessage(QMessageBox::Critical, "Impossible de purger la base de données avant import.", \
+                                    "Voir les détails pour plus d'informations.", \
+                                    queryDelete.lastError().text());
+    } else {
+        // Pas d'erreur lors de la suppression, on ajoute !
+        toutesLesTraductionsListe();
+
+        QString qsJsonLang = "rcs/blazeandcave-fr_fr.json";
+        QVariantMap qvmJsonLang = ouvrirJson(qsJsonLang);
+
+        qDebug() << m_qdDossierAdvancementsBlazeAndCave.path();
+        //exit(0);
+
+        QDirIterator qdiNombreFichier(m_qdDossierAdvancementsBlazeAndCave.path(), qslFormatFichier, QDir::Files, QDirIterator::Subdirectories);
+        while (qdiNombreFichier.hasNext()) {
+            qdiNombreFichier.next();
+            iNombreFichierATraiter++;
+            m_labelExtractionProgresVanilla->setText("Nombre Fichier : 0/"+QString::number(iNombreFichierATraiter));
+            QCoreApplication::processEvents();
+        }
+        m_progressExtractionProgresVanilla->setMaximum(iNombreFichierATraiter);
+        m_labelExtractionProgresVanilla->setText("(0/" + QString::number(iNombreFichierATraiter) + ")");
+
+        QDirIterator qdiFichierProgres(m_qdDossierAdvancementsBlazeAndCave.path(), qslFormatFichier, QDir::Files, QDirIterator::Subdirectories);
+        while (qdiFichierProgres.hasNext()) {
+            QString qsJsonFile = qdiFichierProgres.next();
+            QStringList qslCheminFichier = qsJsonFile.split("/");
+            QString qsCategorie = qslCheminFichier.at(qslCheminFichier.length()-2);
+            if (!qslCheminFichier.contains("technical") && !qslCheminFichier.contains("recipes")) {
+                QVariantMap json_map = ouvrirJson(qsJsonFile);
+                if (m_ouvertureJson) {
+                    QMap<QString, QVariant> qmDisplay = json_map["display"].toMap();
+                    QMap<QString, QVariant> qmTitle = qmDisplay["title"].toMap();
+                    QMap<QString, QVariant> qmDescription = qmDisplay["description"].toMap();
+                    QMap<QString, QVariant> qmCriteres = json_map["criteria"].toMap();
+                    QJsonArray qjaConditionsTemp = json_map["requirements"].toJsonArray();
+                    QString qsTypeCondition = "";
+                    int iNombreRequierements;
+
+                    int iCritereAFaire = qmCriteres.count();
+
+                    if (!qjaConditionsTemp.isEmpty()) {
+                        QJsonArray qjaConditions = qjaConditionsTemp.at(0).toArray();
+                        qjaConditionsTemp.at(1).isArray();
+                        // Si > 1 => OU (||)
+                        // Sinon  => ET (&&)
+                        if (qjaConditionsTemp.at(1).isArray()) {
+                            iNombreRequierements = 1;
+                        } else {
+                            iNombreRequierements = qjaConditions.count();
+                        }
+                    } else {
+                        iNombreRequierements = 1;
+                    }
+
+                    QString qsIdentifiant = qsJsonFile;
+                    QString qsTitre = qvmJsonLang[qmTitle["translate"].toString()].toString();
+                    // Parfois il n'y a pas de traduction...
+                    if (qsTitre == "") {
+                        qsTitre = qmTitle["translate"].toString();
+                    }
+
+                    QString qsDescription = qvmJsonLang[qmDescription["translate"].toString()].toString();
+                    // Parfois il n'y a pas de traduction...
+                    if (qsDescription == "") {
+                        qsDescription = qmDescription["translate"].toString();
+                    }
+                    qsIdentifiant.replace(m_qdDossierAdvancementsBlazeAndCave.path()+"/", "");
+                    qsIdentifiant = "blazeandcave:" + qsIdentifiant.split(".").first();
+
+                    if (qsTitre == "") {
+                        QStringList qslTitre = qsIdentifiant.split("/").last().split("_");
+                        for (int a = 0 ; a < qslTitre.count() ; a++) {
+                            QString qsTitreTemp = qslTitre.at(a);
+                            qsTitreTemp.replace(0, 1, qsTitreTemp.at(0).toUpper());
+                            qsTitre += qsTitreTemp + " ";
+                        }
+                        qsTitre = qsTitre.trimmed();
+                    }
+
+                    qsTitre.replace("’", "'");
+
+                    QMapIterator<QString, QVariant> qmiCriteres(qmCriteres);
+                    while (qmiCriteres.hasNext()) {
+                        qmiCriteres.next();
+                        m_qlLigneProgres.clear();
+                        QString qsCondition = qmiCriteres.key();
+                        QString qsConditionSimple = qsCondition;
+                        qsConditionSimple.replace(QRegExp("^.+:"), "");
+                        QMap<QString, QVariant> qmCritere = qmCriteres[qsCondition].toMap();
+                        QString qmTrigger = qmCritere["trigger"].toString();
+                        QMap<QString, QVariant> qmConditions = qmCritere["conditions"].toMap();
+                        QList<QString> qlsKeysMap = qmConditions.keys();
+                        QDateTime qdtDateRealisation = QDateTime();
+                        QStandardItem *qsiTitre = new QStandardItem("");
+
+                        if (qsDescription == "") {
+                            qsiTitre->setText(qsTitre);
+                        } else {
+                            qsiTitre->setText(qsTitre + " (" + qsDescription + ")");
+                        }
+                        qsiTitre->setData(qsJsonFile, Qt::UserRole);
+
+                        /*
+                 * Rechercher la traduction
+                 * Si trouvé : on la met
+                 * Sinon     : on mets qsConditionSimple
+                 */
+                        int index = m_qslClesToutesLesTrads.indexOf(QRegExp(".+\\.minecraft(\\..+)?\\." + qsConditionSimple + "$"));
+                        if (index != -1) {
+                            qsConditionSimple = m_qslToutesLesTrads.at(index);
+                        }
+
+                        if (iCritereAFaire == 1) {
+                            qsTypeCondition = "UNE";
+                        } else {
+                            if (iNombreRequierements > 1) {
+                                qsTypeCondition = "OU";
+                            } else if (iNombreRequierements == 1) {
+                                qsTypeCondition = "ET";
+                            } else {
+                                qsTypeCondition = "UNE";
+                            }
+                        }
+
+                        QDateTime test(QDateTime::currentDateTime());
+
+                        QSqlQuery queryInsert(bdd.getBase());
+                        queryInsert.prepare("INSERT INTO list_advancements (origine, version, categorie, identifiant, titre, description, condition, condition_texte, type_condition) "
+                                      "VALUES (:origine, :version, :categorie, :identifiant, :titre, :description, :condition, :condition_texte, :type_condition)");
+                        queryInsert.bindValue(":origine", "BACAP");
+                        queryInsert.bindValue(":version", m_qsNumeroVersion);
+                        queryInsert.bindValue(":categorie", qsCategorie);
+                        queryInsert.bindValue(":identifiant", qsIdentifiant);
+                        queryInsert.bindValue(":titre", qsTitre);
+                        queryInsert.bindValue(":description", qsDescription);
+                        queryInsert.bindValue(":condition", qsCondition);
+                        queryInsert.bindValue(":condition_texte", qsConditionSimple);
+                        queryInsert.bindValue(":type_condition", qsTypeCondition);
+                        if(!bErreurInsertionAdvancement) {
+                            if(!queryInsert.exec()) {
+                                bErreurInsertionAdvancement = true;
+                                qsLastErrorBdd = queryInsert.lastError().text();
+                                qsDerniereRequete = queryInsert.executedQuery();
+                            }
+                        }
+                        //qDebug() << "BACAP;"+m_qsNumeroVersion+";"+qsCategorie+";"+qsIdentifiant+";"+qsTitre+";"+qsDescription+";"+qsCondition+";"+qsConditionSimple+";"+qsTypeCondition;
+                        QCoreApplication::processEvents();
+                    }
+                }
+            }
+            iNombreFichierTraiter++;
+            m_progressExtractionProgresVanilla->setValue(m_progressExtractionProgresVanilla->value()+1);
+            m_labelExtractionProgresVanilla->setText("(" + QString::number(iNombreFichierTraiter) + "/" + QString::number(iNombreFichierATraiter) + ")");
+        }
+    }
+
+    if (!bErreurDelete && !bErreurInsertionAdvancement) {
+        QSqlQuery queryDeleteStats(bdd.getBase());
+        if(!queryDeleteStats.exec("DELETE FROM statistics WHERE nom = \"bacap_update\" AND version = \"" + m_qsNumeroVersion + "\"")) {
+            ui->qlDernierImportBacap->setVisible(false);
+            afficherMessage(QMessageBox::Warning, "Impossible de mettre à jour la date d'import des progrès.\nLes progrès ont bien été importés dans la base.", \
+                                        "Voir les détails pour plus d'informations.", \
+                                        queryDeleteStats.lastError().text());
+        } else {
+            qsDernierImport = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
+            QDateTime qdtDernierImportFR = QDateTime::fromString(qsDernierImport, "yyyy-MM-dd hh:mm:ss");
+            QSqlQuery queryInsertStats(bdd.getBase());
+            if(!queryInsertStats.exec("INSERT INTO statistics (nom, valeur, version) VALUES (\"bacap_update\", \"" + qsDernierImport + "\", \"" + m_qsNumeroVersion + "\")")) {
+                ui->qlDernierImportBacap->setVisible(false);
+                afficherMessage(QMessageBox::Warning, "Impossible de mettre à jour la date d'import des progrès.\nLes progrès ont bien été importés dans la base.", \
+                                            "Voir les détails pour plus d'informations.", \
+                                            queryInsertStats.lastError().text());
+            } else {
+                ui->qlDernierImportBacap->setText("Dernier Import : " + qdtDernierImportFR.toString("dd/MM/yyyy hh:mm:ss"));
+                ui->qlDernierImportBacap->setVisible(true);
+                afficherMessage(QMessageBox::Information, "Tous les progrès ont été inséré avec succès !", \
+                                            "Les progrès de BACAP sont maintenant en base");
+            }
+        }
+
+        // Modification du bouton
+        ui->qpbExtraireProgresBacap->setText("Ré-Importer Progrès");
+        ui->qpbExtraireProgresBacap->setEnabled(true);
+        m_bUpdateProgres = true;
+        m_bProgresBlazeandcaveOK = true;
+        // Info utilisateur
+        ui->qlAdvancementsBacapExtrait->setText("Progrès importé !");
+        ui->qlAdvancementsBacapExtrait->setStyleSheet("QLabel { color: green; }");
+        ui->qlAdvancementsBacapExtrait->setVisible(true);
+        m_bProgresBlazeandcaveOK = true;
+    } else if (!bErreurDelete && bErreurInsertionAdvancement) {
+        afficherMessage(QMessageBox::Critical, "Impossible d'insérer tous les progrès.", \
+                                    "Voir les détails pour plus d'informations.", \
+                                    qsLastErrorBdd + "\nDernières Requêtes :\n" + qsDerniereRequete);
+        ui->qlDernierImportVanilla->setVisible(false);
+        // Modification du bouton
+        ui->qpbExtraireProgresBacap->setText("Importer Progrès");
+        ui->qpbExtraireProgresBacap->setEnabled(true);
+        m_bUpdateProgres = true;
+        m_bProgresBlazeandcaveOK = true;
+        // Info utilisateur
+        ui->qlAdvancementsBacapExtrait->setText("Progrès non importé !");
+        ui->qlAdvancementsBacapExtrait->setStyleSheet("QLabel { color: red; }");
+        ui->qlAdvancementsBacapExtrait->setVisible(true);
+        m_bProgresBlazeandcaveOK = false;
+    }
+
+    // On remet les boutons actifs
+    ui->qcbLauncher->setEnabled(true);
+    ui->qcbLangue->setEnabled(true);
+    ui->qcbVersion->setEnabled(true);
+    ui->qpbExtraireProgresBacap->setEnabled(true);
+    ui->qpbExtraireProgresBacap->setEnabled(true);
+    // On supprime les widgets de la status bar
+    m_statusBar->removeWidget(m_progressExtractionProgresVanilla);
+    m_statusBar->removeWidget(m_labelExtractionProgresVanilla);
+    m_statusBar->clearMessage();
+
+    activationBoutonExtraction();
 }
 
 /*
@@ -1894,6 +2236,15 @@ void FRM_Principale::comparaisonVersion(bool ecrireFichier){
     }
 }
 
+/*
+ *
+ */
+void FRM_Principale::dockWidgetOperationFloating(bool floating) {
+    if (floating) {
+        ui->qdwOpe->resize(0, ui->qdwOpe->height());
+    }
+}
+
 /*  ~~~~~~~~~~~~~
  *  | FONCTIONS |
  *  ~~~~~~~~~~~~~
@@ -1901,36 +2252,45 @@ void FRM_Principale::comparaisonVersion(bool ecrireFichier){
 
 QVariantMap FRM_Principale::ouvrirJson(QString fichier) {
     QFile qfFichierJson(fichier);
+    QJsonParseError *error = new QJsonParseError();
+    m_ouvertureJson = false;
     if(!qfFichierJson.open(QIODevice::ReadOnly)){
-        qDebug()<<"Failed to open "<< fichier;
-        exit(1);
+        //qDebug()<<"Failed to open "<< fichier;
+        afficherMessage(QMessageBox::Critical, "Ouverture fichier JSON en échec", "Impossible d'ouvrir le fichier");
+        return QVariantMap();
+        //exit(1);
+    } else {
+        QTextStream qtsFichier(&qfFichierJson);
+        QString qsFichierJson;
+        qsFichierJson = qtsFichier.readAll();
+        qfFichierJson.close();
+        QByteArray qbaFichierJson = qsFichierJson.toLocal8Bit();
+
+        QJsonDocument qjdFichierJson = QJsonDocument::fromJson(qbaFichierJson, error);
+
+        if(qjdFichierJson.isNull()){
+            //qDebug()<<"Failed to create JSON doc. Fichier :" << fichier;
+            //qDebug() << error->errorString();
+            afficherMessage(QMessageBox::Critical, "Ouverture fichier JSON en échec", "Impossible de créer le document JSON", error->errorString());
+            return QVariantMap();
+            //exit(2);
+        } else {
+            if(!qjdFichierJson.isObject()){
+                qDebug()<<"JSON is not an object.";
+                return QVariantMap();
+            } else {
+                QJsonObject qjsFichierJson = qjdFichierJson.object();
+
+                if(qjsFichierJson.isEmpty()){
+                    qDebug()<<"JSON object is empty.";
+                    return QVariantMap();
+                } else {
+                    m_ouvertureJson = true;
+                    return qjsFichierJson.toVariantMap();
+                }
+            }
+        }
     }
-
-    QTextStream qtsFichier(&qfFichierJson);
-    QString qsFichierJson;
-    qsFichierJson = qtsFichier.readAll();
-    qfFichierJson.close();
-    QByteArray qbaFichierJson = qsFichierJson.toLocal8Bit();
-
-    QJsonDocument qjdFichierJson = QJsonDocument::fromJson(qbaFichierJson);
-
-    if(qjdFichierJson.isNull()){
-        qDebug()<<"Failed to create JSON doc.";
-        exit(2);
-    }
-    if(!qjdFichierJson.isObject()){
-        qDebug()<<"JSON is not an object.";
-        exit(3);
-    }
-
-    QJsonObject qjsFichierJson = qjdFichierJson.object();
-
-    if(qjsFichierJson.isEmpty()){
-        qDebug()<<"JSON object is empty.";
-        exit(4);
-    }
-
-    return qjsFichierJson.toVariantMap();
 }
 
 /*
@@ -2033,12 +2393,98 @@ void FRM_Principale::traitementDossierBac(QString folder) {
     m_qdDossierAdvancementsBlazeAndCave.setPath(folder + "\\data\\blazeandcave\\advancements");
 
     if (m_qdDossierAdvancementsBlazeAndCave.exists()) {
+        ui->qpbExtraireProgresBacap->setEnabled(true);
+        QSqlQuery qsqCompteProgresBacap(bdd.getBase()), qsqDernierImportBacap(bdd.getBase());
         QStringList qslFauxDossier = folder.split("/");
         QString qsFauxDossier = qslFauxDossier.first() + "\\fake_Path\\" + qslFauxDossier.last();
         ui->qleDossierBlazeandcave->setText(qsFauxDossier);
 
-        m_bProgresBlazeandcaveOK = true;
+        if (qsqCompteProgresBacap.exec("SELECT COUNT(1) progresImporte FROM statistics WHERE nom = \"bacap_update\" AND version = \"" + m_qsNumeroVersion + "\"")) {
+            qsqCompteProgresBacap.next();
+            int iNombreEnregistrement = qsqCompteProgresBacap.value("progresImporte").toInt();
+            if (iNombreEnregistrement > 0) {
+                if (qsqDernierImportBacap.exec("SELECT valeur FROM statistics WHERE nom = \"bacap_update\" AND version = \"" + m_qsNumeroVersion + "\"")) {
+                    qsqDernierImportBacap.next();
+                    QString qsDernierImport = qsqDernierImportBacap.value("valeur").toString();
+                    QDateTime qdtDernierImport = QDateTime::fromString(qsDernierImport, "yyyy-MM-dd hh:mm:ss");
+                    if (qdtDernierImport.isValid()) {
+                        ui->qlDernierImportBacap->setText("Dernier Import : " + qdtDernierImport.toString("dd/MM/yyyy hh:mm:ss"));
+                        ui->qlDernierImportBacap->setVisible(true);
+                        // Modification du bouton
+                        ui->qpbExtraireProgresBacap->setText("Ré-Importer Progrès");
+                        ui->qpbExtraireProgresBacap->setEnabled(true);
+                        m_bUpdateProgres = true;
+                        m_bProgresBlazeandcaveOK = true;
+                        // Info utilisateur
+                        ui->qlAdvancementsBacapExtrait->setText("Progrès importé !");
+                        ui->qlAdvancementsBacapExtrait->setStyleSheet("QLabel { color: green; }");
+                        ui->qlAdvancementsBacapExtrait->setVisible(true);
+                        m_bProgresBlazeandcaveOK = true;
+                    } else {
+                        ui->qlDernierImportBacap->setVisible(false);
+                        // Modification du bouton
+                        ui->qpbExtraireProgresBacap->setText("Ré-Importer Progrès");
+                        ui->qpbExtraireProgresBacap->setEnabled(true);
+                        m_bUpdateProgres = true;
+                        m_bProgresBlazeandcaveOK = true;
+                        // Info utilisateur
+                        ui->qlAdvancementsBacapExtrait->setText("Import progrès incomplet !");
+                        ui->qlAdvancementsBacapExtrait->setStyleSheet("QLabel { color: orange; }");
+                        ui->qlAdvancementsBacapExtrait->setVisible(true);
+                        m_bProgresBlazeandcaveOK = false;
+                    }
+                } else {
+                    m_bProgresBlazeandcaveOK = false;
+                    afficherMessage(QMessageBox::Warning, "Impossible de récupérer la date de dernier import des progrès Minecraft Vanilla.", \
+                                                "Voir les détails pour plus d'informations.", \
+                                                qsqDernierImportBacap.lastError().text());
+                    ui->qlDernierImportBacap->setVisible(false);
+                }
+            } else {
+                ui->qlDernierImportBacap->setVisible(false);
+                // Modification du bouton
+                ui->qpbExtraireProgresBacap->setText("Importer Progrès");
+                ui->qpbExtraireProgresBacap->setEnabled(true);
+                m_bUpdateProgres = true;
+                m_bProgresBlazeandcaveOK = true;
+                // Info utilisateur
+                ui->qlAdvancementsBacapExtrait->setText("Progrès non importé !");
+                ui->qlAdvancementsBacapExtrait->setStyleSheet("QLabel { color: red; }");
+                ui->qlAdvancementsBacapExtrait->setVisible(true);
+                m_bProgresBlazeandcaveOK = false;
+            }
+        } else {
+            m_bProgresBlazeandcaveOK = false;
+            afficherMessage(QMessageBox::Critical, "Impossible de vérifier si les progrès ont déjà étés importés.", \
+                                        "Contacter <a href=\"https://github.com/Chucky2401/Minecraft-Advancements/issues/new?title=Erreur contrôle import progrès&body=" + qsqDernierImportBacap.lastError().text() + "\n\nRemarque personnel :\n\">le développeur</a>.", \
+                                        qsqDernierImportBacap.lastError().text());
+            ui->qlDernierImportBacap->setVisible(false);
+        }
+
+        QSqlQuery qsqLangueImporte(bdd.getBase());
+        if (qsqLangueImporte.exec("SELECT COUNT(1) nbrTraduction FROM traduction_vanilla WHERE version = '" + m_qsNumeroVersion + "'")) {
+            qsqLangueImporte.next();
+            if (qsqLangueImporte.value("nbrTraduction").toInt() <= 0) {
+                ui->qpbExtraireProgresBacap->setText("Importer Progrès");
+                ui->qpbExtraireProgresBacap->setEnabled(false);
+                // Info utilisateur
+                ui->qlAdvancementsBacapExtrait->setText("La langue de Minecraft n'est pas en base ! Relancer l'import Minecraft Vanilla");
+                ui->qlAdvancementsBacapExtrait->setStyleSheet("QLabel { color: orange; }");
+                ui->qlAdvancementsBacapExtrait->setVisible(true);
+                m_bProgresBlazeandcaveOK = false;
+            }
+        }
     } else {
+        ui->qlDernierImportBacap->setVisible(false);
+        // Modification du bouton
+        ui->qpbExtraireProgresBacap->setText("Importer Progrès");
+        ui->qpbExtraireProgresBacap->setEnabled(true);
+        m_bUpdateProgres = true;
+        m_bProgresBlazeandcaveOK = true;
+        // Info utilisateur
+        ui->qlAdvancementsBacapExtrait->setText("Progrès non importé !");
+        ui->qlAdvancementsBacapExtrait->setStyleSheet("QLabel { color: red; }");
+        ui->qlAdvancementsBacapExtrait->setVisible(true);
         m_bProgresBlazeandcaveOK = false;
     }
 
@@ -2110,6 +2556,9 @@ void FRM_Principale::traitementFichierAdvancements(QString fichier) {
     }
 }
 
+/*
+ * Fonction pour activer les boutons d'extraction suivant des booléens
+ */
 void FRM_Principale::activationBoutonExtraction() {
     if (m_bVersionOK && m_bProgresVanillaOK && m_bProgresPersoOK) {
         ui->qpbReadJSONsVanilla->setEnabled(true);
@@ -2134,15 +2583,62 @@ void FRM_Principale::activationBoutonExtraction() {
  * Fonction pour récupérer toutes les traductions de Minecraft dans deux QStringList
  */
 void FRM_Principale::toutesLesTraductions(QVariantMap jsonLang) {
+    //m_qslClesToutesLesTrads.clear();
+    //m_qslToutesLesTrads.clear();
+    QSqlQuery qsqInsertTraduction(bdd.getBase()), qsqDeleteTraduction(bdd.getBase());
+    QString qsLastQueryError = "";
+    bool bQueryInsertKO = false;
+    int iLangueImporte = 0;
+
+    if (qsqDeleteTraduction.exec("DELETE FROM traduction_vanilla WHERE version = \"" + m_qsNumeroVersion + "\"")) {
+        QMapIterator<QString, QVariant> i(jsonLang);
+        while (i.hasNext()) {
+            i.next();
+            QString qsKey = i.key(), qsValue = i.value().toString();
+            qsValue.replace(QRegExp("\\\"(@|%)?.+\\\""), "");
+
+            if (!qsqInsertTraduction.exec("INSERT INTO traduction_vanilla (version, key, value) VALUES (\"" + m_qsNumeroVersion + "\", \"" + qsKey + "\", \"" + qsValue + "\")")) {
+                bQueryInsertKO = true;
+                qsLastQueryError = qsqInsertTraduction.lastError().text();
+                qDebug() << "Traduction valeur en échec : " << qsValue;
+            }
+            iLangueImporte++;
+            m_labelExtractionProgresVanilla->setText("Langue importé : " + QString::number(iLangueImporte) + "/\?\?");
+            QCoreApplication::processEvents();
+        }
+    } else {
+        afficherMessage(QMessageBox::Critical, "Erreur suppression langue", "Voir les détails", qsqDeleteTraduction.lastError().text());
+    }
+
+    if (bQueryInsertKO) {
+        afficherMessage(QMessageBox::Critical, "Erreur insertion traduction langue", "Voir les détails", qsLastQueryError);
+    } else {
+        ui->qpbExtraireProgresBacap->setEnabled(false);
+        traitementDossierBac(m_qdDossierAdvancementsBlazeAndCave.path().replace("/data/blazeandcave/advancements", ""));
+    }
+}
+
+/*
+ * Mettre toutes les traductions dans des listes
+ * Obligatoire pour pouvoir utiliser des Regex
+ */
+void FRM_Principale::toutesLesTraductionsListe() {
     m_qslClesToutesLesTrads.clear();
     m_qslToutesLesTrads.clear();
 
-    QMapIterator<QString, QVariant> i(jsonLang);
-      while (i.hasNext()) {
-          i.next();
-          m_qslClesToutesLesTrads << i.key();
-          m_qslToutesLesTrads << i.value().toString();
-      }
+    QSqlQuery qsqTraduction(bdd.getBase());
+    int iLangueImporte = 0;
+
+    if (qsqTraduction.exec("SELECT key, value FROM traduction_vanilla WHERE version = '" + m_qsNumeroVersion + "'")) {
+        while (qsqTraduction.next()) {
+            m_qslClesToutesLesTrads << qsqTraduction.value("key").toString();
+            m_qslToutesLesTrads << qsqTraduction.value("value").toString();
+
+            iLangueImporte++;
+            m_labelExtractionProgresVanilla->setText("Remplissage liste Langue : " + QString::number(iLangueImporte) + "/\?\?");
+            QCoreApplication::processEvents();
+        }
+    }
 }
 
 /*
@@ -2187,16 +2683,55 @@ void FRM_Principale::TEST(bool checked) {
     if (checked) {
     }
 
-    qDebug() << param->getPath();
-    QString detailSQLTest = "Je suis une erreur SQL";
-    afficherMessage(QMessageBox::Critical, "Impossible de vérifier si les progrès ont déjà étés importés.", \
-                                "Contacter <a href=\"https://github.com/Chucky2401/Minecraft-Advancements/issues/new?title=Erreur contrôle import progrès&body=" + detailSQLTest + "\n\nRemarque personnel :\n\">le développeur</a> avec les détails ci-dessous.", \
-                                "TEST");
+    //qDebug() << param->getPath();
+    //QString detailSQLTest = "Je suis une erreur SQL";
+    QStringList qslLignesValide;
+    QFile inputFile("rcs/blazeandcave-fr_fr.json");
+    bool bEcrireFichier = false;
+
+    if (inputFile.open(QIODevice::ReadOnly))
+    {
+       QTextStream in(&inputFile);
+       while (!in.atEnd())
+       {
+          QString line = in.readLine();
+          //qDebug() << line;
+          if (!line.contains(QRegExp("^( +#.+| +$|\n$|$)"))) {
+              qslLignesValide << line;
+          } else {
+              bEcrireFichier = true;
+          }
+       }
+       inputFile.close();
+
+       if (bEcrireFichier) {
+           if (inputFile.open(QIODevice::WriteOnly)) {
+               QTextStream out(&inputFile);
+               for (int i = 0; i < qslLignesValide.count(); i++) {
+                   out << qslLignesValide.at(i) << "\n";
+               }
+           }
+       } else {
+           qDebug() << "Pas besoin, clear !";
+       }
+       inputFile.close();
+    }
 
 //    QSqlQuery queryTest(bdd.getBase());
 //    qDebug() << bdd.getDriver()->hasFeature(QSqlDriver::QuerySize);
 
-//    queryTest.exec("SELECT * FROM list_advancements");
+//    if (!queryTest.exec("DROP VIEW main.Test")) {
+//        afficherMessage(QMessageBox::Critical, "Error DROP VIEW", \
+//                                    "Error", \
+//                                    queryTest.lastError().text());
+//    }
+//    if (!queryTest.exec("CREATE VIEW Test AS SELECT * FROM list_advancements WHERE identifiant = \"minecraft:adventure/adventuring_time\"")) {
+//        afficherMessage(QMessageBox::Critical, "Error CREATE VIEW", \
+//                                    "Error", \
+//                                    queryTest.lastError().text());
+//    }
+
+
 //    qDebug() << queryTest.size();
 
     //QString qsJsonFile = "advancements/20w18a/adventure/kill_a_mob.json";

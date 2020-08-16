@@ -61,3 +61,5 @@ J'ai eu cette problématique, et mon copain vidéaste [Olchaldir](https://www.yo
 ## Contact
 
 N'hésitez pas à aller poster dans la partie [Issues](https://github.com/Chucky2401/Minecraft-Advancements/issues "Bug/Amélioration") de ce GitHub !
+
+De plus, je suis sur les réseaux comme [Twitter](https://www.twitter.com/GoCChucky2401) ou [Facebook](https://www.facebook.com/Chucky2401.GoC/), mais aussi un [blog](https://blog.blackwizard.fr) où je parle de tout et de rien :wink:.
