@@ -16,14 +16,17 @@ Suivis des version
   [Résultat du sondage](https://docs.google.com/forms/d/e/1FAIpQLSehyTG2_jkLtpeAD-8g2r8esU4IldJcWlvEdIlanZdosfHoeg/viewanalytics)
 + Création d'un dossier **build** pour l'architecture 64 bits avec binaires et dll associées
 + Si les traductions ne sont pas en base, blocage import BACAP
-+ **EN TEST** - Ajout d'un Dock pour les opérations et filtres
++ Ajout d'un Dock pour les opérations et filtres
++ Le dock peut être fermé, flottant (en dehors de la fenêtre) ou docker (dans la fenêtre). Tout ceci est mémorisé avec l'état de la fenêtre.
 
 ### Modification
 
 + **La plus grosse modification, retour arrière impossible**, utilisation d'une base de données **SQLIte 3** pour stocker toutes les données !
   Avantages : 2 ou 3 long chargement 1 fois, et à chaque changement de version de Minecraft ou du BACAP, puis des affichages rapide pour suivre ses progrès ; Permet de mieux gérer les filtres ; Permet des filtres non possibles avant
   Inconvénient : demande d'actualiser manuellement les progrès en cas de changement
-  **Etat : 30 %**
+  **Etat : 50 %**
++ Déplacement des fichiers extrait pour Minecraft Vanilla pour éviter les erreurs dû au CCU (**C**ontrôle de **C**ompte **U**tilisateur *ou* **U**ser **A**count **C**ontrol - UAC en anglais)
++ Lorsque les progrès Minecraft Vanilla et la langue sont importés, suppression des fichiers
 + Ajout de barre de progression lors de chargement long
 + Les chargements longs ne bloque plus la fenêtre. Windows ne vous dira plus *Ne répond pas*
 + Dû au deux modifications du dessus, blocage complet des boutons pendant les traitements longs

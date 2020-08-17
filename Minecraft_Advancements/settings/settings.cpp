@@ -27,6 +27,12 @@ void Settings::initialisation(bool test) {
     restoreSizePos = this->getIniRestoreSizePos();
     this->setRestoreSizePos(restoreSizePos);
 
+    geometrieDock = this->getIniGeometrieDock();
+    this->setGeometrieDock(geometrieDock);
+
+    dockIsFloating = this->getIniDockIsFloating();
+    this->setDockIsFloating(dockIsFloating);
+
     m_verificationAutoMiseAJour = this->getIniVerificationAutoMiseAJour();
     this->setVerificationAutoMiseAJour(m_verificationAutoMiseAJour);
 
@@ -130,6 +136,32 @@ QByteArray Settings::getIniEtat(){
 
 QByteArray Settings::getEtat(){
     return this->etat;
+}
+
+void Settings::setGeometrieDock(QByteArray geometrie) {
+    this->geometrieDock = geometrie;
+    iniParam->setValue("dock/ope/geometry", geometrie);
+}
+
+QByteArray Settings::getIniGeometrieDock() {
+    return iniParam->value("dock/ope/geometry", settingDefaultByteArray).toByteArray();
+}
+
+QByteArray Settings::getGeometrieDock() {
+    return this->geometrieDock;
+}
+
+void Settings::setDockIsFloating(bool floating) {
+    this->dockIsFloating = floating;
+    iniParam->setValue("dock/ope/floating", floating);
+}
+
+bool Settings::getIniDockIsFloating() {
+    return iniParam->value("dock/ope/floating", settingDefaultBool).toBool();
+}
+
+bool Settings::getDockIsFloating() {
+    return this->dockIsFloating;
 }
 
 void Settings::setRestoreSizePos(bool enabled){

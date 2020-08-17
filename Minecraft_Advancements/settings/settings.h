@@ -35,6 +35,14 @@ public:
     QByteArray getIniEtat();
     QByteArray getEtat();
 
+    void setGeometrieDock(QByteArray geometrie);
+    QByteArray getIniGeometrieDock();
+    QByteArray getGeometrieDock();
+
+    void setDockIsFloating(bool floating);
+    bool getIniDockIsFloating();
+    bool getDockIsFloating();
+
     void setVerificationAutoMiseAJour(bool enabled);
     bool getIniVerificationAutoMiseAJour();
     bool getVerificationAutoMiseAJour();
@@ -99,7 +107,10 @@ private:
     QString bddName;
     QByteArray geometrie;
     QByteArray etat;
+    QByteArray geometrieDock;
     bool restoreSizePos;
+    bool restoreSizePosDock;
+    bool dockIsFloating;
     bool m_verificationAutoMiseAJour;
     int m_nombreJourMiseAJour;
     QDate m_derniereVerificationMiseAJour;

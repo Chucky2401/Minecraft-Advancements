@@ -27,6 +27,7 @@
 
 #include <QDateTime>
 #include <QStandardItemModel>
+#include <QSqlQueryModel>
 #include <QStandardItem>
 #include <QSortFilterProxyModel>
 #include <QCompleter>
@@ -146,6 +147,7 @@ private:
     QSortFilterProxyModel *proxyModelFiltreTypeCondition;
     DateEtHeureFilterProxyModel *proxyModelFiltreDate;
     QAbstractItemModel *m_defaultModelCompleter;
+    QSqlQueryModel *plainModel;
     QCompleter *m_defaultCompleter;
     QCompleter *m_sansCompleter;
     // Settings
@@ -169,6 +171,7 @@ signals:
 private slots:
     // GUI
     void dockWidgetOperationFloating(bool floating);
+//    void dockWidgetOperationClosing(bool closing);
     //Configuration
     void choixLauncher(int index);
     //void choixVersion(int index);
@@ -177,6 +180,7 @@ private slots:
     void extraireProgres(bool checked);
     void selectionDossierBlazeandcave(bool checked);
     void importProgresBlazeandcave(bool checked);
+    void importProgresPerso(bool checked);
     void exclureStats(int statut);
     // Lecture et affichage
     void readJSONsVanilla(bool checked);
