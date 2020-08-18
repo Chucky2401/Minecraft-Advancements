@@ -45,6 +45,7 @@
 #include <QDebug>
 
 #include "dateetheurefilterproxymodel.h"
+#include "sqlmodel.h"
 #include "settings/settings.h"
 #include "settings/database.h"
 #include "settings/dia_parametres.h"
@@ -79,6 +80,7 @@ private:
     void activationBoutonExtraction();
     void toutesLesTraductions(QVariantMap jsonLang);
     void toutesLesTraductionsListe();
+    void definirModele();
     void effacerFiltreDate();
     void afficherMessage(int type, QString text, QString information, QString detail = "");
 
@@ -138,6 +140,7 @@ private:
     QString m_qsDossierAExclure;
     // Listing Progrés
     bool bTousLesProgres;
+    QStringList m_qslRequeteComparaison;
     QList<QStandardItem *> m_qlLigneProgres;
     QStandardItemModel *m_qsimProgresRealisation;
     QSortFilterProxyModel *proxModelFiltreOrigine;
@@ -148,6 +151,7 @@ private:
     DateEtHeureFilterProxyModel *proxyModelFiltreDate;
     QAbstractItemModel *m_defaultModelCompleter;
     QSqlQueryModel *plainModel;
+    SqlModel *m_smProgresRealisation;
     QCompleter *m_defaultCompleter;
     QCompleter *m_sansCompleter;
     // Settings
@@ -183,6 +187,7 @@ private slots:
     void importProgresPerso(bool checked);
     void exclureStats(int statut);
     // Lecture et affichage
+    void comparerLesProgres(bool checked);
     void readJSONsVanilla(bool checked);
     void readJSONsBlazeandcave(bool checked);
     void readAllJsons(bool checked);

@@ -82,6 +82,7 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     m_qsimProgresRealisation = new QStandardItemModel(0,6);
 
     // Modèles pour la vue
+    m_smProgresRealisation = new SqlModel(this);
     proxModelFiltreOrigine = new QSortFilterProxyModel(this);
     proxyModelFiltreTitre = new QSortFilterProxyModel(this);
     proxyModelFiltreProgresFinis = new QSortFilterProxyModel(this);
@@ -108,13 +109,15 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
 
 
     ui->qcbFiltreOrigine->addItem("");
+    ui->qcbFiltreOrigine->addItem("Minecraft Vanilla");
+    ui->qcbFiltreOrigine->addItem("BACAP");
+    ui->qcbFiltreProgresFinis->addItem("");
+    ui->qcbFiltreProgresFinis->addItem("oui", "true");
+    ui->qcbFiltreProgresFinis->addItem("non", "false");
+    ui->qcbFiltreTitre->addItem("");
     ui->qcbFiltreConditionFait->addItem("");
     ui->qcbFiltreConditionFait->addItem("oui");
     ui->qcbFiltreConditionFait->addItem("non");
-    ui->qcbFiltreTitre->addItem("");
-    ui->qcbFiltreProgresFinis->addItem("");
-    ui->qcbFiltreProgresFinis->addItem("oui");
-    ui->qcbFiltreProgresFinis->addItem("non");
     ui->qcbFiltreType->addItem("");
     ui->qcbFiltreType->addItem("ET");
     ui->qcbFiltreType->addItem("OU");
@@ -170,8 +173,9 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     connect(ui->qpbExtraireProgresVanilla, SIGNAL(clicked(bool)), this, SLOT(extraireProgres(bool)));
     connect(ui->qpbReadJSONsVanilla, SIGNAL(clicked(bool)), this, SLOT(readJSONsVanilla(bool)));
     connect(ui->qpbReadJSONsBlazeandcave, SIGNAL(clicked(bool)), this, SLOT(readJSONsBlazeandcave(bool)));
-    connect(ui->qpbReadAllJSONs, SIGNAL(clicked(bool)), this, SLOT(readAllJsons(bool)));
+    connect(ui->qpbReadAllJSONs, SIGNAL(clicked(bool)), this, SLOT(comparerLesProgres(bool)));
     // Filtres
+    connect(ui->qcbFiltreOrigine, SIGNAL(currentTextChanged(QString)), this, SLOT(filtreTableOrigine(QString)));
     connect(ui->qcbFiltreProgresFinis, SIGNAL(currentTextChanged(QString)), this, SLOT(filtreTableProgresFinis(QString)));
     connect(ui->qcbFiltreConditionFait, SIGNAL(currentTextChanged(QString)), this, SLOT(filtreTableConditionFait(QString)));
     connect(ui->qcbFiltreType, SIGNAL(currentTextChanged(QString)), this, SLOT(filtreTableTypeCondition(QString)));
@@ -1402,6 +1406,101 @@ void FRM_Principale::choixFichierAdvancements(bool checked) {
 
     param->setFichierAdvancementsPerso(qsFichierAdvancementsPerso);
 
+}
+
+/*
+ *
+ */
+void FRM_Principale::comparerLesProgres(bool checked) {
+    if(checked){
+    }
+
+    QString qsDeleteVue = "DROP VIEW compare_advancements";
+    QString qsRequeteVue = "CREATE VIEW 'compare_advancements' AS SELECT "
+                  "la.origine"
+                ", la.categorie"
+                ", la.titre"
+                ", pa.done progres_fait"
+                ", la.description"
+                ", la.condition_texte"
+               ", CASE WHEN pa.condition IS NULL "
+                       "THEN 'non' "
+                       "ELSE 'oui' "
+                       "END condition_fait"
+                ", la.type_condition"
+            " FROM "
+                "list_advancements la "
+            "INNER JOIN player_advancements pa ON pa.version = la.version AND pa.identifiant = la.identifiant AND pa.condition = la.condition"
+            " WHERE "
+                "la.version = '" + m_qsNumeroVersion + "' "
+            "AND la.type_condition IN ('OU', 'UNE')"
+            " UNION "
+            "SELECT "
+                  "la.origine"
+                ", la.categorie"
+                ", la.titre"
+                ", CASE WHEN pa.done IS NULL "
+                    "THEN 'false' "
+                    "ELSE pa.done "
+                    "END progres_fait"
+                ", la.description"
+                ", la.condition_texte"
+                ", CASE WHEN pa.condition IS NULL "
+                        "THEN 'non' "
+                        "ELSE 'oui' "
+                        "END condition_fait"
+                ", la.type_condition"
+            " FROM "
+                "list_advancements la "
+            "LEFT JOIN player_advancements pa ON pa.version = la.version AND pa.identifiant = la.identifiant AND pa.condition = la.condition"
+            " WHERE "
+                "la.version = '" + m_qsNumeroVersion + "' "
+            "AND la.type_condition = 'ET'"
+            " ORDER BY "
+                  "la.origine DESC"
+                ", la.categorie ASC"
+                ", la.titre ASC"
+                ", la.condition_texte ASC"
+                ", progres_fait ASC";
+
+    QSqlQuery qsqDeleteVue(bdd.getBase());
+    QSqlQuery qsqCreateVue(bdd.getBase());
+    QString qsLastErreurDelete = "", qsLastErreurCreation = "";
+    bool bErreurDelete = false, bErreurCreation = false;
+
+    if (!qsqDeleteVue.exec(qsDeleteVue)) {
+        qsLastErreurDelete = qsqDeleteVue.lastError().text();
+        if (qsLastErreurDelete == "no such view: compare_advancements Unable to execute statement") {
+            bErreurDelete = true;
+            afficherMessage(QMessageBox::Critical, "Impossible de supprimer l'ancienne comparaison", "Voir les détails pour plus d'informations", qsLastErreurDelete);
+        }
+    }
+
+    if (!bErreurDelete) {
+        if (!qsqCreateVue.exec(qsRequeteVue)) {
+            bErreurCreation = true;
+            qsLastErreurCreation = qsqCreateVue.lastError().text();
+            afficherMessage(QMessageBox::Critical, "Impossible de comparer vos progrès", "Voir les détails pour plus d'informations", qsLastErreurCreation);
+        }
+    }
+
+    if (!bErreurDelete && !bErreurCreation) {
+        // On cré le modèle et on le mets dans la vue
+        m_qslRequeteComparaison.clear();
+        m_qslRequeteComparaison << "SELECT * FROM compare_advancements";
+        definirModele();
+
+        //connect(ui->qcbFiltreTitre, SIGNAL(currentTextChanged(QString)), this, SLOT(filtreTableTitre(QString)));
+
+        ui->qgbFiltres->setEnabled(true);
+        ui->qgbOperations->setEnabled(true);
+        ui->qaImprimerVue->setEnabled(true);
+
+//        m_defaultCompleter->setModel(ui->qcbFiltreTitre->model());
+//        m_defaultCompleter->setCompletionMode(QCompleter::PopupCompletion);
+//        m_defaultCompleter->setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
+//        ui->qcbFiltreTitre->setCompleter(m_defaultCompleter);
+    }
 }
 
 /*
@@ -2888,6 +2987,17 @@ void FRM_Principale::toutesLesTraductionsListe() {
             QCoreApplication::processEvents();
         }
     }
+}
+
+/*
+ *
+ */
+void FRM_Principale::definirModele() {
+    if (m_qslRequeteComparaison.size() == 1) {
+        m_smProgresRealisation->setQuery(m_qslRequeteComparaison.at(0), bdd.getBase());
+        ui->tableView->setModel(m_smProgresRealisation);
+    }
+    //qDebug() << m_smProgresRealisation->rowCount();
 }
 
 /*

@@ -24,7 +24,7 @@ Suivis des version
 + **La plus grosse modification, retour arrière impossible**, utilisation d'une base de données **SQLIte 3** pour stocker toutes les données !
   Avantages : 2 ou 3 long chargement 1 fois, et à chaque changement de version de Minecraft ou du BACAP, puis des affichages rapide pour suivre ses progrès ; Permet de mieux gérer les filtres ; Permet des filtres non possibles avant
   Inconvénient : demande d'actualiser manuellement les progrès en cas de changement
-  **Etat : 50 %**
+  **Etat : 65 %**
 + Déplacement des fichiers extrait pour Minecraft Vanilla pour éviter les erreurs dû au CCU (**C**ontrôle de **C**ompte **U**tilisateur *ou* **U**ser **A**count **C**ontrol - UAC en anglais)
 + Lorsque les progrès Minecraft Vanilla et la langue sont importés, suppression des fichiers
 + Ajout de barre de progression lors de chargement long

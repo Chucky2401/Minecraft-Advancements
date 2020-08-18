@@ -34,7 +34,8 @@ SOURCES += \
     frm_principale.cpp \
     settings/database.cpp \
     settings/dia_parametres.cpp \
-    settings/settings.cpp
+    settings/settings.cpp \
+    sqlmodel.cpp
 
 HEADERS += \
     dateetheurefilterproxymodel.h \
@@ -42,7 +43,8 @@ HEADERS += \
     frm_principale.h \
     settings/database.h \
     settings/dia_parametres.h \
-    settings/settings.h
+    settings/settings.h \
+    sqlmodel.h
 
 FORMS += \
     dia_apropos.ui \
