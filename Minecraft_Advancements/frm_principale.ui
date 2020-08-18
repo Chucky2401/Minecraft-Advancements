@@ -529,7 +529,7 @@
   <widget class="QDockWidget" name="qdwOpe">
    <property name="minimumSize">
     <size>
-     <width>954</width>
+     <width>957</width>
      <height>256</height>
     </size>
    </property>
@@ -630,7 +630,7 @@
            </size>
           </property>
           <property name="text">
-           <string>Afficher les Milestones ?</string>
+           <string>Masquer les Milestones ?</string>
           </property>
          </widget>
         </item>
@@ -797,7 +797,7 @@
         <item row="1" column="8">
          <widget class="QCheckBox" name="qcbStatistiques">
           <property name="text">
-           <string>Afficher les Statistiques ?</string>
+           <string>Masquer les Statistiques ?</string>
           </property>
          </widget>
         </item>

@@ -82,6 +82,7 @@ private:
     void toutesLesTraductionsListe();
     void definirModele();
     void effacerFiltreDate();
+    void resetVue();
     void afficherMessage(int type, QString text, QString information, QString detail = "");
 
 // Fonction protéger
@@ -131,7 +132,7 @@ private:
     QString m_qsNumeroVersion;
     QStringList m_qslListVersionJar;
     QString m_qsDossierSauvegarde;
-    QVariantMap m_qvmJsonProgresPerso;
+    //QVariantMap m_qvmJsonProgresPerso;
     // Traduction
     QStringList m_qslClesToutesLesTrads;
     QStringList m_qslToutesLesTrads;
@@ -143,12 +144,12 @@ private:
     QStringList m_qslRequeteComparaison;
     QList<QStandardItem *> m_qlLigneProgres;
     QStandardItemModel *m_qsimProgresRealisation;
-    QSortFilterProxyModel *proxModelFiltreOrigine;
+    //QSortFilterProxyModel *proxModelFiltreOrigine;
     QSortFilterProxyModel *proxyModelFiltreTitre;
-    QSortFilterProxyModel *proxyModelFiltreProgresFinis;
-    QSortFilterProxyModel *proxyModelFiltreConditionFaite;
-    QSortFilterProxyModel *proxyModelFiltreTypeCondition;
-    DateEtHeureFilterProxyModel *proxyModelFiltreDate;
+    //QSortFilterProxyModel *proxyModelFiltreProgresFinis;
+    //QSortFilterProxyModel *proxyModelFiltreConditionFaite;
+    //QSortFilterProxyModel *proxyModelFiltreTypeCondition;
+    //DateEtHeureFilterProxyModel *proxyModelFiltreDate;
     QAbstractItemModel *m_defaultModelCompleter;
     QSqlQueryModel *plainModel;
     SqlModel *m_smProgresRealisation;

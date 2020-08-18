@@ -83,12 +83,12 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
 
     // Modèles pour la vue
     m_smProgresRealisation = new SqlModel(this);
-    proxModelFiltreOrigine = new QSortFilterProxyModel(this);
+    //proxModelFiltreOrigine = new QSortFilterProxyModel(this);
     proxyModelFiltreTitre = new QSortFilterProxyModel(this);
-    proxyModelFiltreProgresFinis = new QSortFilterProxyModel(this);
-    proxyModelFiltreConditionFaite = new QSortFilterProxyModel(this);
-    proxyModelFiltreTypeCondition = new QSortFilterProxyModel(this);
-    proxyModelFiltreDate = new DateEtHeureFilterProxyModel(this);
+    //proxyModelFiltreProgresFinis = new QSortFilterProxyModel(this);
+    //proxyModelFiltreConditionFaite = new QSortFilterProxyModel(this);
+    //proxyModelFiltreTypeCondition = new QSortFilterProxyModel(this);
+    //proxyModelFiltreDate = new DateEtHeureFilterProxyModel(this);
 
     // Variable si on prends Vanilla + BAC ou pas
     bTousLesProgres = false;
@@ -162,13 +162,10 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     // Configuration
     connect(ui->qcbLauncher, SIGNAL(currentIndexChanged(int)), this, SLOT(choixLauncher(int)));
     //connect(ui->qcbVersion, SIGNAL(currentIndexChanged(int)), this, SLOT(choixVersion(int)));
-    connect(ui->qcbVersion, SIGNAL(currentIndexChanged(QString)), this, SLOT(choixVersion(QString)));
     connect(ui->qpbSelectionFichierProgres, SIGNAL(clicked(bool)), this, SLOT(choixFichierAdvancements(bool)));
     connect(ui->qpbDossierBlazeandcave, SIGNAL(clicked(bool)), this, SLOT(selectionDossierBlazeandcave(bool)));
     connect(ui->qpbExtraireProgresBacap, SIGNAL(clicked(bool)), this, SLOT(importProgresBlazeandcave(bool)));
     connect(ui->qpbImportProgresJoueur, SIGNAL(clicked(bool)), this, SLOT(importProgresPerso(bool)));
-    connect(ui->qcbStatistiques, SIGNAL(stateChanged(int)), this, SLOT(exclureStats(int)));
-    connect(ui->qcbMilestones, SIGNAL(stateChanged(int)), this, SLOT(exclureStats(int)));
     // Lecture fichiers
     connect(ui->qpbExtraireProgresVanilla, SIGNAL(clicked(bool)), this, SLOT(extraireProgres(bool)));
     connect(ui->qpbReadJSONsVanilla, SIGNAL(clicked(bool)), this, SLOT(readJSONsVanilla(bool)));
@@ -225,6 +222,9 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     ui->qpbReadJSONsBlazeandcave->setEnabled(false);
     ui->qpbReadAllJSONs->setEnabled(false);
 
+    // On peut connecter la version
+    connect(ui->qcbVersion, SIGNAL(currentIndexChanged(QString)), this, SLOT(choixVersion(QString)));
+
     // On redimensionne la fenêtre dans son dernier état si l'utilisateur la souhaité
     if (param->getRestoreSizePos()) {
         if(param->getEtat() != "DNE" && param->getGeometrie() != "DNE") {
@@ -241,6 +241,8 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
 
     // Ici on va traiter si l'utilisateur souhaite une restauration de ses dernières saisis
     if (param->getRestoreData()) {
+        ui->qcbMilestones->setChecked(param->getMilestones());
+        ui->qcbStatistiques->setChecked(param->getStatistics());
         if (param->getVersion() != "DNE") {
             int index = ui->qcbVersion->findText(param->getVersion());
             if (index != -1) {
@@ -252,14 +254,16 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
             traitementDossierBac(param->getDossierBlazeAndCave());
         }
 
-        ui->qcbMilestones->setChecked(param->getMilestones());
-        ui->qcbStatistiques->setChecked(param->getStatistics());
         exclureStats(ui->qcbMilestones->checkState());
 
         if (param->getFichierAdvancementsPerso() != "DNE") {
             traitementFichierAdvancements(param->getFichierAdvancementsPerso());
         }
     }
+
+    // A connecter après restauration
+    connect(ui->qcbStatistiques, SIGNAL(stateChanged(int)), this, SLOT(exclureStats(int)));
+    connect(ui->qcbMilestones, SIGNAL(stateChanged(int)), this, SLOT(exclureStats(int)));
 
     ouvertureEnCours = false;
 
@@ -480,6 +484,7 @@ void FRM_Principale::choixVersion(QString text) {
     traitementDossierBac(m_qdDossierAdvancementsBlazeAndCave.path().replace("/data/blazeandcave/advancements", ""));
     traitementFichierAdvancements(m_qsFichierAdvancementsSolo);
 
+    resetVue();
     activationBoutonExtraction();
 
     if (qsCheminVersion != "EMPTY") {
@@ -502,9 +507,8 @@ void FRM_Principale::extraireProgres(bool checked) {
     if (checked) {
     }
 
-    // TEST
     QTime qtDebut(QTime::currentTime());
-
+    QTime qtFin;
     QStringList qslFormatFichier;
     QString qsTitrePrecedent = "";
     QString qsTempNom, qsNouveauNom;
@@ -514,6 +518,7 @@ void FRM_Principale::extraireProgres(bool checked) {
     int iNombreFichierATraiter = 0, iNombreFichierTraiter = 0;
 
     qslFormatFichier << "*.json";
+    resetVue();
 
     m_progressExtractionProgresVanilla->setMinimum(0);
     m_progressExtractionProgresVanilla->setMaximum(0);
@@ -821,6 +826,7 @@ void FRM_Principale::extraireProgres(bool checked) {
                 m_labelExtractionProgresVanilla->setText("(" + QString::number(iNombreFichierTraiter) + "/" + QString::number(iNombreFichierATraiter) + ")");
             }
         }
+        qtFin = QTime::currentTime();
         if (!bErreurDelete && !bErreurInsertionAdvancement) {
             QSqlQuery queryDeleteStats(bdd.getBase());
             if(!queryDeleteStats.exec("DELETE FROM statistics WHERE nom = \"progres_update\" AND version = \"" + m_qsNumeroVersion + "\"")) {
@@ -887,13 +893,22 @@ void FRM_Principale::extraireProgres(bool checked) {
         m_statusBar->clearMessage();
 
         activationBoutonExtraction();
+
+        traitementDossierBac(m_qdDossierAdvancementsBlazeAndCave.path().replace("/data/blazeandcave/advancements", ""));
+        traitementFichierAdvancements(m_qsFichierAdvancementsSolo);
     } else {
         afficherMessage(QMessageBox::Critical, "Erreur avec les fichiers", "Les fichier progrès ou la langue n'ont pas pu être extrait.");
     }
 
-    QTime qtFin(QTime::currentTime());
+    //QTime qtFin(QTime::currentTime());
     int iDuree = qtDebut.secsTo(qtFin);
-    m_statusBar->showMessage("Durée écoulée : " + QString::number(iDuree), 10000);
+    QTime qtDuree(0,0,0);
+    qtDuree = qtDuree.addSecs(iDuree);
+    if (iDuree > 60) {
+        m_statusBar->showMessage("Durée écoulée : " + qtDuree.toString("m") + " min. " + qtDuree.toString("ss") + " sec(s).", 10000);
+    } else {
+        m_statusBar->showMessage("Durée écoulée : " + qtDuree.toString("ss") + " sec(s).", 10000);
+    }
 
 }
 
@@ -920,9 +935,7 @@ void FRM_Principale::importProgresBlazeandcave(bool checked) {
     if (checked) {
     }
 
-    // TEST
-    QTime qtDebut(QTime::currentTime());
-
+    QTime qtDebut(QTime::currentTime()), qtFin;
     QStringList qslFormatFichier;
     QString qsTitrePrecedent = "";
     int iNombreFichierATraiter = 0, iNombreFichierTraiter = 0;
@@ -930,6 +943,7 @@ void FRM_Principale::importProgresBlazeandcave(bool checked) {
     bool bErreurDelete = false, bErreurInsertionAdvancement = false;
 
     qslFormatFichier << "*.json";
+    resetVue();
 
     m_progressExtractionProgresVanilla->setMinimum(0);
     m_progressExtractionProgresVanilla->setMaximum(0);
@@ -1112,6 +1126,7 @@ void FRM_Principale::importProgresBlazeandcave(bool checked) {
         }
     }
 
+    qtFin = QTime::currentTime();
     if (!bErreurDelete && !bErreurInsertionAdvancement) {
         QSqlQuery queryDeleteStats(bdd.getBase());
         if(!queryDeleteStats.exec("DELETE FROM statistics WHERE nom = \"bacap_update\" AND version = \"" + m_qsNumeroVersion + "\"")) {
@@ -1177,9 +1192,15 @@ void FRM_Principale::importProgresBlazeandcave(bool checked) {
 
     activationBoutonExtraction();
 
-    QTime qtFin(QTime::currentTime());
+    //QTime qtFin(QTime::currentTime());
     int iDuree = qtDebut.secsTo(qtFin);
-    m_statusBar->showMessage("Durée écoulée : " + QString::number(iDuree), 10000);
+    QTime qtDuree(0,0,0);
+    qtDuree = qtDuree.addSecs(iDuree);
+    if (iDuree > 60) {
+        m_statusBar->showMessage("Durée écoulée : " + qtDuree.toString("m") + " min. " + qtDuree.toString("ss") + " sec(s).", 10000);
+    } else {
+        m_statusBar->showMessage("Durée écoulée : " + qtDuree.toString("ss") + " sec(s).", 10000);
+    }
 }
 
 /*
@@ -1189,12 +1210,11 @@ void FRM_Principale::importProgresPerso(bool checked) {
     if (checked) {
     }
 
-    // TEST
-    QTime qtDebut(QTime::currentTime());
-
+    QTime qtDebut(QTime::currentTime()), qtFin(QTime::currentTime());
     int iNombreProgresJoueur = 0, iNombreProgresTraite = 0;
     bool bErreurDelete = false, bErreurInsertionAdvancement = false;
     QString qsLastErrorBdd = "", qsDernierImport = "", qsDerniereRequete = "";
+    resetVue();
 
     m_progressExtractionProgresVanilla->setMinimum(0);
     m_progressExtractionProgresVanilla->setMaximum(0);
@@ -1273,7 +1293,7 @@ void FRM_Principale::importProgresPerso(bool checked) {
                             queryInsert.bindValue(":identifiant", qsIdentifiant);
                             queryInsert.bindValue(":done", qsDone);
                             queryInsert.bindValue(":condition", qsNomCriteres);
-                            queryInsert.bindValue(":date_fait", qdtDateCriteres.toString("yyyy-MM-dd hh:m:ss"));
+                            queryInsert.bindValue(":date_fait", qdtDateCriteres.toString("yyyy-MM-dd hh:mm:ss"));
                             if(!bErreurInsertionAdvancement) {
                                 if(!queryInsert.exec()) {
                                     bErreurInsertionAdvancement = true;
@@ -1297,6 +1317,7 @@ void FRM_Principale::importProgresPerso(bool checked) {
             m_bProgresPersoOK = false;
         }
 
+        qtFin = QTime::currentTime();
         if (!bErreurInsertionAdvancement) {
             QSqlQuery queryDeleteStats(bdd.getBase());
             if(!queryDeleteStats.exec("DELETE FROM statistics WHERE nom = \"player_update\" AND version = \"" + m_qsNumeroVersion + "\"")) {
@@ -1358,35 +1379,15 @@ void FRM_Principale::importProgresPerso(bool checked) {
     m_statusBar->clearMessage();
     traitementFichierAdvancements(m_qsFichierAdvancementsSolo);
 
-    QTime qtFin(QTime::currentTime());
+    //QTime qtFin(QTime::currentTime());
     int iDuree = qtDebut.secsTo(qtFin);
-    m_statusBar->showMessage("Durée écoulée : " + QString::number(iDuree), 10000);
-}
-/*
- * Slots lors du choix pour les milestones et statistics pour BACAP
- */
-void FRM_Principale::exclureStats(int statut) {
-    if (statut) {
-    }
-
-    if (ui->qcbStatistiques->checkState() == Qt::Checked && ui->qcbMilestones->checkState() == Qt::Checked) {
-        // Tout est activé
-        m_qsDossierAExclure = "recipes|technical";
-    } else if (ui->qcbStatistiques->checkState() == Qt::Checked && ui->qcbMilestones->checkState() == Qt::Unchecked) {
-        // Seulement les statistiques
-        // Pas les milestones
-        m_qsDossierAExclure = "recipes|technical|bacap";
-    } else if (ui->qcbStatistiques->checkState() == Qt::Unchecked && ui->qcbMilestones->checkState() == Qt::Checked) {
-        // Seulement les milestones
-        // Pas les statistiques
-        m_qsDossierAExclure = "recipes|technical|statistics";
+    QTime qtDuree(0,0,0);
+    qtDuree = qtDuree.addSecs(iDuree);
+    if (iDuree > 60) {
+        m_statusBar->showMessage("Durée écoulée : " + qtDuree.toString("m") + " min. " + qtDuree.toString("ss") + " sec(s).", 10000);
     } else {
-        // Aucun des deux...
-        m_qsDossierAExclure = "recipes|technical|statistics|bacap";
+        m_statusBar->showMessage("Durée écoulée : " + qtDuree.toString("ss") + " sec(s).", 10000);
     }
-
-    param->setMilestones(ui->qcbMilestones->isChecked());
-    param->setStatistics(ui->qcbStatistiques->isChecked());
 }
 
 /*
@@ -1423,10 +1424,11 @@ void FRM_Principale::comparerLesProgres(bool checked) {
                 ", pa.done progres_fait"
                 ", la.description"
                 ", la.condition_texte"
-               ", CASE WHEN pa.condition IS NULL "
+                ", CASE WHEN pa.condition IS NULL "
                        "THEN 'non' "
                        "ELSE 'oui' "
                        "END condition_fait"
+                ", pa.date_fait"
                 ", la.type_condition"
             " FROM "
                 "list_advancements la "
@@ -1449,6 +1451,7 @@ void FRM_Principale::comparerLesProgres(bool checked) {
                         "THEN 'non' "
                         "ELSE 'oui' "
                         "END condition_fait"
+                ", pa.date_fait"
                 ", la.type_condition"
             " FROM "
                 "list_advancements la "
@@ -1485,21 +1488,46 @@ void FRM_Principale::comparerLesProgres(bool checked) {
     }
 
     if (!bErreurDelete && !bErreurCreation) {
-        // On cré le modèle et on le mets dans la vue
-        m_qslRequeteComparaison.clear();
-        m_qslRequeteComparaison << "SELECT * FROM compare_advancements";
-        definirModele();
+        // On récupére les titres au complet pour mettre dans la QComboBox
+        QString qsLastOrigine = "";
+        QSqlQuery qsqListeTitre(bdd.getBase());
+        bool bSeparateurFait = false;
 
-        //connect(ui->qcbFiltreTitre, SIGNAL(currentTextChanged(QString)), this, SLOT(filtreTableTitre(QString)));
+        if (qsqListeTitre.exec("SELECT DISTINCT origine, titre FROM compare_advancements ORDER BY origine DESC, titre ASC")) {
+            while (qsqListeTitre.next()) {
+                QString qsOrigine = qsqListeTitre.value("origine").toString();
+                QString qsTitre = qsqListeTitre.value("titre").toString();
 
-        ui->qgbFiltres->setEnabled(true);
-        ui->qgbOperations->setEnabled(true);
-        ui->qaImprimerVue->setEnabled(true);
+                if (qsLastOrigine != qsOrigine) {
+                    ui->qcbFiltreTitre->addItem("----- " + qsOrigine + " -----");
+                    qsLastOrigine = qsOrigine;
+                }
 
-//        m_defaultCompleter->setModel(ui->qcbFiltreTitre->model());
-//        m_defaultCompleter->setCompletionMode(QCompleter::PopupCompletion);
-//        m_defaultCompleter->setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
-//        ui->qcbFiltreTitre->setCompleter(m_defaultCompleter);
+                if (qsOrigine == "BACAP" && !bSeparateurFait) {
+                    ui->qcbFiltreTitre->insertSeparator(ui->qcbFiltreTitre->count()-1);
+                    bSeparateurFait = true;
+                }
+
+                ui->qcbFiltreTitre->addItem(qsTitre);
+                QCoreApplication::processEvents();
+            }
+            // On cré le modèle et on le mets dans la vue
+            definirModele();
+
+            connect(ui->qcbFiltreTitre, SIGNAL(currentTextChanged(QString)), this, SLOT(filtreTableTitre(QString)));
+
+            ui->qgbFiltres->setEnabled(true);
+            ui->qgbOperations->setEnabled(true);
+
+            m_defaultCompleter->setModel(ui->qcbFiltreTitre->model());
+            m_defaultCompleter->setCompletionMode(QCompleter::PopupCompletion);
+            m_defaultCompleter->setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
+            ui->qcbFiltreTitre->setCompleter(m_defaultCompleter);
+
+        } else {
+            afficherMessage(QMessageBox::Critical, "Erreur lors de la récupération des titres", "Voir les détails pour plus d'informations", \
+                            qsqListeTitre.lastError().text());
+        }
     }
 }
 
@@ -2201,21 +2229,34 @@ void FRM_Principale::readAllJsons(bool checked) {
  * Slots lors de la modification du filtre sur l'origine (Vanilla ou BCAP)
  */
 void FRM_Principale::filtreTableOrigine(QString filtre) {
-    proxModelFiltreOrigine->setFilterKeyColumn(0);
-    proxModelFiltreOrigine->setFilterRegExp(QRegExp(filtre, Qt::CaseInsensitive, QRegExp::FixedString));
+    int iIndexOfWhere = m_qslRequeteComparaison.indexOf(QRegExp(".*origine = .+"));
+    int iTailleListeRequete = m_qslRequeteComparaison.size();
+    if(iIndexOfWhere != -1) {
+        m_qslRequeteComparaison.removeAt(iIndexOfWhere);
+        iTailleListeRequete--;
+    }
 
-    if (ui->qcbFiltreTitre->currentText() != "") {
-        filtreTableTitre(ui->qcbFiltreTitre->currentText());
+    if (filtre != "") {
+        m_qslRequeteComparaison << "origine = '" + filtre + "'";
     }
-    if (ui->qcbFiltreProgresFinis->currentText() != "") {
-        filtreTableProgresFinis(ui->qcbFiltreProgresFinis->currentText());
-    }
-    if (ui->qcbFiltreConditionFait->currentText() != "") {
-        filtreTableConditionFait(ui->qcbFiltreConditionFait->currentText());
-    }
-    if (ui->qcbFiltreType->currentText() != "") {
-        filtreTableTypeCondition(ui->qcbFiltreType->currentText());
-    }
+
+    definirModele();
+
+//    proxModelFiltreOrigine->setFilterKeyColumn(0);
+//    proxModelFiltreOrigine->setFilterRegExp(QRegExp(filtre, Qt::CaseInsensitive, QRegExp::FixedString));
+
+//    if (ui->qcbFiltreTitre->currentText() != "") {
+//        filtreTableTitre(ui->qcbFiltreTitre->currentText());
+//    }
+//    if (ui->qcbFiltreProgresFinis->currentText() != "") {
+//        filtreTableProgresFinis(ui->qcbFiltreProgresFinis->currentText());
+//    }
+//    if (ui->qcbFiltreConditionFait->currentText() != "") {
+//        filtreTableConditionFait(ui->qcbFiltreConditionFait->currentText());
+//    }
+//    if (ui->qcbFiltreType->currentText() != "") {
+//        filtreTableTypeCondition(ui->qcbFiltreType->currentText());
+//    }
 }
 
 /*
@@ -2223,21 +2264,11 @@ void FRM_Principale::filtreTableOrigine(QString filtre) {
  */
 void FRM_Principale::filtreTableTitre(QString filtre) {
     if (filtre != "----- Minecraft Vanilla -----" && filtre != "----- Blaze and Cave -----") {
-        proxyModelFiltreTitre->setFilterKeyColumn(1);
+        proxyModelFiltreTitre->setFilterKeyColumn(2);
         if (ui->qcbRegExp->isChecked())
             proxyModelFiltreTitre->setFilterRegExp(QRegExp(filtre, Qt::CaseInsensitive, QRegExp::RegExp));
         else
             proxyModelFiltreTitre->setFilterRegExp(QRegExp(filtre, Qt::CaseInsensitive, QRegExp::FixedString));
-    }
-
-    if (ui->qcbFiltreProgresFinis->currentText() != "") {
-        filtreTableProgresFinis(ui->qcbFiltreProgresFinis->currentText());
-    }
-    if (ui->qcbFiltreConditionFait->currentText() != "") {
-        filtreTableConditionFait(ui->qcbFiltreConditionFait->currentText());
-    }
-    if (ui->qcbFiltreType->currentText() != "") {
-        filtreTableTypeCondition(ui->qcbFiltreType->currentText());
     }
 }
 
@@ -2245,55 +2276,157 @@ void FRM_Principale::filtreTableTitre(QString filtre) {
  * Slots lors du filtre si progrès finis (oui/non)
  */
 void FRM_Principale::filtreTableProgresFinis(QString filtre) {
-    proxyModelFiltreProgresFinis->setFilterKeyColumn(2);
-    proxyModelFiltreProgresFinis->setFilterRegExp(QRegExp(filtre, Qt::CaseInsensitive, QRegExp::FixedString));
+    //int iIndexOfFiltre = ui->qcbFiltreProgresFinis->findData(filtre, Qt::DisplayRole);
+    QString qsDataFiltre = ui->qcbFiltreProgresFinis->currentData().toString();
+    int iIndexOfWhere = m_qslRequeteComparaison.indexOf(QRegExp(".*progres_fait = .+"));
+    int iTailleListeRequete = m_qslRequeteComparaison.size();
+    if(iIndexOfWhere != -1) {
+        m_qslRequeteComparaison.removeAt(iIndexOfWhere);
+        iTailleListeRequete--;
+    }
+
+    if (filtre != "") {
+        m_qslRequeteComparaison << "progres_fait = '" + qsDataFiltre + "'";
+    }
 
     if (filtre == "oui") {
-        ui->qcbFiltreConditionFait->setCurrentIndex(1);
-        filtreTableConditionFait(ui->qcbFiltreConditionFait->currentText());
+        ui->qcbFiltreConditionFait->setCurrentIndex(0);
+        //filtreTableConditionFait(ui->qcbFiltreConditionFait->currentText());
         ui->qcbFiltreConditionFait->setEnabled(false);
     } else {
-        if (ui->qcbFiltreConditionFait->isEnabled()) {
-            if (ui->qcbFiltreConditionFait->currentText() != "") {
-                filtreTableConditionFait(ui->qcbFiltreConditionFait->currentText());
-            }
-        } else {
-            ui->qcbFiltreConditionFait->setEnabled(true);
-            ui->qcbFiltreConditionFait->setCurrentIndex(0);
-            filtreTableConditionFait(ui->qcbFiltreConditionFait->currentText());
-        }
+        ui->qcbFiltreConditionFait->setEnabled(true);
+//        filtreTableConditionFait(ui->qcbFiltreConditionFait->currentText());
     }
-    if (ui->qcbFiltreType->currentText() != "") {
-        filtreTableTypeCondition(ui->qcbFiltreType->currentText());
-    }
+
+    definirModele();
+
+//    proxyModelFiltreProgresFinis->setFilterKeyColumn(2);
+//    proxyModelFiltreProgresFinis->setFilterRegExp(QRegExp(filtre, Qt::CaseInsensitive, QRegExp::FixedString));
+
+//    if (filtre == "oui") {
+//        ui->qcbFiltreConditionFait->setCurrentIndex(1);
+//        filtreTableConditionFait(ui->qcbFiltreConditionFait->currentText());
+//        ui->qcbFiltreConditionFait->setEnabled(false);
+//    } else {
+//        if (ui->qcbFiltreConditionFait->isEnabled()) {
+//            if (ui->qcbFiltreConditionFait->currentText() != "") {
+//                filtreTableConditionFait(ui->qcbFiltreConditionFait->currentText());
+//            }
+//        } else {
+//            ui->qcbFiltreConditionFait->setEnabled(true);
+//            ui->qcbFiltreConditionFait->setCurrentIndex(0);
+//            filtreTableConditionFait(ui->qcbFiltreConditionFait->currentText());
+//        }
+//    }
+//    if (ui->qcbFiltreType->currentText() != "") {
+//        filtreTableTypeCondition(ui->qcbFiltreType->currentText());
+//    }
 }
 
 /*
  * Slots lors du filtre si condition faite (oui/non)
  */
 void FRM_Principale::filtreTableConditionFait(QString filtre) {
-    proxyModelFiltreConditionFaite->setFilterKeyColumn(4);
-    proxyModelFiltreConditionFaite->setFilterRegExp(QRegExp(filtre, Qt::CaseInsensitive, QRegExp::FixedString));
-    if (ui->qcbFiltreType->currentText() != "") {
-        filtreTableTypeCondition(ui->qcbFiltreType->currentText());
+    int iIndexOfWhere = m_qslRequeteComparaison.indexOf(QRegExp(".*condition_fait = .+"));
+    int iTailleListeRequete = m_qslRequeteComparaison.size();
+    if(iIndexOfWhere != -1) {
+        m_qslRequeteComparaison.removeAt(iIndexOfWhere);
+        iTailleListeRequete--;
     }
+
+    if (filtre != "") {
+        m_qslRequeteComparaison << "condition_fait = '" + filtre + "'";
+    }
+
+    definirModele();
+
+//    proxyModelFiltreConditionFaite->setFilterKeyColumn(4);
+//    proxyModelFiltreConditionFaite->setFilterRegExp(QRegExp(filtre, Qt::CaseInsensitive, QRegExp::FixedString));
+//    if (ui->qcbFiltreType->currentText() != "") {
+//        filtreTableTypeCondition(ui->qcbFiltreType->currentText());
+//    }
 }
 
 /*
  * Slots lors du filtre sur le type de condition (ET/OU/UN)
  */
 void FRM_Principale::filtreTableTypeCondition(QString filtre) {
-    proxyModelFiltreTypeCondition->setFilterKeyColumn(6);
-    proxyModelFiltreTypeCondition->setFilterRegExp(QRegExp(filtre, Qt::CaseInsensitive, QRegExp::FixedString));
+    int iIndexOfWhere = m_qslRequeteComparaison.indexOf(QRegExp(".*type_condition = .+"));
+    int iTailleListeRequete = m_qslRequeteComparaison.size();
+    if(iIndexOfWhere != -1) {
+        m_qslRequeteComparaison.removeAt(iIndexOfWhere);
+        iTailleListeRequete--;
+    }
+
+    if (filtre != "") {
+        m_qslRequeteComparaison << "type_condition = '" + filtre + "'";
+    }
+
+    definirModele();
+//    proxyModelFiltreTypeCondition->setFilterKeyColumn(6);
+//    proxyModelFiltreTypeCondition->setFilterRegExp(QRegExp(filtre, Qt::CaseInsensitive, QRegExp::FixedString));
+}
+
+/*
+ * Slots lors du choix pour les milestones et statistics pour BACAP
+ */
+void FRM_Principale::exclureStats(int statut) {
+    if (statut) {
+    }
+
+    int iIndexOfWhere = m_qslRequeteComparaison.indexOf(QRegExp(".*categorie NOT IN.+"));
+    int iTailleListeRequete = m_qslRequeteComparaison.size();
+    if(iIndexOfWhere != -1) {
+        m_qslRequeteComparaison.removeAt(iIndexOfWhere);
+        iTailleListeRequete--;
+    }
+
+    if (ui->qcbStatistiques->checkState() == Qt::Checked && ui->qcbMilestones->checkState() == Qt::Checked) {
+        // Aucun des deux...
+        m_qslRequeteComparaison << "categorie NOT IN ('bacap', 'statistics')";
+    } else if (ui->qcbStatistiques->checkState() == Qt::Checked && ui->qcbMilestones->checkState() == Qt::Unchecked) {
+        // Seulement les milestones
+        // Pas les statistiques
+        m_qslRequeteComparaison << "categorie NOT IN ('statistics')";
+        //m_qsDossierAExclure = "recipes|technical|bacap";
+    } else if (ui->qcbStatistiques->checkState() == Qt::Unchecked && ui->qcbMilestones->checkState() == Qt::Checked) {
+        // Seulement les statistiques
+        // Pas les milestones
+        m_qslRequeteComparaison << "categorie NOT IN ('bacap')";
+        //m_qsDossierAExclure = "recipes|technical|statistics";
+    } else {
+        //m_qsDossierAExclure = "recipes|technical|statistics|bacap";
+    }
+
+
+
+    definirModele();
+
+    param->setMilestones(ui->qcbMilestones->isChecked());
+    param->setStatistics(ui->qcbStatistiques->isChecked());
 }
 
 /*
  * Slots lors du filtre sur les dates
  */
-void FRM_Principale::dateFilterChanged()
-{
-    proxyModelFiltreDate->setFilterMinimumDate(ui->qdteFrom->dateTime());
-    proxyModelFiltreDate->setFilterMaximumDate(ui->qdteTo->dateTime());
+void FRM_Principale::dateFilterChanged() {
+    int iIndexOfWhere = m_qslRequeteComparaison.indexOf(QRegExp(".*date_fait BETWEEN .+"));
+    int iTailleListeRequete = m_qslRequeteComparaison.size();
+    QDateTime qdtDebutDefaut = QDateTime(QDate(1970, 01, 01), QTime(0, 0, 0));
+    QDateTime qdtFinDefaut = QDateTime(QDate(2099, 12, 31), QTime(23, 59, 59));
+    QDateTime qdtDebut = ui->qdteFrom->dateTime(), qdtFin = ui->qdteTo->dateTime();
+
+    if(iIndexOfWhere != -1) {
+        m_qslRequeteComparaison.removeAt(iIndexOfWhere);
+        iTailleListeRequete--;
+    }
+
+    if (qdtDebut != qdtDebutDefaut && qdtFin != qdtFinDefaut) {
+        m_qslRequeteComparaison << "date_fait BETWEEN '" + qdtDebut.toString("yyyy-MM-dd hh:mm:ss") + "' "
+                                   "AND '" + qdtFin.toString("yyyy-MM-dd hh:mm:ss") + "'";
+    }
+
+    definirModele();
 }
 
 /*
@@ -2336,9 +2469,10 @@ void FRM_Principale::etatAutoCompletion(int etat) {
 }
 
 void FRM_Principale::dataSelectionnee(const QModelIndex index) {
-    QModelIndex qmiTitre = proxyModelFiltreDate->index(index.row(), 1);
-    QString qsTitreDisplay = proxyModelFiltreDate->data(qmiTitre, Qt::DisplayRole).toString();
-    QString qsTitreData = proxyModelFiltreDate->data(qmiTitre, Qt::UserRole).toString();
+    // TODO A REFAIRE !
+    QModelIndex qmiTitre = proxyModelFiltreTitre->index(index.row(), 1);
+    QString qsTitreDisplay = proxyModelFiltreTitre->data(qmiTitre, Qt::DisplayRole).toString();
+    QString qsTitreData = proxyModelFiltreTitre->data(qmiTitre, Qt::UserRole).toString();
 
     qsTitreDisplay.replace(QRegularExpression(" \\(.+\\)"), "");
 }
@@ -2346,8 +2480,20 @@ void FRM_Principale::dataSelectionnee(const QModelIndex index) {
 void FRM_Principale::imprimerTable(bool checked) {
     if (checked) {
     }
+
     QString strStream;
     QTextStream out(&strStream);
+    QString qsRequeteFinal = "";
+    QSqlQuery qsqDataAImprimer(bdd.getBase());
+
+    for (int i = 0; i < m_qslRequeteComparaison.size(); i++) {
+        if (i == 1) {
+            qsRequeteFinal += " WHERE ";
+        } else if (i > 1) {
+            qsRequeteFinal += " AND ";
+        }
+        qsRequeteFinal += m_qslRequeteComparaison.at(i);
+    }
 
     const int rowCount = ui->tableView->model()->rowCount();
     const int columnCount = ui->tableView->model()->columnCount();
@@ -2375,16 +2521,30 @@ void FRM_Principale::imprimerTable(bool checked) {
     out << "</tr></thead>\n";
 
     // data table
-    for (int row = 0; row < rowCount; row++) {
-        out << "<tr>";
-        for (int column = 0; column < columnCount; column++) {
-            if (!ui->tableView->isColumnHidden(column)) {
-                QString data = ui->tableView->model()->data(ui->tableView->model()->index(row, column)).toString().simplified();
-                out << QString("<td bkcolor=0>%1</td>").arg((!data.isEmpty()) ? data : QString("&nbsp;"));
-            }
+    if(qsqDataAImprimer.exec(qsRequeteFinal)) {
+        while(qsqDataAImprimer.next()) {
+            QString qsOrigine = qsqDataAImprimer.value("origine").toString();
+            QString qsCategorie = qsqDataAImprimer.value("categorie").toString();
+            QString qsTitre = qsqDataAImprimer.value("titre").toString();
+            QString qsProgresFait = (qsqDataAImprimer.value("progres_fait").toString() == "true") ? "oui" : "non";
+            QString qsDescription = qsqDataAImprimer.value("description").toString();
+            QString qsConditionTexte = qsqDataAImprimer.value("condition_texte").toString();
+            QString qsConditionFait = qsqDataAImprimer.value("condition_fait").toString();
+            QDateTime qdtDateFait = qsqDataAImprimer.value("date_fait").toDateTime();
+            QString qsDateFait = qdtDateFait.toString("dd/MM/yyyy hh:mm:ss");
+            out << "<tr>"
+                   "<td bkcolor=0>"+qsOrigine+"</td>"
+                    "<td bkcolor=0>"+qsCategorie+"</td>"
+                    "<td bkcolor=0>"+qsTitre+"</td>"
+                    "<td bkcolor=0>"+qsProgresFait+"</td>"
+                    "<td bkcolor=0>"+qsDescription+"</td>"
+                    "<td bkcolor=0>"+qsConditionTexte+"</td>"
+                    "<td bkcolor=0>"+qsConditionFait+"</td>"
+                    "<td bkcolor=0>"+qsDateFait+"</td>"
+                    "</tr>\n";
         }
-        out << "</tr>\n";
     }
+
     out <<  "</table>\n"
         "</body>\n"
         "</html>\n";
@@ -2938,6 +3098,8 @@ void FRM_Principale::toutesLesTraductions(QVariantMap jsonLang) {
     bool bQueryInsertKO = false;
     int iLangueImporte = 0;
 
+    ui->qpbExtraireProgresBacap->setEnabled(false);
+
     if (qsqDeleteTraduction.exec("DELETE FROM traduction_vanilla WHERE version = \"" + m_qsNumeroVersion + "\"")) {
         QMapIterator<QString, QVariant> i(jsonLang);
         while (i.hasNext()) {
@@ -2961,8 +3123,7 @@ void FRM_Principale::toutesLesTraductions(QVariantMap jsonLang) {
     if (bQueryInsertKO) {
         afficherMessage(QMessageBox::Critical, "Erreur insertion traduction langue", "Voir les détails", qsLastQueryError);
     } else {
-        ui->qpbExtraireProgresBacap->setEnabled(false);
-        traitementDossierBac(m_qdDossierAdvancementsBlazeAndCave.path().replace("/data/blazeandcave/advancements", ""));
+
     }
 }
 
@@ -2993,10 +3154,30 @@ void FRM_Principale::toutesLesTraductionsListe() {
  *
  */
 void FRM_Principale::definirModele() {
-    if (m_qslRequeteComparaison.size() == 1) {
-        m_smProgresRealisation->setQuery(m_qslRequeteComparaison.at(0), bdd.getBase());
-        ui->tableView->setModel(m_smProgresRealisation);
+    if (!ouvertureEnCours) {
+        QString qsRequeteFinal = "";
+
+        for (int i = 0; i < m_qslRequeteComparaison.size(); i++) {
+            if (i == 1) {
+                qsRequeteFinal += " WHERE ";
+            } else if (i > 1) {
+                qsRequeteFinal += " AND ";
+            }
+            qsRequeteFinal += m_qslRequeteComparaison.at(i);
+        }
+
+        qDebug() << "Requete filtre:" << qsRequeteFinal;
+
+        m_smProgresRealisation->setQuery(qsRequeteFinal, bdd.getBase());
+        proxyModelFiltreTitre->setSourceModel(m_smProgresRealisation);
+        ui->tableView->setModel(proxyModelFiltreTitre);
+        ui->tableView->hideColumn(8);
     }
+
+//    if (m_qslRequeteComparaison.size() == 1) {
+//        m_smProgresRealisation->setQuery(m_qslRequeteComparaison.at(0), bdd.getBase());
+//        ui->tableView->setModel(m_smProgresRealisation);
+//    }
     //qDebug() << m_smProgresRealisation->rowCount();
 }
 
@@ -3006,7 +3187,31 @@ void FRM_Principale::definirModele() {
 void FRM_Principale::effacerFiltreDate() {
     ui->qdteFrom->setDateTime(QDateTime(QDate(1970, 01, 01), QTime(0, 0, 0)));
     ui->qdteTo->setDateTime(QDateTime(QDate(2099, 12, 31), QTime(23, 59, 59)));
-    proxyModelFiltreDate->effacerFiltreDate();
+}
+
+/*
+ *
+ */
+void FRM_Principale::resetVue() {
+    // Reset Filtre
+    effacerLesFiltres(true);
+    // On déconnecte le titre pour éviter les problèmes
+    ui->qcbFiltreTitre->disconnect();
+    ui->qcbFiltreTitre->clear();
+    ui->qcbFiltreTitre->addItem("");
+    // On désactive les boutons
+    ui->qgbFiltres->setEnabled(false);
+    ui->qgbOperations->setEnabled(false);
+    // On vide la vue
+    proxyModelFiltreTitre->invalidate();
+    m_smProgresRealisation->setQuery("", bdd.getBase());
+    while (m_smProgresRealisation->rowCount() > 0)
+        m_smProgresRealisation->removeRows(0, m_smProgresRealisation->rowCount());
+    // On réinitialise la requête de filtre
+    m_qslRequeteComparaison.clear();
+    m_qslRequeteComparaison << "SELECT * FROM compare_advancements";
+    //exclureStats(0);
+
 }
 
 /*
@@ -3042,7 +3247,10 @@ void FRM_Principale::TEST(bool checked) {
     if (checked) {
     }
 
-    qDebug() << "Is Floating:" << ui->qdwOpe->isFloating() << "Geometry:" << ui->qdwOpe->geometry();
+    resetVue();
+
+    //m_smProgresRealisation->setQuery("", bdd.getBase());
+    //qDebug() << "Is Floating:" << ui->qdwOpe->isFloating() << "Geometry:" << ui->qdwOpe->geometry();
 
     //plainModel->setQuery("SELECT * FROM Test WHERE condition = 'minecraft:badlands'", bdd.getBase());
 
