@@ -243,9 +243,13 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     ui->qcbLauncher->setCurrentIndex(1);
     ui->qpbSelectionDossierLanceur->setVisible(false);
     ui->qpbExtraireProgresVanilla->setEnabled(false);
+    ui->qpbImportProgresJoueur->setEnabled(false);
     ui->qlAdvancementsVanillaExtrait->setVisible(false);
     ui->qlDernierImportVanilla->setVisible(false);
+    ui->qlAdvancementsBacapExtrait->setVisible(false);
     ui->qlProgresPerso->setVisible(false);
+    ui->qpbDossierBlazeandcave->setEnabled(false);
+    ui->qpbSelectionFichierProgres->setEnabled(false);
     ui->qpbReadJSONsVanilla->setEnabled(false);
     ui->qpbReadJSONsBlazeandcave->setEnabled(false);
     ui->qpbReadAllJSONs->setEnabled(false);
@@ -514,6 +518,9 @@ void FRM_Principale::choixVersion(QString text) {
                                     qsqDernierImporteVanilla.lastError().text());
         ui->qlDernierImportVanilla->setVisible(false);
     }
+
+    ui->qpbDossierBlazeandcave->setEnabled(true);
+    ui->qpbSelectionFichierProgres->setEnabled(true);
 
     traitementDossierBac(m_qdDossierAdvancementsBlazeAndCave.path().replace("/data/blazeandcave/advancements", ""));
     traitementFichierAdvancements(m_qsFichierAdvancementsSolo);
@@ -919,8 +926,10 @@ void FRM_Principale::extraireProgres(bool checked) {
         ui->qcbLangue->setEnabled(true);
         ui->qcbVersion->setEnabled(true);
         ui->qpbExtraireProgresVanilla->setEnabled(true);
-        ui->qpbExtraireProgresBacap->setEnabled(true);
-        ui->qpbImportProgresJoueur->setEnabled(true);
+        if (m_qdDossierAdvancementsBlazeAndCave.exists())
+            ui->qpbExtraireProgresBacap->setEnabled(true);
+        if (QFile::exists(m_qsFichierAdvancementsSolo))
+            ui->qpbImportProgresJoueur->setEnabled(true);
         // On supprime les widgets de la status bar
         m_statusBar->removeWidget(m_progressExtractionProgresVanilla);
         m_statusBar->removeWidget(m_labelExtractionProgresVanilla);
@@ -1216,9 +1225,10 @@ void FRM_Principale::importProgresBlazeandcave(bool checked) {
     ui->qcbLauncher->setEnabled(true);
     ui->qcbLangue->setEnabled(true);
     ui->qcbVersion->setEnabled(true);
+    ui->qpbExtraireProgresVanilla->setEnabled(true);
     ui->qpbExtraireProgresBacap->setEnabled(true);
-    ui->qpbExtraireProgresBacap->setEnabled(true);
-    ui->qpbImportProgresJoueur->setEnabled(true);
+    if (QFile::exists(m_qsFichierAdvancementsSolo))
+        ui->qpbImportProgresJoueur->setEnabled(true);
     // On supprime les widgets de la status bar
     m_statusBar->removeWidget(m_progressExtractionProgresVanilla);
     m_statusBar->removeWidget(m_labelExtractionProgresVanilla);
@@ -1378,8 +1388,8 @@ void FRM_Principale::importProgresPerso(bool checked) {
             }
 
             // Modification du bouton
-            ui->qpbExtraireProgresBacap->setText("Ré-Importer Progrès");
-            ui->qpbExtraireProgresBacap->setEnabled(true);
+            ui->qpbImportProgresJoueur->setText("Ré-Importer Progrès");
+            ui->qpbImportProgresJoueur->setEnabled(true);
             // Info utilisateur
             ui->qlProgresPerso->setText("Progrès importé !");
             ui->qlProgresPerso->setStyleSheet("QLabel { color: green; }");
@@ -1389,10 +1399,10 @@ void FRM_Principale::importProgresPerso(bool checked) {
             afficherMessage(QMessageBox::Critical, "Impossible d'insérer tous vos progrès pour la version <strong>" + m_qsNumeroVersion + "</strong>.", \
                                         "Voir les détails pour plus d'informations.", \
                                         qsLastErrorBdd + "\nDernières Requêtes :\n" + qsDerniereRequete);
-            ui->qlDernierImportVanilla->setVisible(false);
+            ui->qlDernierImportPerso->setVisible(false);
             // Modification du bouton
-            ui->qpbExtraireProgresBacap->setText("Importer Progrès");
-            ui->qpbExtraireProgresBacap->setEnabled(true);
+            ui->qpbImportProgresJoueur->setText("Importer Progrès");
+            ui->qpbImportProgresJoueur->setEnabled(true);
             // Info utilisateur
             ui->qlProgresPerso->setText("Progrès non importé !");
             ui->qlProgresPerso->setStyleSheet("QLabel { color: red; }");
@@ -1406,13 +1416,15 @@ void FRM_Principale::importProgresPerso(bool checked) {
     ui->qcbLangue->setEnabled(true);
     ui->qcbVersion->setEnabled(true);
     ui->qpbExtraireProgresVanilla->setEnabled(true);
-    ui->qpbExtraireProgresBacap->setEnabled(true);
+    if (m_qdDossierAdvancementsBlazeAndCave.exists())
+        ui->qpbExtraireProgresBacap->setEnabled(true);
     ui->qpbImportProgresJoueur->setEnabled(true);
     // On supprime les widgets de la status bar
     m_statusBar->removeWidget(m_progressExtractionProgresVanilla);
     m_statusBar->removeWidget(m_labelExtractionProgresVanilla);
     m_statusBar->clearMessage();
-    traitementFichierAdvancements(m_qsFichierAdvancementsSolo);
+
+    activationBoutonExtraction();
 
     //QTime qtFin(QTime::currentTime());
     int iDuree = qtDebut.secsTo(qtFin);
@@ -3137,7 +3149,7 @@ QString FRM_Principale::hashLangue() {
 void FRM_Principale::traitementDossierBac(QString folder) {
     m_qdDossierAdvancementsBlazeAndCave.setPath(folder + "\\data\\blazeandcave\\advancements");
 
-    if (m_qdDossierAdvancementsBlazeAndCave.exists()) {
+    if (m_qdDossierAdvancementsBlazeAndCave.exists() && m_qsNumeroVersion != "") {
         ui->qpbExtraireProgresBacap->setEnabled(true);
         QSqlQuery qsqCompteProgresBacap(bdd.getBase()), qsqDernierImportBacap(bdd.getBase());
         QStringList qslFauxDossier = folder.split("/");
@@ -3225,13 +3237,22 @@ void FRM_Principale::traitementDossierBac(QString folder) {
                                         qsqDernierImportBacap.lastError().text());
             ui->qlDernierImportBacap->setVisible(false);
         }
+    } else if (QFile::exists(m_qsFichierAdvancementsSolo) && m_qsNumeroVersion == "") {
+        ui->qlDernierImportBacap->setVisible(false);
+        // Modification du bouton
+        ui->qpbExtraireProgresBacap->setText("Importer Progrès");
+        ui->qpbExtraireProgresBacap->setEnabled(false);
+        // Info utilisateur
+        // Info utilisateur
+        ui->qlAdvancementsBacapExtrait->setText("Sélectionnez la version d'abord !");
+        ui->qlAdvancementsBacapExtrait->setStyleSheet("QLabel { color: orange; }");
+        ui->qlAdvancementsBacapExtrait->setVisible(true);
+        m_bProgresBlazeandcaveOK = false;
     } else {
         ui->qlDernierImportBacap->setVisible(false);
         // Modification du bouton
         ui->qpbExtraireProgresBacap->setText("Importer Progrès");
-        ui->qpbExtraireProgresBacap->setEnabled(true);
-        m_bUpdateProgres = true;
-        m_bProgresBlazeandcaveOK = true;
+        ui->qpbExtraireProgresBacap->setEnabled(false);
         // Info utilisateur
         ui->qlAdvancementsBacapExtrait->setText("Progrès non importé !");
         ui->qlAdvancementsBacapExtrait->setStyleSheet("QLabel { color: red; }");
@@ -3255,62 +3276,90 @@ void FRM_Principale::traitementFichierAdvancements(QString fichier) {
     qslFormatFichier << "*.json";
 
     m_qsFichierAdvancementsSolo = fichier;
-    qslFauxChemin = m_qsFichierAdvancementsSolo.split("/");
-    qsFauxChemin = qslFauxChemin.first() + "\\Fake_Path\\" + qslFauxChemin.last();
-    ui->qleFichierProgres->setText(qsFauxChemin);
 
-    // On vérifie d'abord si déjà importé
-    if (qsqCompteProgresPerso.exec("SELECT COUNT(1) progresImporte FROM statistics WHERE nom = \"player_update\" AND version = \"" + m_qsNumeroVersion + "\"")) {
-        qsqCompteProgresPerso.next();
-        int iNombreEnregistrement = qsqCompteProgresPerso.value("progresImporte").toInt();
-        if (iNombreEnregistrement > 0) {
-            if (qsqDernierImportPerso.exec("SELECT valeur FROM statistics WHERE nom = \"player_update\" AND version = \"" + m_qsNumeroVersion + "\"")) {
-                qsqDernierImportPerso.next();
-                QString qsDernierImport = qsqDernierImportPerso.value("valeur").toString();
-                QDateTime qdtDernierImport = QDateTime::fromString(qsDernierImport, "yyyy-MM-dd hh:mm:ss");
-                if (qdtDernierImport.isValid()) {
-                    ui->qlDernierImportPerso->setText("Dernier Import : " + qdtDernierImport.toString("dd/MM/yyyy hh:mm:ss"));
-                    ui->qlDernierImportPerso->setVisible(true);
-                    // Modification du bouton
-                    ui->qpbImportProgresJoueur->setText("Ré-Importer Progrès");
-                    ui->qpbImportProgresJoueur->setEnabled(true);
-                    m_bUpdateProgres = true;
-                    // Info utilisateur
-                    ui->qlProgresPerso->setText("Progrès importé !");
-                    ui->qlProgresPerso->setStyleSheet("QLabel { color: green; }");
-                    ui->qlProgresPerso->setVisible(true);
-                    m_bProgresPersoOK = true;
+    if (QFile::exists(m_qsFichierAdvancementsSolo) && m_qsNumeroVersion != "") {
+        qslFauxChemin = m_qsFichierAdvancementsSolo.split("/");
+        qsFauxChemin = qslFauxChemin.first() + "\\Fake_Path\\" + qslFauxChemin.last();
+        ui->qleFichierProgres->setText(qsFauxChemin);
+
+        // On vérifie d'abord si déjà importé
+        if (qsqCompteProgresPerso.exec("SELECT COUNT(1) progresImporte FROM statistics WHERE nom = \"player_update\" AND version = \"" + m_qsNumeroVersion + "\"")) {
+            qsqCompteProgresPerso.next();
+            int iNombreEnregistrement = qsqCompteProgresPerso.value("progresImporte").toInt();
+            if (iNombreEnregistrement > 0) {
+                if (qsqDernierImportPerso.exec("SELECT valeur FROM statistics WHERE nom = \"player_update\" AND version = \"" + m_qsNumeroVersion + "\"")) {
+                    qsqDernierImportPerso.next();
+                    QString qsDernierImport = qsqDernierImportPerso.value("valeur").toString();
+                    QDateTime qdtDernierImport = QDateTime::fromString(qsDernierImport, "yyyy-MM-dd hh:mm:ss");
+                    if (qdtDernierImport.isValid()) {
+                        ui->qlDernierImportPerso->setText("Dernier Import : " + qdtDernierImport.toString("dd/MM/yyyy hh:mm:ss"));
+                        ui->qlDernierImportPerso->setVisible(true);
+                        // Modification du bouton
+                        ui->qpbImportProgresJoueur->setText("Ré-Importer Progrès");
+                        ui->qpbImportProgresJoueur->setEnabled(true);
+                        m_bUpdateProgres = true;
+                        // Info utilisateur
+                        ui->qlProgresPerso->setText("Progrès importé !");
+                        ui->qlProgresPerso->setStyleSheet("QLabel { color: green; }");
+                        ui->qlProgresPerso->setVisible(true);
+                        m_bProgresPersoOK = true;
+                    } else {
+                        ui->qlDernierImportPerso->setVisible(false);
+                        // Modification du bouton
+                        ui->qpbImportProgresJoueur->setText("Ré-Importer Progrès");
+                        ui->qpbImportProgresJoueur->setEnabled(true);
+                        m_bUpdateProgres = true;
+                        // Info utilisateur
+                        ui->qlProgresPerso->setText("Import progrès incomplet !");
+                        ui->qlProgresPerso->setStyleSheet("QLabel { color: orange; }");
+                        ui->qlProgresPerso->setVisible(true);
+                        m_bProgresPersoOK = false;
+                    }
                 } else {
-                    ui->qlDernierImportPerso->setVisible(false);
-                    // Modification du bouton
-                    ui->qpbImportProgresJoueur->setText("Ré-Importer Progrès");
-                    ui->qpbImportProgresJoueur->setEnabled(true);
-                    m_bUpdateProgres = true;
-                    // Info utilisateur
-                    ui->qlProgresPerso->setText("Import progrès incomplet !");
-                    ui->qlProgresPerso->setStyleSheet("QLabel { color: orange; }");
-                    ui->qlProgresPerso->setVisible(true);
                     m_bProgresPersoOK = false;
+                    afficherMessage(QMessageBox::Warning, "Impossible de récupérer la date de dernier import des progrès Minecraft Vanilla.", \
+                                    "Voir les détails pour plus d'informations.", \
+                                    qsqDernierImportPerso.lastError().text());
+                    ui->qlDernierImportPerso->setVisible(false);
                 }
             } else {
-                m_bProgresPersoOK = false;
-                afficherMessage(QMessageBox::Warning, "Impossible de récupérer la date de dernier import des progrès Minecraft Vanilla.", \
-                                            "Voir les détails pour plus d'informations.", \
-                                            qsqDernierImportPerso.lastError().text());
+                // Modification du bouton
+                ui->qpbImportProgresJoueur->setText("Importer Progrès");
+                ui->qpbImportProgresJoueur->setEnabled(true);
+                m_bUpdateProgres = true;
+                // Info utilisateur
+                ui->qlProgresPerso->setText("Progrès non importé !");
+                ui->qlProgresPerso->setStyleSheet("QLabel { color: red; }");
+                ui->qlProgresPerso->setVisible(true);
                 ui->qlDernierImportPerso->setVisible(false);
+                m_bProgresPersoOK = false;
             }
         } else {
-            // Modification du bouton
-            ui->qpbImportProgresJoueur->setText("Importer Progrès");
-            ui->qpbImportProgresJoueur->setEnabled(true);
-            m_bUpdateProgres = true;
-            // Info utilisateur
-            ui->qlProgresPerso->setText("Progrès non importé !");
-            ui->qlProgresPerso->setStyleSheet("QLabel { color: red; }");
-            ui->qlProgresPerso->setVisible(true);
-            ui->qlDernierImportPerso->setVisible(false);
+            afficherMessage(QMessageBox::Critical, "Impossible de vérifier si les progrès ont déjà étés importés.", \
+                            "Contacter <a href=\"https://github.com/Chucky2401/Minecraft-Advancements/issues/new?title=Erreur contrôle import progrès&body=" + qsqCompteProgresPerso.lastError().text() + "\n\nRemarque personnel :\n\">le développeur</a>.", \
+                            qsqCompteProgresPerso.lastError().text());
             m_bProgresPersoOK = false;
         }
+    } else if (QFile::exists(m_qsFichierAdvancementsSolo) && m_qsNumeroVersion == "") {
+        ui->qlDernierImportPerso->setVisible(false);
+        // Modification du bouton
+        ui->qpbImportProgresJoueur->setText("Importer Progrès");
+        ui->qpbImportProgresJoueur->setEnabled(false);
+        // Info utilisateur
+        ui->qlProgresPerso->setText("Sélectionnez la version d'abord !");
+        ui->qlProgresPerso->setStyleSheet("QLabel { color: orange; }");
+        ui->qlProgresPerso->setVisible(true);
+        m_bProgresPersoOK = false;
+    } else {
+        ui->qlDernierImportPerso->setVisible(false);
+        // Modification du bouton
+        ui->qpbImportProgresJoueur->setText("Importer Progrès");
+        ui->qpbImportProgresJoueur->setEnabled(false);
+        // Info utilisateur
+        ui->qlProgresPerso->setText("Progrès non importé !");
+        ui->qlProgresPerso->setStyleSheet("QLabel { color: red; }");
+        ui->qlProgresPerso->setVisible(true);
+        m_bProgresPersoOK = false;
     }
 
     activationBoutonExtraction();
