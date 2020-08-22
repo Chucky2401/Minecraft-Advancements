@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Installer>
     <Name>Minecraft Advancements</Name>
-    <Version>0.1.1</Version>
+    <Version>2.0</Version>
     <Title>Minecraft Advancements</Title>
     <Publisher>Black Wizard Company</Publisher>
     <ProductUrl>https://chucky2401.github.io/Minecraft-Advancements/</ProductUrl>
@@ -13,7 +13,7 @@
     <InstallActionColumnVisible>true</InstallActionColumnVisible>
     <RemoteRepositories>
         <Repository>
-             <Url>https://blackwizard.yj.fr/repository/advancements-x64</Url>
+             <Url>https://advancements.blackwizard.fr/repository-64/release</Url>
              <Enabled>1</Enabled>
              <DisplayName>Release</DisplayName>
         </Repository>

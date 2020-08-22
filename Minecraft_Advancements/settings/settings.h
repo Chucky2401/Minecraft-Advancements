@@ -89,6 +89,14 @@ public:
     bool getIniStatistics();
     bool getStatistics();
 
+    void setTypeGraphique(QString type);
+    QString getIniTypeGraphique();
+    QString getTypeGraphique();
+
+    void setProgresMasque(QStringList progres);
+    QStringList getIniProgresMasque();
+    QStringList getProgresMasque();
+
     void setFichierAdvancementsPerso(QString fichier);
     QString getIniFichierAdvancementsPerso();
     QString getFichierAdvancementsPerso();
@@ -124,6 +132,8 @@ private:
     bool m_milestones;
     bool m_statistics;
     QString m_fichierAdvancementsPerso;
+    QStringList m_qslProgresMasque;
+    QString m_qsTypeGraphique;
 
 };
 

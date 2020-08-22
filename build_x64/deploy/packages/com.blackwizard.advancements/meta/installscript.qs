@@ -26,12 +26,11 @@
 **
 ****************************************************************************/
 
-function Controller() {
-
-}
-
 function Component()
 {
+    var tempRepo = ["https://advancements.blackwizard.fr/repository-64/beta"]
+    installer.setTemporaryRepositories(tempRepo, false)
+    
     if (installer.isUpdater()) {
         var startMenuShortcut = installer.value("StartMenuDir") + "/Minecraft Advancements.lnk";
         var desktopShortcut = installer.value("DesktopDir") + "/Minecraft Advancements.lnk";
@@ -56,7 +55,7 @@ function Component()
 
 Component.prototype.createOperations = function()
 {
-    
+
     component.createOperations();
 
     if (installer.isInstaller()) {

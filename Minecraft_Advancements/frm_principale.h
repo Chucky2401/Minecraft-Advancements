@@ -49,6 +49,7 @@
 #include "settings/settings.h"
 #include "settings/database.h"
 #include "settings/dia_parametres.h"
+#include "statistiques.h"
 #include "dia_apropos.h"
 
 QT_BEGIN_NAMESPACE
@@ -84,6 +85,9 @@ private:
     void effacerFiltreDate();
     void resetVue();
     void afficherMessage(int type, QString text, QString information, QString detail = "");
+    bool getEtatFenGraphiqueStats();
+    void setEtatFenGraphiqueStats(bool stated);
+    void restoreTypeGraphique(QString type);
 
 // Fonction protéger
 protected:
@@ -96,6 +100,7 @@ private:
     QStatusBar *m_statusBar;
     QProgressBar *m_progressExtractionProgresVanilla;
     QLabel *m_labelExtractionProgresVanilla;
+    QString m_qsArchitecture;
     // Constante
     const QString connectionName = "principal";
     // Booléen
@@ -155,9 +160,18 @@ private:
     SqlModel *m_smProgresRealisation;
     QCompleter *m_defaultCompleter;
     QCompleter *m_sansCompleter;
+    QModelIndex m_qmiDataSelectionne;
+    QMenu *m_qmPopup;
+    QAction *m_qaPopupDeleteAction;
+    QAction *m_qaPopupRestoreAction;
+    QStringList m_qslProgresMasques;
     // Settings
     class Settings *param;
     class database bdd;
+    // Fenêtres complémentaires
+    Statistiques *graphiqueStatistiques;
+    QString m_qsTypeGraphique;
+    bool fenGraphiqueStatsOuverte;
     DIA_Parametres *diaParametres;
     DIA_apropos *diaAPropos;
     // Mise à jour
@@ -189,9 +203,9 @@ private slots:
     void exclureStats(int statut);
     // Lecture et affichage
     void comparerLesProgres(bool checked);
-    void readJSONsVanilla(bool checked);
-    void readJSONsBlazeandcave(bool checked);
-    void readAllJsons(bool checked);
+    //void readJSONsVanilla(bool checked);
+    //void readJSONsBlazeandcave(bool checked);
+    //void readAllJsons(bool checked);
     void filtreTableOrigine(QString filtre);
     void filtreTableTitre(QString filtre);
     void filtreTableProgresFinis(QString filtre);
@@ -202,9 +216,16 @@ private slots:
     void effacerFiltresSurLesDates(bool checked);
     void etatAutoCompletion(int etat);
     void dataSelectionnee(const QModelIndex index);
+    void customMenuRequested(QPoint pos);
+    void masquerProgres(bool booleen);
+    void restaurerProgres(bool booleen);
     // Impression
     void imprimerTable(bool checked);
-    // Fenêtres complémentaire
+    // Fenêtres complémentaires
+    void graphiqueLigne(bool checked);
+    void graphiqueSpline(bool checked);
+    void ouvrirFenGraphiqueStats(bool clicked);
+    void fenGraphiqueStatsClose(int result);
     void ouvrirAPropos();
     void ouvrirParametres();
     // Mise à jour

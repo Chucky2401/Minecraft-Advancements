@@ -72,7 +72,7 @@ bool database::createConnection(QString name)
 }
 
 bool database::initialisationTable(){
-    QFile qfSqlCreation(":/file/nms_database.db.sql");
+    QFile qfSqlCreation(":/files/minecraft_Advancements.sql");
     QByteArray line;
     QSqlQuery query(this->base);
     bool bExecutionRequeteEchoue = false;

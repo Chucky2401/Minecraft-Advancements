@@ -448,6 +448,19 @@
        </widget>
       </item>
       <item>
+       <spacer name="horizontalSpacer_4">
+        <property name="orientation">
+         <enum>Qt::Horizontal</enum>
+        </property>
+        <property name="sizeHint" stdset="0">
+         <size>
+          <width>40</width>
+          <height>20</height>
+         </size>
+        </property>
+       </spacer>
+      </item>
+      <item>
        <widget class="Line" name="line_5">
         <property name="orientation">
          <enum>Qt::Vertical</enum>
@@ -530,7 +543,7 @@
    <property name="minimumSize">
     <size>
      <width>957</width>
-     <height>256</height>
+     <height>278</height>
     </size>
    </property>
    <property name="floating">
@@ -540,7 +553,7 @@
     <set>QDockWidget::AllDockWidgetFeatures</set>
    </property>
    <property name="windowTitle">
-    <string>Opérations</string>
+    <string>Opérations (Ctrl+O)</string>
    </property>
    <attribute name="dockWidgetArea">
     <number>8</number>
@@ -568,56 +581,23 @@
         <property name="sizeConstraint">
          <enum>QLayout::SetNoConstraint</enum>
         </property>
-        <item row="0" column="4" colspan="2">
-         <widget class="QComboBox" name="qcbFiltreTitre">
-          <property name="minimumSize">
+        <item row="1" column="12">
+         <spacer name="horizontalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Horizontal</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
            <size>
-            <width>200</width>
-            <height>0</height>
+            <width>40</width>
+            <height>20</height>
            </size>
           </property>
-          <property name="editable">
-           <bool>true</bool>
-          </property>
-          <property name="maxVisibleItems">
-           <number>30</number>
-          </property>
-          <property name="insertPolicy">
-           <enum>QComboBox::NoInsert</enum>
-          </property>
-         </widget>
+         </spacer>
         </item>
-        <item row="2" column="1">
-         <widget class="QComboBox" name="qcbFiltreProgresFinis">
-          <property name="minimumSize">
-           <size>
-            <width>100</width>
-            <height>0</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="11">
-         <widget class="QDateTimeEdit" name="qdteTo">
-          <property name="calendarPopup">
-           <bool>true</bool>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="10" colspan="2">
-         <widget class="QLabel" name="label_11">
+        <item row="1" column="8">
+         <widget class="QCheckBox" name="qcbStatistiques">
           <property name="text">
-           <string>Date réalisation</string>
-          </property>
-          <property name="alignment">
-           <set>Qt::AlignCenter</set>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="5">
-         <widget class="QCheckBox" name="qcbAutoCompletion">
-          <property name="text">
-           <string>Autocomplétion</string>
+           <string>Masquer les Statistiques ?</string>
           </property>
          </widget>
         </item>
@@ -634,133 +614,6 @@
           </property>
          </widget>
         </item>
-        <item row="0" column="2" rowspan="3">
-         <widget class="Line" name="line_7">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="6" rowspan="3">
-         <widget class="Line" name="line_8">
-          <property name="orientation">
-           <enum>Qt::Vertical</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="8">
-         <widget class="QComboBox" name="qcbFiltreType"/>
-        </item>
-        <item row="0" column="1">
-         <widget class="QComboBox" name="qcbFiltreOrigine">
-          <property name="minimumSize">
-           <size>
-            <width>100</width>
-            <height>0</height>
-           </size>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="7">
-         <widget class="QLabel" name="label_6">
-          <property name="text">
-           <string>Type Condition</string>
-          </property>
-         </widget>
-        </item>
-        <item row="2" column="0">
-         <widget class="QLabel" name="label_4">
-          <property name="minimumSize">
-           <size>
-            <width>100</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>100</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Progrès Finis</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="4">
-         <widget class="QCheckBox" name="qcbRegExp">
-          <property name="text">
-           <string>Expression Régulière</string>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="3">
-         <widget class="QLabel" name="label">
-          <property name="minimumSize">
-           <size>
-            <width>0</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>100</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Titre</string>
-          </property>
-         </widget>
-        </item>
-        <item row="1" column="12">
-         <spacer name="horizontalSpacer_2">
-          <property name="orientation">
-           <enum>Qt::Horizontal</enum>
-          </property>
-          <property name="sizeHint" stdset="0">
-           <size>
-            <width>40</width>
-            <height>20</height>
-           </size>
-          </property>
-         </spacer>
-        </item>
-        <item row="2" column="4" colspan="2">
-         <widget class="QComboBox" name="qcbFiltreConditionFait">
-          <property name="minimumSize">
-           <size>
-            <width>100</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="editable">
-           <bool>false</bool>
-          </property>
-          <property name="insertPolicy">
-           <enum>QComboBox::NoInsert</enum>
-          </property>
-         </widget>
-        </item>
-        <item row="0" column="0">
-         <widget class="QLabel" name="label_3">
-          <property name="minimumSize">
-           <size>
-            <width>100</width>
-            <height>0</height>
-           </size>
-          </property>
-          <property name="maximumSize">
-           <size>
-            <width>100</width>
-            <height>16777215</height>
-           </size>
-          </property>
-          <property name="text">
-           <string>Origine</string>
-          </property>
-         </widget>
-        </item>
         <item row="1" column="10">
          <widget class="QLabel" name="label_13">
           <property name="text">
@@ -768,10 +621,22 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="11">
-         <widget class="QDateTimeEdit" name="qdteFrom">
-          <property name="calendarPopup">
+        <item row="0" column="4" colspan="2">
+         <widget class="QComboBox" name="qcbFiltreTitre">
+          <property name="minimumSize">
+           <size>
+            <width>200</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="editable">
            <bool>true</bool>
+          </property>
+          <property name="maxVisibleItems">
+           <number>30</number>
+          </property>
+          <property name="insertPolicy">
+           <enum>QComboBox::NoInsert</enum>
           </property>
          </widget>
         </item>
@@ -794,17 +659,92 @@
           </property>
          </widget>
         </item>
-        <item row="1" column="8">
-         <widget class="QCheckBox" name="qcbStatistiques">
+        <item row="0" column="10" colspan="2">
+         <widget class="QLabel" name="label_11">
           <property name="text">
-           <string>Masquer les Statistiques ?</string>
+           <string>Date réalisation</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
           </property>
          </widget>
         </item>
-        <item row="2" column="10">
-         <widget class="QLabel" name="label_12">
+        <item row="0" column="6" rowspan="3">
+         <widget class="Line" name="line_8">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="5">
+         <widget class="QCheckBox" name="qcbAutoCompletion">
           <property name="text">
-           <string>Au</string>
+           <string>Autocomplétion</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QComboBox" name="qcbFiltreOrigine">
+          <property name="minimumSize">
+           <size>
+            <width>100</width>
+            <height>0</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="2" rowspan="3">
+         <widget class="Line" name="line_7">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QLabel" name="label_4">
+          <property name="minimumSize">
+           <size>
+            <width>100</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>100</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Progrès Finis</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="11">
+         <widget class="QDateTimeEdit" name="qdteFrom">
+          <property name="calendarPopup">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="8">
+         <widget class="QComboBox" name="qcbFiltreType"/>
+        </item>
+        <item row="0" column="0">
+         <widget class="QLabel" name="label_3">
+          <property name="minimumSize">
+           <size>
+            <width>100</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>100</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Origine</string>
           </property>
          </widget>
         </item>
@@ -815,13 +755,86 @@
           </property>
          </widget>
         </item>
+        <item row="2" column="11">
+         <widget class="QDateTimeEdit" name="qdteTo">
+          <property name="calendarPopup">
+           <bool>true</bool>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QComboBox" name="qcbFiltreProgresFinis">
+          <property name="minimumSize">
+           <size>
+            <width>100</width>
+            <height>0</height>
+           </size>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="3">
+         <widget class="QLabel" name="label">
+          <property name="minimumSize">
+           <size>
+            <width>0</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="maximumSize">
+           <size>
+            <width>100</width>
+            <height>16777215</height>
+           </size>
+          </property>
+          <property name="text">
+           <string>Titre</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="4" colspan="2">
+         <widget class="QComboBox" name="qcbFiltreConditionFait">
+          <property name="minimumSize">
+           <size>
+            <width>100</width>
+            <height>0</height>
+           </size>
+          </property>
+          <property name="editable">
+           <bool>false</bool>
+          </property>
+          <property name="insertPolicy">
+           <enum>QComboBox::NoInsert</enum>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="7">
+         <widget class="QLabel" name="label_6">
+          <property name="text">
+           <string>Type Condition</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="10">
+         <widget class="QLabel" name="label_12">
+          <property name="text">
+           <string>Au</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="4">
+         <widget class="QCheckBox" name="qcbRegExp">
+          <property name="text">
+           <string>Expression Régulière</string>
+          </property>
+         </widget>
+        </item>
        </layout>
       </widget>
      </item>
      <item>
       <layout class="QHBoxLayout" name="horizontalLayout_9">
        <property name="sizeConstraint">
-        <enum>QLayout::SetNoConstraint</enum>
+        <enum>QLayout::SetDefaultConstraint</enum>
        </property>
        <property name="topMargin">
         <number>0</number>
@@ -831,9 +844,24 @@
          <property name="title">
           <string>Opérations</string>
          </property>
+         <property name="flat">
+          <bool>false</bool>
+         </property>
+         <property name="checkable">
+          <bool>false</bool>
+         </property>
          <layout class="QGridLayout" name="gridLayout_4">
           <property name="sizeConstraint">
            <enum>QLayout::SetNoConstraint</enum>
+          </property>
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <property name="verticalSpacing">
+           <number>0</number>
           </property>
           <item row="0" column="0">
            <widget class="QPushButton" name="qpbClearFilter">
@@ -872,6 +900,36 @@
         </widget>
        </item>
        <item>
+        <widget class="QGroupBox" name="qgbStats">
+         <property name="title">
+          <string>Statistiques</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_5">
+          <item row="1" column="0">
+           <widget class="QRadioButton" name="qrbCerce">
+            <property name="text">
+             <string>Graphique Ligne courbe</string>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QRadioButton" name="qrbLigne">
+            <property name="text">
+             <string>Graphique Ligne</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QPushButton" name="qpbAfficherGraphique">
+            <property name="text">
+             <string>Afficher le Graphique</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
         <spacer name="horizontalSpacer_3">
          <property name="orientation">
           <enum>Qt::Horizontal</enum>
@@ -887,23 +945,92 @@
        <item>
         <widget class="QGroupBox" name="groupBox">
          <property name="title">
+          <string>Compteurs Progrès</string>
+         </property>
+         <layout class="QGridLayout" name="gridLayout_2">
+          <item row="0" column="1">
+           <widget class="QLabel" name="qlVanilla">
+            <property name="text">
+             <string>x / x</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="1">
+           <widget class="QLabel" name="qlBacap">
+            <property name="text">
+             <string>x / x</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="1">
+           <widget class="QLabel" name="qlTotal">
+            <property name="text">
+             <string>x / x</string>
+            </property>
+            <property name="alignment">
+             <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
+            </property>
+           </widget>
+          </item>
+          <item row="0" column="0">
+           <widget class="QLabel" name="qlTitreVanilla">
+            <property name="text">
+             <string>Vanilla  :</string>
+            </property>
+           </widget>
+          </item>
+          <item row="1" column="0">
+           <widget class="QLabel" name="qlTitreBacap">
+            <property name="text">
+             <string>BACAP :</string>
+            </property>
+           </widget>
+          </item>
+          <item row="2" column="0">
+           <widget class="QLabel" name="qlTitreTotal">
+            <property name="text">
+             <string>Total    :</string>
+            </property>
+           </widget>
+          </item>
+         </layout>
+        </widget>
+       </item>
+       <item>
+        <widget class="QGroupBox" name="qgbLegende">
+         <property name="title">
           <string>Légende</string>
          </property>
-         <layout class="QGridLayout" name="gridLayout_5">
+         <layout class="QVBoxLayout" name="verticalLayout_4">
           <property name="sizeConstraint">
            <enum>QLayout::SetNoConstraint</enum>
           </property>
-          <item row="2" column="0">
-           <widget class="QLabel" name="label_8">
+          <property name="topMargin">
+           <number>0</number>
+          </property>
+          <property name="bottomMargin">
+           <number>0</number>
+          </property>
+          <item>
+           <widget class="QLabel" name="label_9">
+            <property name="lineWidth">
+             <number>1</number>
+            </property>
             <property name="text">
-             <string>&lt;span style=&quot;color: blue;&quot;&gt;Condition de type OU&lt;/span&gt;</string>
+             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#006400;&quot;&gt;Progrès réalisé&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
             </property>
             <property name="textFormat">
              <enum>Qt::RichText</enum>
             </property>
            </widget>
           </item>
-          <item row="1" column="0">
+          <item>
            <widget class="QLabel" name="label_7">
             <property name="text">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#8b0000;&quot;&gt;Condition de type ET&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
@@ -913,17 +1040,17 @@
             </property>
            </widget>
           </item>
-          <item row="0" column="0">
-           <widget class="QLabel" name="label_9">
+          <item>
+           <widget class="QLabel" name="label_8">
             <property name="text">
-             <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#006400;&quot;&gt;Progrès réalisé&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>
+             <string>&lt;span style=&quot;color: blue;&quot;&gt;Condition de type OU&lt;/span&gt;</string>
             </property>
             <property name="textFormat">
              <enum>Qt::RichText</enum>
             </property>
            </widget>
           </item>
-          <item row="3" column="0">
+          <item>
            <widget class="QLabel" name="label_10">
             <property name="text">
              <string>&lt;html&gt;&lt;head/&gt;&lt;body&gt;&lt;p&gt;&lt;span style=&quot; color:#808000;&quot;&gt;Condition Unique&lt;/span&gt;&lt;/p&gt;&lt;/body&gt;&lt;/html&gt;</string>

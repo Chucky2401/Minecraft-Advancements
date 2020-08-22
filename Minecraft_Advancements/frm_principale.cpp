@@ -7,6 +7,7 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
 
     // Quelques réglages de bases sur la fenêtre
     ui->setupUi(this);
+    m_qsArchitecture = QSysInfo::buildCpuArchitecture();
     m_statusBar = this->statusBar();
     m_statusBar->setStyleSheet("QStatusBar { background: #E0E0E0; }");
     this->setStatusBar(m_statusBar);
@@ -17,6 +18,7 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     this->setStyleSheet("QMainWindow { background-image: url(:/img/wallpaper.png); background-position: bottom right; background-repeat: none; }");
 
     QAction *qaDockOperation = ui->qdwOpe->toggleViewAction();
+    qaDockOperation->setText("Afficher/Masquer Opérations");
     qaDockOperation->setIcon(QIcon(":/img/icons8_work_24px.png"));
     qaDockOperation->setShortcut(QKeySequence("Ctrl+O"));
     ui->qmOutils->addSeparator();
@@ -25,9 +27,16 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     ouvertureEnCours = true;
 
     QString qsWindowTitle = QApplication::applicationName() + " - " + QApplication::applicationVersion();
-    if (QApplication::applicationVersion().right(1) == "b") {
-        qsWindowTitle += " /!\\ BETA /!\\";
+    if (m_qsArchitecture == "x86_64") {
+        qsWindowTitle += " (64 bits)";
+    } else {
+        qsWindowTitle += " (32 bits)";
     }
+
+    if (QApplication::applicationVersion().right(1) == "b") {
+        qsWindowTitle += " - /!\\ BETA /!\\";
+    }
+
 
     // Si on est on mode test on masque certaines choses
     if (test == false) {
@@ -75,6 +84,7 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     m_bProgresVanillaOK = false;
     m_bProgresBlazeandcaveOK = false;
     m_bProgresPersoOK = false;
+    m_qsTypeGraphique = "Ligne";
 
     m_qs7zBin = "bin/7z.exe";
     m_qp7zProcess = new QProcess(this);
@@ -85,6 +95,11 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     m_smProgresRealisation = new SqlModel(this);
     //proxModelFiltreOrigine = new QSortFilterProxyModel(this);
     proxyModelFiltreTitre = new QSortFilterProxyModel(this);
+    ui->tableView->setContextMenuPolicy(Qt::CustomContextMenu);
+    m_qmiDataSelectionne = QModelIndex();
+    m_qmPopup = new QMenu(this);
+    m_qaPopupDeleteAction = new QAction(QIcon(":/img/icons8_delete_24px.png"), "Masquer ...", this);
+    m_qaPopupRestoreAction = new QAction(QIcon(":/img/icons8_restart_24px.png"), "Restaurer tous les progrès masqués", this);
     //proxyModelFiltreProgresFinis = new QSortFilterProxyModel(this);
     //proxyModelFiltreConditionFaite = new QSortFilterProxyModel(this);
     //proxyModelFiltreTypeCondition = new QSortFilterProxyModel(this);
@@ -141,6 +156,12 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     ui->qdteFrom->setDateTime(QDateTime(QDate(1970, 01, 01), QTime(0, 0, 0)));
     ui->qdteTo->setDateTime(QDateTime(QDate(2099, 12, 31), QTime(23, 59, 59)));
 
+    ui->qgbStats->setEnabled(false);
+
+    restoreTypeGraphique(param->getTypeGraphique());
+
+    fenGraphiqueStatsOuverte = false;
+
     bool testBdd = bdd.createConnection(connectionName);
     if(!testBdd){
         QString lastBddError = bdd.getError();
@@ -168,8 +189,8 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     connect(ui->qpbImportProgresJoueur, SIGNAL(clicked(bool)), this, SLOT(importProgresPerso(bool)));
     // Lecture fichiers
     connect(ui->qpbExtraireProgresVanilla, SIGNAL(clicked(bool)), this, SLOT(extraireProgres(bool)));
-    connect(ui->qpbReadJSONsVanilla, SIGNAL(clicked(bool)), this, SLOT(readJSONsVanilla(bool)));
-    connect(ui->qpbReadJSONsBlazeandcave, SIGNAL(clicked(bool)), this, SLOT(readJSONsBlazeandcave(bool)));
+    //connect(ui->qpbReadJSONsVanilla, SIGNAL(clicked(bool)), this, SLOT(readJSONsVanilla(bool)));
+    //connect(ui->qpbReadJSONsBlazeandcave, SIGNAL(clicked(bool)), this, SLOT(readJSONsBlazeandcave(bool)));
     connect(ui->qpbReadAllJSONs, SIGNAL(clicked(bool)), this, SLOT(comparerLesProgres(bool)));
     // Filtres
     connect(ui->qcbFiltreOrigine, SIGNAL(currentTextChanged(QString)), this, SLOT(filtreTableOrigine(QString)));
@@ -181,6 +202,9 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     connect(ui->qcbAutoCompletion, SIGNAL(stateChanged(int)), this, SLOT(etatAutoCompletion(int)));
     // Action sur la vue
     connect(ui->tableView, SIGNAL(pressed(const QModelIndex)), this, SLOT(dataSelectionnee(const QModelIndex)));
+    connect(ui->tableView, SIGNAL(customContextMenuRequested(QPoint)), this, SLOT(customMenuRequested(QPoint)));
+    connect(m_qaPopupDeleteAction, SIGNAL(triggered(bool)), this, SLOT(masquerProgres(bool)));
+    connect(m_qaPopupRestoreAction, SIGNAL(triggered(bool)), this, SLOT(restaurerProgres(bool)));
     // Outils
     connect(ui->pbImprimer, SIGNAL(clicked(bool)), this, SLOT(imprimerTable(bool)));
     connect(ui->qpbClearFilter, SIGNAL(clicked(bool)), this, SLOT(effacerLesFiltres(bool)));
@@ -194,6 +218,10 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     connect(ui->qaUpdate, SIGNAL(triggered()), this, SLOT(verifierMiseAJour()));
     connect(m_qnamManager, SIGNAL (finished(QNetworkReply*)), this, SLOT(fichierTelecharge(QNetworkReply*)));
     connect(this, SIGNAL(downloaded(bool)), this, SLOT(comparaisonVersion(bool)));
+    // Autre fenêtres
+    connect(ui->qrbLigne, SIGNAL(clicked(bool)), this, SLOT(graphiqueLigne(bool)));
+    connect(ui->qrbCerce, SIGNAL(clicked(bool)), this, SLOT(graphiqueSpline(bool)));
+    connect(ui->qpbAfficherGraphique, SIGNAL(clicked(bool)), this, SLOT(ouvrirFenGraphiqueStats(bool)));
     // Fermeture
     connect(this, SIGNAL(fermeture()), this, SLOT(close()));
 
@@ -221,6 +249,9 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     ui->qpbReadJSONsVanilla->setEnabled(false);
     ui->qpbReadJSONsBlazeandcave->setEnabled(false);
     ui->qpbReadAllJSONs->setEnabled(false);
+    ui->qpbReadJSONsVanilla->setVisible(false);
+    ui->qpbReadJSONsBlazeandcave->setVisible(false);
+    ui->line_5->setVisible(false);
 
     // On peut connecter la version
     connect(ui->qcbVersion, SIGNAL(currentIndexChanged(QString)), this, SLOT(choixVersion(QString)));
@@ -254,6 +285,8 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
             traitementDossierBac(param->getDossierBlazeAndCave());
         }
 
+        // Restaurer progrès masqué
+        m_qslProgresMasques = param->getProgresMasque();
         exclureStats(ui->qcbMilestones->checkState());
 
         if (param->getFichierAdvancementsPerso() != "DNE") {
@@ -266,11 +299,6 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     connect(ui->qcbMilestones, SIGNAL(stateChanged(int)), this, SLOT(exclureStats(int)));
 
     ouvertureEnCours = false;
-
-    // TEST
-//    plainModel = new QSqlQueryModel();
-//    plainModel->setQuery("SELECT * FROM list_advancements WHERE version = '1.15.2' AND identifiant = 'minecraft:adventure/adventuring_time'", bdd.getBase());
-//    ui->tableView->setModel(plainModel);
 }
 
 /*
@@ -292,6 +320,8 @@ void FRM_Principale::closeEvent(QCloseEvent *event){
     // Si on est en test ou le paramètre pour confirmation fermeture est désactivé
     // On ferme sans message bloquant
     if (m_test || !param->getMessageConfirmationFermeture()) {
+        if (getEtatFenGraphiqueStats())
+            graphiqueStatistiques->close();
 
         if (param->getRestoreSizePos()) {
             param->setGeometrieEtat(saveGeometry(), saveState());
@@ -304,6 +334,9 @@ void FRM_Principale::closeEvent(QCloseEvent *event){
 
     // "Sinon", on demande confirmation de fermeture
     if (QMessageBox::question(this, "Fermeture", "Voulez-vous fermer le programme ?") == QMessageBox::Yes){
+        if (getEtatFenGraphiqueStats())
+            graphiqueStatistiques->close();
+
         if (param->getRestoreSizePos()) {
             param->setGeometrieEtat(saveGeometry(), saveState());
             param->setGeometrieDock(ui->qdwOpe->saveGeometry());
@@ -315,7 +348,8 @@ void FRM_Principale::closeEvent(QCloseEvent *event){
     }
 }
 
-/*  ~~~~~~~~~
+/*
+ *  ~~~~~~~~~
  *  | SLOTS |
  *  ~~~~~~~~~
  */
@@ -1280,11 +1314,12 @@ void FRM_Principale::importProgresPerso(bool checked) {
                         QString qsDone = qmIdentifiantPerso.value("done").toString();
                         QMapIterator<QString, QVariant> qmiCriteresPerso(qmCriteresPerso);
                         //qDebug() << "Identifiant :" << qsIdentifiant << "Done :" << qsDone;
-                        qDebug() << qsIdentifiant;
+                        //qDebug() << qsIdentifiant;
                         while (qmiCriteresPerso.hasNext()) {
                             qmiCriteresPerso.next();
                             QString qsNomCriteres = qmiCriteresPerso.key();
                             QDateTime qdtDateCriteres = qmiCriteresPerso.value().toDateTime();
+                            //qDebug() << qsNomCriteres;
 
                             QSqlQuery queryInsert(bdd.getBase());
                             queryInsert.prepare("INSERT INTO player_advancements (version, identifiant, done, condition, date_fait) "
@@ -1435,7 +1470,37 @@ void FRM_Principale::comparerLesProgres(bool checked) {
             "INNER JOIN player_advancements pa ON pa.version = la.version AND pa.identifiant = la.identifiant AND pa.condition = la.condition"
             " WHERE "
                 "la.version = '" + m_qsNumeroVersion + "' "
-            "AND la.type_condition IN ('OU', 'UNE')"
+            "AND la.type_condition IN ('OU')"
+           "UNION "
+           "SELECT"
+           "    la.origine"
+           "    , la.categorie"
+           "    , la.titre"
+           "    , pa.done progres_fait"
+           "    , la.description"
+           "    , la.condition_texte"
+           "    , CASE WHEN pa.condition IS NULL"
+           "        THEN 'non'"
+           "        ELSE 'oui'"
+           "        END condition_fait"
+           "    , pa.date_fait"
+           "    , la.type_condition"
+           " FROM"
+           "    list_advancements la"
+           " LEFT JOIN player_advancements pa ON pa.version = la.version AND pa.identifiant = la.identifiant AND pa.condition = la.condition AND progres_fait IS NULL AND condition_fait IS NULL"
+           " WHERE"
+           "    la.version = '1.16.2'"
+           " AND la.type_condition IN ('OU')"
+           " AND la.titre NOT IN ("
+           "    SELECT"
+           "        la.titre"
+           "    FROM"
+           "        list_advancements la"
+           "    INNER JOIN player_advancements pa ON pa.version = la.version AND pa.identifiant = la.identifiant AND pa.condition = la.condition"
+           "    WHERE"
+           "        la.version = '1.16.2'"
+           "    AND la.type_condition IN ('OU')"
+           ")"
             " UNION "
             "SELECT "
                   "la.origine"
@@ -1458,7 +1523,7 @@ void FRM_Principale::comparerLesProgres(bool checked) {
             "LEFT JOIN player_advancements pa ON pa.version = la.version AND pa.identifiant = la.identifiant AND pa.condition = la.condition"
             " WHERE "
                 "la.version = '" + m_qsNumeroVersion + "' "
-            "AND la.type_condition = 'ET'"
+            "AND la.type_condition in ('ET', 'UNE')"
             " ORDER BY "
                   "la.origine DESC"
                 ", la.categorie ASC"
@@ -1473,7 +1538,7 @@ void FRM_Principale::comparerLesProgres(bool checked) {
 
     if (!qsqDeleteVue.exec(qsDeleteVue)) {
         qsLastErreurDelete = qsqDeleteVue.lastError().text();
-        if (qsLastErreurDelete == "no such view: compare_advancements Unable to execute statement") {
+        if (qsLastErreurDelete != "no such view: compare_advancements Unable to execute statement") {
             bErreurDelete = true;
             afficherMessage(QMessageBox::Critical, "Impossible de supprimer l'ancienne comparaison", "Voir les détails pour plus d'informations", qsLastErreurDelete);
         }
@@ -1528,19 +1593,89 @@ void FRM_Principale::comparerLesProgres(bool checked) {
             afficherMessage(QMessageBox::Critical, "Erreur lors de la récupération des titres", "Voir les détails pour plus d'informations", \
                             qsqListeTitre.lastError().text());
         }
+
+//        // On compte pour affichage
+//        QString qsSqlCompteTout = "SELECT"
+//                                  "	COUNT(DISTINCT titre) 'nbr_progres'"
+//                                  " , (SELECT COUNT(DISTINCT titre) FROM compare_advancements WHERE progres_fait = 'true') 'nbr_progres_fait'"
+//                                  "FROM"
+//                                  "	compare_advancements";
+//        QString qsSqlCompteVanilla = "SELECT"
+//                                     "   COUNT(DISTINCT titre) 'nbr_progres'"
+//                                     " , (SELECT COUNT(DISTINCT titre) FROM compare_advancements WHERE origine = 'Minecraft Vanilla' AND progres_fait = 'true') 'nbr_progres_fait'"
+//                                     " FROM"
+//                                     " compare_advancements"
+//                                     " WHERE"
+//                                     " origine = 'Minecraft Vanilla'";
+//        QString qsSqlCompteBacap = "SELECT"
+//                                   "   COUNT(DISTINCT titre) 'nbr_progres'"
+//                                   " , (SELECT COUNT(DISTINCT titre) FROM compare_advancements WHERE origine = 'BACAP' AND progres_fait = 'true') 'nbr_progres_fait'"
+//                                   " FROM"
+//                                   " compare_advancements"
+//                                   " WHERE"
+//                                   " origine = 'BACAP'";
+//        QSqlQuery qsqCompteTout(qsSqlCompteTout, bdd.getBase()), qsqCompteVanilla(qsSqlCompteVanilla, bdd.getBase()), qsqCompteBacap(qsSqlCompteBacap, bdd.getBase());
+
+//        if (qsqCompteVanilla.exec()) {
+//            qsqCompteVanilla.next();
+//            int iTotal = qsqCompteVanilla.value("nbr_progres").toInt();
+//            int iFait = qsqCompteVanilla.value("nbr_progres_fait").toInt();
+
+//            if (iTotal != 0) {
+//                ui->qlVanilla->setText(QString::number(iFait) + " / " + QString::number(iTotal));
+//            } else {
+//                ui->qlVanilla->setText("x / x");
+//            }
+//        } else {
+//            ui->qlVanilla->setText("\?\? / \?\?");
+//            qDebug() << qsqCompteVanilla.lastError();
+//            qDebug() << qsSqlCompteVanilla;
+//        }
+
+//        if (qsqCompteBacap.exec()) {
+//            qsqCompteBacap.next();
+//            int iTotal = qsqCompteBacap.value("nbr_progres").toInt();
+//            int iFait = qsqCompteBacap.value("nbr_progres_fait").toInt();
+
+//            if (iTotal != 0) {
+//                ui->qlBacap->setText(QString::number(iFait) + " / " + QString::number(iTotal));
+//            } else {
+//                ui->qlBacap->setText("x / x");
+//            }
+//        } else {
+//            ui->qlBacap->setText("\?\? / \?\?");
+//        }
+
+//        if (qsqCompteTout.exec()) {
+//            qsqCompteTout.next();
+//            int iTotal = qsqCompteTout.value("nbr_progres").toInt();
+//            int iFait = qsqCompteTout.value("nbr_progres_fait").toInt();
+
+//            if (iTotal != 0) {
+//                ui->qlTotal->setText(QString::number(iFait) + " / " + QString::number(iTotal));
+//            } else {
+//                ui->qlTotal->setText("x / x");
+//            }
+//        } else {
+//            ui->qlTotal->setText("\?\? / \?\?");
+//        }
+
+        // On compact la base de données, car le drop la fait gonfler vite
+        QSqlQuery qsqCompactage(bdd.getBase());
+        qsqCompactage.exec("VACUUM main");
     }
 }
 
 /*
  * Slots pour comparer tous les progrès Vanilla
  */
-void FRM_Principale::readJSONsVanilla(bool checked) {
+/*void FRM_Principale::readJSONsVanilla(bool checked) {
     if (checked) {
     }
 
     afficherMessage(QMessageBox::Information, "Ce bouton est désactivé !", "Réécriture à faire !");
 
-    /*ui->qcbFiltreOrigine->disconnect();
+    ui->qcbFiltreOrigine->disconnect();
     ui->qcbFiltreTitre->disconnect();
 
     proxyModelFiltreConditionFaite->invalidate();
@@ -1813,19 +1948,19 @@ void FRM_Principale::readJSONsVanilla(bool checked) {
         m_defaultCompleter->setCompletionMode(QCompleter::PopupCompletion);
         m_defaultCompleter->setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
         ui->qcbFiltreTitre->setCompleter(m_defaultCompleter);
-    }*/
-}
+    }
+}*/
 
 /*
  * Slots pour comparer tous les progrès BACAP
  */
-void FRM_Principale::readJSONsBlazeandcave(bool checked) {
+/*void FRM_Principale::readJSONsBlazeandcave(bool checked) {
     if (checked) {
     }
 
     afficherMessage(QMessageBox::Information, "Ce bouton est désactivé !", "Réécriture à faire !");
 
-    /*if (!bTousLesProgres) {
+    if (!bTousLesProgres) {
         ui->qcbFiltreOrigine->disconnect();
         ui->qcbFiltreTitre->disconnect();
 
@@ -2174,19 +2309,19 @@ void FRM_Principale::readJSONsBlazeandcave(bool checked) {
         m_defaultCompleter->setCompletionMode(QCompleter::PopupCompletion);
         m_defaultCompleter->setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
         ui->qcbFiltreTitre->setCompleter(m_defaultCompleter);
-    }*/
-}
+    }
+}*/
 
 /*
  * Slots pour comparer tous les progrès (Vanilla + BCAP)
  */
-void FRM_Principale::readAllJsons(bool checked) {
+/*void FRM_Principale::readAllJsons(bool checked) {
     if (checked) {
     }
 
     afficherMessage(QMessageBox::Information, "Ce bouton est désactivé !", "Réécriture à faire !");
 
-    /*bTousLesProgres = true;
+    bTousLesProgres = true;
 
     // Vanilla
     readJSONsVanilla(true);
@@ -2222,8 +2357,8 @@ void FRM_Principale::readAllJsons(bool checked) {
     m_defaultCompleter->setCaseSensitivity(Qt::CaseSensitivity::CaseInsensitive);
     ui->qcbFiltreTitre->setCompleter(m_defaultCompleter);
 
-    bTousLesProgres = false;*/
-}
+    bTousLesProgres = false;
+}*/
 
 /*
  * Slots lors de la modification du filtre sur l'origine (Vanilla ou BCAP)
@@ -2454,6 +2589,9 @@ void FRM_Principale::effacerFiltresSurLesDates(bool checked) {
     effacerFiltreDate();
 }
 
+/*
+ * Définir l'autocomplétion sur la combobox pour les titres
+ */
 void FRM_Principale::etatAutoCompletion(int etat) {
     if (etat == 0) {
         // Unchecked - Désactivation
@@ -2468,15 +2606,68 @@ void FRM_Principale::etatAutoCompletion(int etat) {
     }
 }
 
+/*
+ * Lorsqu'un clique est fait dans la table
+ */
 void FRM_Principale::dataSelectionnee(const QModelIndex index) {
     // TODO A REFAIRE !
-    QModelIndex qmiTitre = proxyModelFiltreTitre->index(index.row(), 1);
+    m_qmiDataSelectionne = index;
+    QModelIndex qmiTitre = proxyModelFiltreTitre->index(index.row(), 2);
     QString qsTitreDisplay = proxyModelFiltreTitre->data(qmiTitre, Qt::DisplayRole).toString();
     QString qsTitreData = proxyModelFiltreTitre->data(qmiTitre, Qt::UserRole).toString();
 
     qsTitreDisplay.replace(QRegularExpression(" \\(.+\\)"), "");
+    //qDebug() << qsTitreDisplay;
 }
 
+/*
+ * Afficher le menu Pop-Up de la table
+ */
+void FRM_Principale::customMenuRequested(QPoint pos){
+    QModelIndex index = m_qmiDataSelectionne;
+    QModelIndex qmiTitre = proxyModelFiltreTitre->index(index.row(), 2);
+    QString qsTitreDisplay = proxyModelFiltreTitre->data(qmiTitre, Qt::DisplayRole).toString();
+    qDebug() << qsTitreDisplay;
+
+    m_qmPopup->clear();
+    m_qaPopupDeleteAction->setText("Masquer '"+ qsTitreDisplay + "'");
+    m_qmPopup->addAction(m_qaPopupDeleteAction);
+    m_qmPopup->addAction(m_qaPopupRestoreAction);
+    m_qmPopup->popup(ui->tableView->viewport()->mapToGlobal(pos));
+}
+/*
+ *  Masquer le progres sélectionner lors du clique droit avec le menu pop-up
+ */
+void FRM_Principale::masquerProgres(bool booleen) {
+    if (booleen) {
+    }
+
+    QModelIndex index = m_qmiDataSelectionne;
+    QModelIndex qmiTitre = proxyModelFiltreTitre->index(index.row(), 2);
+    QString qsTitreDisplay = proxyModelFiltreTitre->data(qmiTitre, Qt::DisplayRole).toString();
+
+    m_qslProgresMasques << qsTitreDisplay;
+    param->setProgresMasque(m_qslProgresMasques);
+
+    definirModele();
+}
+
+/*
+ * Restaurer les progres
+ */
+void FRM_Principale::restaurerProgres(bool booleen) {
+    if (booleen) {
+    }
+
+    m_qslProgresMasques.clear();
+    param->setProgresMasque(m_qslProgresMasques);
+
+    definirModele();
+}
+
+/*
+ * Imprimer tous les progres dépendant des filtres
+ */
 void FRM_Principale::imprimerTable(bool checked) {
     if (checked) {
     }
@@ -2495,7 +2686,7 @@ void FRM_Principale::imprimerTable(bool checked) {
         qsRequeteFinal += m_qslRequeteComparaison.at(i);
     }
 
-    const int rowCount = ui->tableView->model()->rowCount();
+    //const int rowCount = ui->tableView->model()->rowCount();
     const int columnCount = ui->tableView->model()->columnCount();
 
     out << "<!DOCTYPE html>\n"
@@ -2562,6 +2753,58 @@ void FRM_Principale::imprimerTable(bool checked) {
     delete document;
 }
 
+void FRM_Principale::graphiqueLigne(bool checked) {
+    if(checked) {
+        m_qsTypeGraphique = "Ligne";
+        param->setTypeGraphique(m_qsTypeGraphique);
+    }
+}
+
+void FRM_Principale::graphiqueSpline(bool checked) {
+    if(checked) {
+        m_qsTypeGraphique = "Spline";
+        param->setTypeGraphique(m_qsTypeGraphique);
+    }
+}
+
+/*
+ * Ouvrir la fenêtre des statistiques
+ */
+void FRM_Principale::ouvrirFenGraphiqueStats(bool clicked) {
+    if (clicked){
+    }
+
+    if (!getEtatFenGraphiqueStats()){
+        // La fenêtre n'est pas déjà ouverte, on cré l'objet, l'affiche et on lie la femeture de la fenêtre à la fonction
+        graphiqueStatistiques = new Statistiques(this, m_qsTypeGraphique,this->m_test);
+        setEtatFenGraphiqueStats(true);
+        connect(graphiqueStatistiques, SIGNAL(finished(int)), this, SLOT(fenGraphiqueStatsClose(int)));
+        graphiqueStatistiques->show();
+    } else {
+        // La fenêtre est déjà ouverte, on informe, et on la met au premier plan
+        QMessageBox::information(this, "Ajouter une recette", "La fenêtre pour ajouter une recette est déjà ouverte.");
+        graphiqueStatistiques->raise();
+    }
+}
+
+/*
+ * Quand la fenêtre des stats ce ferme
+ */
+void FRM_Principale::fenGraphiqueStatsClose(int result) {
+    result += 0; // Pour supprimer un warning lors de la compilation
+
+    // On définis l'état de la fenêtre à fermer
+    setEtatFenGraphiqueStats(false);
+    // On bloque le signal du ComboBox, sinon ça plante !
+    //ui->qcbListeRecettes->blockSignals(true);
+    // On efface le modèle et listes toutes les recettes pour prendre la nouvelle
+    //modele->clear();
+    //listeRecettes();
+    // On débloque le signal pour pouvoir restaurer la dernière recette sélectionné si l'utilisateur l'a activé.
+    //ui->qcbListeRecettes->blockSignals(false);
+    //restaurerDerniereRecette();
+}
+
 /*
  * Ouvrir la fenêtre a propos
  */
@@ -2588,14 +2831,21 @@ void FRM_Principale::ouvrirParametres(){
 void FRM_Principale::verifierMiseAJour(){
     QUrl url;
     if (param->getMiseAJourBeta() && !m_updateBetaVerifiee) {
-        url.setUrl("https://advancements.blackwizard.fr/repository/beta/Updates.xml");
+        if (m_qsArchitecture == "i386")
+            url.setUrl("https://advancements.blackwizard.fr/repository/beta/Updates.xml");
+        else if (m_qsArchitecture == "x86_64")
+            url.setUrl("https://advancements.blackwizard.fr/repository-64/beta/Updates.xml");
         m_updateBetaVerifiee = true;
     } else {
-        url.setUrl("https://advancements.blackwizard.fr/repository/release/Updates.xml");
+        if (m_qsArchitecture == "i386")
+            url.setUrl("https://advancements.blackwizard.fr/repository/release/Updates.xml");
+        else if (m_qsArchitecture == "x86_64")
+            url.setUrl("https://advancements.blackwizard.fr/repository-64/release/Updates.xml");
         m_updateBetaVerifiee = false;
     }
     QNetworkRequest request;
 
+    qDebug() << url;
     request.setUrl(url);
     m_qnamManager->get(request);
 
@@ -2608,6 +2858,7 @@ void FRM_Principale::verifierMiseAJour(){
  * et on émet le signal downloaded() pour indiquer que l'on a tout télécharger correctement.
  */
 void FRM_Principale::fichierTelecharge(QNetworkReply* pReply){
+    qDebug() << m_qnamManager;
     m_qbaDonneesTelechargees = pReply->readAll();
     pReply->deleteLater();
     emit downloaded(true);
@@ -2627,7 +2878,7 @@ void FRM_Principale::comparaisonVersion(bool ecrireFichier){
     QString qsVersionOnline;
     QString qsVersionLocal = QApplication::applicationVersion();
     QStringList qslVersionOnline, qslVersionLocal;
-    bool bMiseAJourNecessaire = false;
+    bool bMiseAJourNecessaire = false, bLocalPlusRecente = false;
 
     qsVersionLocal.replace(QRegExp("[a-z]"), "");
 
@@ -2670,9 +2921,12 @@ void FRM_Principale::comparaisonVersion(bool ecrireFichier){
     }
     //TEST
     //qsVersionLocal = "0.2.4.1";
-    //qsVersionOnline = "0.2.4.1";
+//    qsVersionOnline = "0.2.5.4";
     qslVersionOnline = qsVersionOnline.split(".");
     qslVersionLocal = qsVersionLocal.split(".");
+
+//    qDebug() << "Version local" << qslVersionLocal;
+//    qDebug() << "Version Online" << qslVersionOnline;
 
     if (qsVersionOnline.count() > qsVersionLocal.count()) {
         int diff = qsVersionOnline.count() - qsVersionLocal.count();
@@ -2682,9 +2936,13 @@ void FRM_Principale::comparaisonVersion(bool ecrireFichier){
     }
 
     for(int i = 0; i < qslVersionOnline.size(); i++) {
-        if(!bMiseAJourNecessaire) {
+//        qDebug() << "i" << i << "Numéro Local" << qslVersionLocal.at(i);
+//        qDebug() << "i" << i << "Numéro Online" << qslVersionOnline.at(i);
+        if(!bMiseAJourNecessaire && !bLocalPlusRecente) {
             if(qslVersionOnline.at(i).toInt() > qslVersionLocal.at(i).toInt()) {
                 bMiseAJourNecessaire = true;
+            } else if (qslVersionLocal.at(i).toInt() > qslVersionOnline.at(i).toInt()) {
+                bLocalPlusRecente = true;
             }
         }
     }
@@ -2732,13 +2990,7 @@ void FRM_Principale::dockWidgetOperationFloating(bool floating) {
 }
 
 /*
- *
- */
-//void FRM_Principale::dockWidgetOperationClosing(bool closing) {
-//    qDebug() << closing;
-//}
-
-/*  ~~~~~~~~~~~~~
+ *  ~~~~~~~~~~~~~
  *  | FONCTIONS |
  *  ~~~~~~~~~~~~~
  */
@@ -3069,21 +3321,27 @@ void FRM_Principale::traitementFichierAdvancements(QString fichier) {
  */
 void FRM_Principale::activationBoutonExtraction() {
     if (m_bVersionOK && m_bProgresVanillaOK && m_bProgresPersoOK) {
-        ui->qpbReadJSONsVanilla->setEnabled(true);
+        ui->qpbReadAllJSONs->setEnabled(true);
+        ui->qgbStats->setEnabled(true);
     } else {
-        ui->qpbReadJSONsVanilla->setEnabled(false);
+        ui->qpbReadAllJSONs->setEnabled(false);
+        ui->qgbStats->setEnabled(false);
     }
 
-    if (m_bProgresBlazeandcaveOK && m_bProgresPersoOK) {
-        ui->qpbReadJSONsBlazeandcave->setEnabled(true);
+    if (m_bVersionOK && m_bProgresBlazeandcaveOK && m_bProgresPersoOK) {
+        ui->qpbReadAllJSONs->setEnabled(true);
+        ui->qgbStats->setEnabled(true);
     } else {
-        ui->qpbReadJSONsBlazeandcave->setEnabled(false);
+        ui->qpbReadAllJSONs->setEnabled(false);
+        ui->qgbStats->setEnabled(false);
     }
 
     if (m_bVersionOK && m_bProgresVanillaOK && m_bProgresPersoOK && m_bProgresBlazeandcaveOK) {
         ui->qpbReadAllJSONs->setEnabled(true);
+        ui->qgbStats->setEnabled(true);
     } else {
         ui->qpbReadAllJSONs->setEnabled(false);
+        ui->qgbStats->setEnabled(false);
     }
 }
 
@@ -3156,23 +3414,140 @@ void FRM_Principale::toutesLesTraductionsListe() {
 void FRM_Principale::definirModele() {
     if (!ouvertureEnCours) {
         QString qsRequeteFinal = "";
+        QString qsConditionCompteFinal = "";
+        QString qsSqlCompteTout = "SELECT"
+                                  "	COUNT(DISTINCT titre) 'nbr_progres'"
+                                  " , (SELECT COUNT(DISTINCT titre) FROM compare_advancements WHERE progres_fait = 'true' CONDITION_MANQUANTE) 'nbr_progres_fait'"
+                                  "FROM"
+                                  "	compare_advancements";
+        QString qsSqlCompteVanilla = "SELECT"
+                                     "   COUNT(DISTINCT titre) 'nbr_progres'"
+                                     " , (SELECT COUNT(DISTINCT titre) FROM compare_advancements WHERE origine = 'Minecraft Vanilla' AND progres_fait = 'true' CONDITION_MANQUANTE) 'nbr_progres_fait'"
+                                     " FROM"
+                                     " compare_advancements"
+                                     " WHERE"
+                                     " origine = 'Minecraft Vanilla'";
+        QString qsSqlCompteBacap = "SELECT"
+                                   "   COUNT(DISTINCT titre) 'nbr_progres'"
+                                   " , (SELECT COUNT(DISTINCT titre) FROM compare_advancements WHERE origine = 'BACAP' AND progres_fait = 'true' CONDITION_MANQUANTE) 'nbr_progres_fait'"
+                                   " FROM"
+                                   " compare_advancements"
+                                   " WHERE"
+                                   " origine = 'BACAP'";
+        QString qsFiltreTitreMasque = "";
 
         for (int i = 0; i < m_qslRequeteComparaison.size(); i++) {
             if (i == 1) {
                 qsRequeteFinal += " WHERE ";
+                qsSqlCompteTout += " WHERE " + m_qslRequeteComparaison.at(i);
+                qsSqlCompteBacap += " AND " + m_qslRequeteComparaison.at(i);
+                qsSqlCompteVanilla += " AND " + m_qslRequeteComparaison.at(i);
+                qsConditionCompteFinal += "AND " + m_qslRequeteComparaison.at(i);
             } else if (i > 1) {
                 qsRequeteFinal += " AND ";
+                qsSqlCompteTout += " AND " + m_qslRequeteComparaison.at(i);
+                qsSqlCompteBacap += " AND " + m_qslRequeteComparaison.at(i);
+                qsSqlCompteVanilla += " AND " + m_qslRequeteComparaison.at(i);
+                qsConditionCompteFinal += " AND " + m_qslRequeteComparaison.at(i);
             }
             qsRequeteFinal += m_qslRequeteComparaison.at(i);
         }
 
-        qDebug() << "Requete filtre:" << qsRequeteFinal;
+        // Filtre titre
+        if (m_qslProgresMasques.size() > 0) {
+            qsFiltreTitreMasque += "titre NOT IN (";
+            for (int i = 0; i < m_qslProgresMasques.size(); i++) {
+                QString qsTitreDisplay = m_qslProgresMasques.at(i);
+                if (m_qslProgresMasques.size() == 1) {
+                    qsFiltreTitreMasque += "'" + qsTitreDisplay + "'";
+                } else {
+                    if (i != m_qslProgresMasques.size()-1){
+                        qsFiltreTitreMasque += "'" + qsTitreDisplay + "',";
+                    } else {
+                        qsFiltreTitreMasque += "'" + qsTitreDisplay + "'";
+                    }
+                }
+            }
+            qsFiltreTitreMasque += ")";
+            qsRequeteFinal += " AND " + qsFiltreTitreMasque;
+            qsSqlCompteTout += " AND " + qsFiltreTitreMasque;
+            qsSqlCompteBacap += " AND " + qsFiltreTitreMasque;
+            qsSqlCompteVanilla += " AND " + qsFiltreTitreMasque;
+            qsConditionCompteFinal += " AND " + qsFiltreTitreMasque;
+        }
+
+        qsSqlCompteVanilla = qsSqlCompteVanilla.replace("CONDITION_MANQUANTE", qsConditionCompteFinal);
+        qsSqlCompteBacap = qsSqlCompteBacap.replace("CONDITION_MANQUANTE", qsConditionCompteFinal);
+        qsSqlCompteTout = qsSqlCompteTout.replace("CONDITION_MANQUANTE", qsConditionCompteFinal);
+        QSqlQuery qsqCompteTout(qsSqlCompteTout, bdd.getBase()), qsqCompteVanilla(qsSqlCompteVanilla, bdd.getBase()), qsqCompteBacap(qsSqlCompteBacap, bdd.getBase());
 
         m_smProgresRealisation->setQuery(qsRequeteFinal, bdd.getBase());
+        m_smProgresRealisation->setHeaderData(0, Qt::Horizontal, tr("Origine"));
+        m_smProgresRealisation->setHeaderData(1, Qt::Horizontal, tr("Catégorie"));
+        m_smProgresRealisation->setHeaderData(2, Qt::Horizontal, tr("Progrès"));
+        m_smProgresRealisation->setHeaderData(3, Qt::Horizontal, tr("Progrès Faite"));
+        m_smProgresRealisation->setHeaderData(4, Qt::Horizontal, tr("Description"));
+        m_smProgresRealisation->setHeaderData(5, Qt::Horizontal, tr("Critère"));
+        m_smProgresRealisation->setHeaderData(6, Qt::Horizontal, tr("Critère Fait"));
+        m_smProgresRealisation->setHeaderData(7, Qt::Horizontal, tr("Date Fait"));
+        m_smProgresRealisation->setHeaderData(8, Qt::Horizontal, tr("Type Critère"));
         proxyModelFiltreTitre->setSourceModel(m_smProgresRealisation);
         ui->tableView->setModel(proxyModelFiltreTitre);
+        ui->tableView->setColumnWidth(0, 95);
+        ui->tableView->setColumnWidth(1, 67);
+        ui->tableView->setColumnWidth(2, 250);
+        ui->tableView->setColumnWidth(3, 75);
+        ui->tableView->setColumnWidth(5, 146);
+        ui->tableView->setColumnWidth(6, 84);
+        ui->tableView->setColumnWidth(7, 110);
         ui->tableView->hideColumn(8);
+
+        // On compte pour affichage
+        if (qsqCompteVanilla.exec()) {
+            qsqCompteVanilla.next();
+            int iTotal = qsqCompteVanilla.value("nbr_progres").toInt();
+            int iFait = qsqCompteVanilla.value("nbr_progres_fait").toInt();
+
+            if (iTotal != 0) {
+                ui->qlVanilla->setText(QString::number(iFait) + " / " + QString::number(iTotal));
+            } else {
+                ui->qlVanilla->setText("x / x");
+            }
+        } else {
+            ui->qlVanilla->setText("\?\? / \?\?");
+            qDebug() << qsqCompteVanilla.lastError();
+            qDebug() << qsSqlCompteVanilla;
+        }
+
+        if (qsqCompteBacap.exec()) {
+            qsqCompteBacap.next();
+            int iTotal = qsqCompteBacap.value("nbr_progres").toInt();
+            int iFait = qsqCompteBacap.value("nbr_progres_fait").toInt();
+
+            if (iTotal != 0) {
+                ui->qlBacap->setText(QString::number(iFait) + " / " + QString::number(iTotal));
+            } else {
+                ui->qlBacap->setText("x / x");
+            }
+        } else {
+            ui->qlBacap->setText("\?\? / \?\?");
+        }
+
+        if (qsqCompteTout.exec()) {
+            qsqCompteTout.next();
+            int iTotal = qsqCompteTout.value("nbr_progres").toInt();
+            int iFait = qsqCompteTout.value("nbr_progres_fait").toInt();
+
+            if (iTotal != 0) {
+                ui->qlTotal->setText(QString::number(iFait) + " / " + QString::number(iTotal));
+            } else {
+                ui->qlTotal->setText("x / x");
+            }
+        } else {
+            ui->qlTotal->setText("\?\? / \?\?");
+        }
     }
+
 
 //    if (m_qslRequeteComparaison.size() == 1) {
 //        m_smProgresRealisation->setQuery(m_qslRequeteComparaison.at(0), bdd.getBase());
@@ -3238,6 +3613,24 @@ void FRM_Principale::afficherMessage(int type, QString text, QString information
     m_qmbMessage.setInformativeText(information);
     m_qmbMessage.setDetailedText(detail);
     m_qmbMessage.exec();
+}
+
+bool FRM_Principale::getEtatFenGraphiqueStats() {
+    return fenGraphiqueStatsOuverte;
+}
+
+void FRM_Principale::setEtatFenGraphiqueStats(bool stated) {
+    fenGraphiqueStatsOuverte = stated;
+}
+
+void FRM_Principale::restoreTypeGraphique(QString type) {
+    if (type == "Spline") {
+        ui->qrbCerce->toggle();
+        m_qsTypeGraphique = "Spline";
+    } else {
+        ui->qrbLigne->toggle();
+        m_qsTypeGraphique = "Ligne";
+    }
 }
 
 /*

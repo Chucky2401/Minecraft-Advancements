@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<Package>
+    <DisplayName>Minecraft Advancements</DisplayName>
+    <Description>Suivis complet des progrès Minecraft Vanilla et Blaze and Cave.</Description>
+    <Version>1.0.0</Version>
+    <ReleaseDate>2020-06-15</ReleaseDate>
+    <Name>com.blackwizard.advancements</Name>
+    <Licenses>
+        <License name="GNU Public License Agreement" file="license.txt" />
+    </Licenses>
+    <Script>installscript.qs</Script>
+    <UserInterfaces>
+        <UserInterface>launchattheend.ui</UserInterface>
+        <UserInterface>startmenushortcutcheckboxform.ui</UserInterface>
+    </UserInterfaces>
+    <UpdateText>Voir l'intégralité du Changelog : https://yourls.blackwizard.fr/changelog</UpdateText>
+    <Default>true</Default>
+    <ForcedInstallation>true</ForcedInstallation>
+</Package>

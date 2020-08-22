@@ -2,9 +2,14 @@ release/dateetheurefilterproxymodel.o
 release/dia_apropos.o
 release/main.o
 release/frm_principale.o
+release/database.o
 release/dia_parametres.o
 release/settings.o
+release/sqlmodel.o
+release/statistiques.o
+release/qrc_files.o
 release/qrc_img.o
 release/moc_dia_apropos.o
 release/moc_frm_principale.o
 release/moc_dia_parametres.o
+release/moc_statistiques.o

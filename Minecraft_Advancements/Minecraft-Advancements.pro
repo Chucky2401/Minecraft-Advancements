@@ -1,8 +1,11 @@
-QT       += core gui printsupport network xml sql
+QT       += core gui printsupport network xml sql widgets charts
 
 greaterThan(QT_MAJOR_VERSION, 4): QT += widgets
 
 CONFIG += c++11
+
+win32:VERSION = 2.0
+else:VERSION = 2.0
 
 # The following define makes your compiler emit warnings if you use
 # any Qt feature that has been marked deprecated (the exact warnings
@@ -26,6 +29,12 @@ win32:contains(QMAKE_HOST.arch, x86_64) {
 #DEFINES += QT_DISABLE_DEPRECATED_BEFORE=0x060000    # disables all the APIs deprecated before Qt 6.0.0
 
 RC_ICONS = minecraft.ico
+RC_CODEPAGE = 1252
+RC_LANG = 0x040C
+QMAKE_TARGET_COMPANY = "Black Wizard Company"
+QMAKE_TARGET_DESCRIPTION = "Suivez vos progres Minecraft !"
+QMAKE_TARGET_COPYRIGHT = "Copyright 2019-2020 Black Wizard Company"
+QMAKE_TARGET_PRODUCT = "Minecraft Advancements"
 
 SOURCES += \
     dateetheurefilterproxymodel.cpp \
@@ -35,7 +44,8 @@ SOURCES += \
     settings/database.cpp \
     settings/dia_parametres.cpp \
     settings/settings.cpp \
-    sqlmodel.cpp
+    sqlmodel.cpp \
+    statistiques.cpp
 
 HEADERS += \
     dateetheurefilterproxymodel.h \
@@ -44,12 +54,14 @@ HEADERS += \
     settings/database.h \
     settings/dia_parametres.h \
     settings/settings.h \
-    sqlmodel.h
+    sqlmodel.h \
+    statistiques.h
 
 FORMS += \
     dia_apropos.ui \
     frm_principale.ui \
-    settings/dia_parametres.ui
+    settings/dia_parametres.ui \
+    statistiques.ui
 
 TRANSLATIONS += \
     Minecraft-Advancements_fr_FR.ts
@@ -66,4 +78,5 @@ DISTFILES += \
     Old_Slots_avant_2.0.0
 
 RESOURCES += \
+    files.qrc \
     img.qrc

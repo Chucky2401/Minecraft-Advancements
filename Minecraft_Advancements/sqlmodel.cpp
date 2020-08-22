@@ -15,8 +15,17 @@ QVariant SqlModel::data(const QModelIndex &index, int role) const
         else if (index.column() == 3 && value == "false")
             return "non";
         else if (index.column() == 7 && value != "") {
-            //QDateTime qdtDateFait = QDateTime::fromString(value.toString(), "yyyy-MM-dd hh:mm:ss");
             return QDateTime::fromString(value.toString(), "yyyy-MM-dd hh:m:ss").toString("dd/MM/yyyy hh:mm:ss");
+        }
+    }
+
+    if (role == Qt::DecorationRole) {
+        QVariant qvValue = QSqlQueryModel::data(index, Qt::DisplayRole);
+        QString valeur = qvValue.toString();
+        if (index.column() == 5) {
+            if (valeur.contains("/")) {
+                return QVariant::fromValue(QIcon(valeur));
+            }
         }
     }
 
@@ -34,6 +43,18 @@ QVariant SqlModel::data(const QModelIndex &index, int role) const
             return QVariant::fromValue(QColor(Qt::blue));
         if (qmiValeurProgresFait.data(Qt::DisplayRole) == "UNE")
             return QVariant::fromValue(QColor(Qt::darkYellow));
+    }
+
+    if (role == Qt::ToolTipRole) {
+        QVariant qvValue = QSqlQueryModel::data(index, Qt::DisplayRole);
+        QString valeur = qvValue.toString();
+        if(index.column() == 5) {
+            if (valeur.contains("/")) {
+                return QString("<img src=\"" + valeur + "\" width=\"167\" height=\"100\">");
+            }
+        } else if (index.column() == 4) {
+            return QString(valeur);
+        }
     }
     return value;
 }

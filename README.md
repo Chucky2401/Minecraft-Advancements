@@ -22,7 +22,7 @@ Suivis des progrès Minecraft Vanilla et Blaze and Cave
 
 ## Capture d'écran
 
-![Illustration](https://i.imgur.com/e3Wn8aj.png)
+![Illustration](https://i.imgur.com/4JET7jh.png)
 
 ## Pré-Requis
 

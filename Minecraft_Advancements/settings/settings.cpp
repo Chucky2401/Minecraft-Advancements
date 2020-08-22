@@ -66,8 +66,14 @@ void Settings::initialisation(bool test) {
     m_statistics = this->getIniStatistics();
     this->setStatistics(m_statistics);
 
+    m_qsTypeGraphique = this->getIniTypeGraphique();
+    this->setTypeGraphique(m_qsTypeGraphique);
+
     m_fichierAdvancementsPerso = this->getIniFichierAdvancementsPerso();
     this->setFichierAdvancementsPerso(m_fichierAdvancementsPerso);
+
+    m_qslProgresMasque = this->getIniProgresMasque();
+    this->setProgresMasque(m_qslProgresMasque);
 }
 
 QString Settings::getPath() {
@@ -312,6 +318,19 @@ bool Settings::getStatistics() {
     return m_statistics;
 }
 
+void Settings::setTypeGraphique(QString type) {
+    this->m_qsTypeGraphique = type;
+    iniParam->setValue("data/graphique", type);
+}
+
+QString Settings::getIniTypeGraphique() {
+    return iniParam->value("data/graphique", "Ligne").toString();
+}
+
+QString Settings::getTypeGraphique() {
+    return m_qsTypeGraphique;
+}
+
 void Settings::setFichierAdvancementsPerso(QString fichier) {
     this->m_fichierAdvancementsPerso = fichier;
     iniParam->setValue("data/advancementsPerso", fichier);
@@ -323,4 +342,17 @@ QString Settings::getIniFichierAdvancementsPerso() {
 
 QString Settings::getFichierAdvancementsPerso() {
     return m_fichierAdvancementsPerso;
+}
+
+void Settings::setProgresMasque(QStringList progres) {
+    this->m_qslProgresMasque = progres;
+    iniParam->setValue("progres/masque", progres);
+}
+
+QStringList Settings::getIniProgresMasque() {
+    return iniParam->value("progres/masque", QStringList()).toStringList();
+}
+
+QStringList Settings::getProgresMasque() {
+    return m_qslProgresMasque;
 }

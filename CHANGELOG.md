@@ -2,13 +2,14 @@
 
 Suivis des version
 
-## **V2.0.0** - *To Be Announced*
+## **V2.0.0b** - *To Be Announced*
 
 ### Correction
 
 + Correction des .dll lors migration **Qt 5.15**
 + Correction des binaires pour être du 32 bits sur l'architecture 32 bits
 + Lors de l'ajout de la langue en base de données, plantage lors de l'import du BACAP. Ajout d'une fonction qui prend tout de la base pour stocker.
++ Correction lors du contrôle de mise à jour. Par exemple si la version en cours est là 2.0 et la dernière en ligne la 0.2.4.6, alors le programme disait qu'il fallait mettre à jour.
 + Correction de bugs divers
 
 ### Ajout
@@ -21,8 +22,13 @@ Suivis des version
 + Le dock peut être fermé, flottant (en dehors de la fenêtre) ou docker (dans la fenêtre). Tout ceci est mémorisé avec l'état de la fenêtre.
 + Ajout d'une image de fond et d'un titre au tableau
 + Status bar de la fenêtre. C'est une bar tout en bas qui permet d'affichage des informations
-+ Ajout de barre de progression lors de chargement long dans la status bar
++ Ajout de barre de progression lors de chargement long dans la status bar [Issue #19](https://github.com/Chucky2401/Minecraft-Advancements/issues/19)
 + Affichage du temps écoulé pour les imports dans la status bar à la fin pendant 10 secondes
++ Info-bulle sur Description
++ Compteurs de progrès [Issue #17](https://github.com/Chucky2401/Minecraft-Advancements/issues/17)
++ Possibilités de masquer un progrès lors d'un clique droit sur la ligne de ce dernier [Issue #3](https://github.com/Chucky2401/Minecraft-Advancements/issues/3)
++ Possibilités d'afficher des statistiques dans un graphique [Issue #18](https://github.com/Chucky2401/Minecraft-Advancements/issues/18)
++ Affichage architecture dans le titre de la fenêtre
 
 ### Modification
 
@@ -30,6 +36,8 @@ Suivis des version
   Avantages : 2 ou 3 long chargement 1 fois, et à chaque changement de version de Minecraft ou du BACAP, puis des affichages rapide pour suivre ses progrès ; Permet de mieux gérer les filtres ; Permet des filtres non possibles avant
   Inconvénient : demande d'actualiser manuellement les progrès en cas de changement
   **Etat : 100 %**
+  
++ La base de données est compacté après chaque comparaison
   
 + Déplacement des fichiers extrait pour Minecraft Vanilla pour éviter les erreurs dû au CCU (**C**ontrôle de **C**ompte **U**tilisateur *ou* **U**ser **A**count **C**ontrol - UAC en anglais)
 
@@ -46,7 +54,6 @@ Suivis des version
 + Complèment point du dessus : même chose pour l'import des progrès (Vanilla, BACAP ou personnel)
 
 + Passage en **Qt 5.15** *(vivement Qt 6 !)* et utilisation de **MinGW** (compilateur) en **8.1** au lieu de **7.3**
-  
   
 
 ### Divers
