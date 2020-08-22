@@ -2,7 +2,7 @@
 
 Suivis des version
 
-## **V2.0.0b** - *To Be Announced*
+## **V2.0.0b** - *23/08/2020*
 
 ### Correction
 
