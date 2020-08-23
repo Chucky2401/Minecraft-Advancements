@@ -85,7 +85,7 @@ public:
     QLabel *qlProgresPerso;
     QLabel *qlDernierImportPerso;
     QFrame *line_2;
-    QLabel *label_14;
+    QLabel *qlVosProgres;
     QTableView *tableView;
     QHBoxLayout *horizontalLayout_5;
     QPushButton *qpbReadJSONsVanilla;
@@ -421,16 +421,16 @@ public:
 
         verticalLayout->addWidget(line_2);
 
-        label_14 = new QLabel(centralwidget);
-        label_14->setObjectName(QString::fromUtf8("label_14"));
+        qlVosProgres = new QLabel(centralwidget);
+        qlVosProgres->setObjectName(QString::fromUtf8("qlVosProgres"));
         QFont font;
         font.setFamily(QString::fromUtf8("Minecrafter"));
         font.setPointSize(10);
-        label_14->setFont(font);
-        label_14->setTextFormat(Qt::RichText);
-        label_14->setScaledContents(false);
+        qlVosProgres->setFont(font);
+        qlVosProgres->setTextFormat(Qt::RichText);
+        qlVosProgres->setScaledContents(false);
 
-        verticalLayout->addWidget(label_14);
+        verticalLayout->addWidget(qlVosProgres);
 
         tableView = new QTableView(centralwidget);
         tableView->setObjectName(QString::fromUtf8("tableView"));
@@ -877,7 +877,7 @@ public:
         qlFichierProgres->setText(QCoreApplication::translate("FRM_Principale", "Fichier Progr\303\250s", nullptr));
         qlProgresPerso->setText(QCoreApplication::translate("FRM_Principale", "TextLabel", nullptr));
         qlDernierImportPerso->setText(QCoreApplication::translate("FRM_Principale", "TextLabel", nullptr));
-        label_14->setText(QCoreApplication::translate("FRM_Principale", "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt; color:#8bc34a;\">Vos Progres</span></p></body></html>", nullptr));
+        qlVosProgres->setText(QCoreApplication::translate("FRM_Principale", "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt; color:#8bc34a;\">Vos Progres</span></p></body></html>", nullptr));
         qpbReadJSONsVanilla->setText(QCoreApplication::translate("FRM_Principale", "Comparer progr\303\250s Vanilla (seulement)", nullptr));
         qpbReadJSONsBlazeandcave->setText(QCoreApplication::translate("FRM_Principale", "Comparer progr\303\250s BACAP (seulement)", nullptr));
         qpbReadAllJSONs->setText(QCoreApplication::translate("FRM_Principale", "Comparer tous les progr\303\250s", nullptr));

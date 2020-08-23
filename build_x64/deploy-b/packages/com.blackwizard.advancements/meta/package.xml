@@ -2,8 +2,8 @@
 <Package>
     <DisplayName>Minecraft Advancements</DisplayName>
     <Description>Suivis complet des progrès Minecraft Vanilla et Blaze and Cave. Version BÊTA</Description>
-    <Version>2.0</Version>
-    <ReleaseDate>2020-08-22</ReleaseDate>
+    <Version>2.0.1</Version>
+    <ReleaseDate>2020-08-23</ReleaseDate>
     <Name>com.blackwizard.advancements</Name>
     <Licenses>
         <License name="GNU Public License Agreement" file="license.txt" />

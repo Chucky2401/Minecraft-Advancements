@@ -394,7 +394,7 @@
      </widget>
     </item>
     <item>
-     <widget class="QLabel" name="label_14">
+     <widget class="QLabel" name="qlVosProgres">
       <property name="font">
        <font>
         <family>Minecrafter</family>

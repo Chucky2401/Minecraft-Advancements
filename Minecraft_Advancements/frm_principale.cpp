@@ -89,7 +89,7 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     m_qs7zBin = "bin/7z.exe";
     m_qp7zProcess = new QProcess(this);
     m_bErreurExtraction = false;
-    m_qsimProgresRealisation = new QStandardItemModel(0,6);
+    //m_qsimProgresRealisation = new QStandardItemModel(0,6);
 
     // Modèles pour la vue
     m_smProgresRealisation = new SqlModel(this);
@@ -152,6 +152,13 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
                                    " - '^par|^monstre' : recherche 'par' OU 'monstre' au début du texte.\n"
                                    "    Trouvera 'Partons à l'aventure' et 'Monstres chassés'");
     ui->qcbFiltreTitre->setToolTipDuration(30000);
+
+    // Police spéciale
+    int iFontId = QFontDatabase::addApplicationFont(":/files/MINECRAFTER.REG.TTF");
+    if (iFontId != -1) {
+        QFont qfMinecrafter("Minecrafter");
+        ui->qlVosProgres->setFont(qfMinecrafter);
+    }
 
     ui->qdteFrom->setDateTime(QDateTime(QDate(1970, 01, 01), QTime(0, 0, 0)));
     ui->qdteTo->setDateTime(QDateTime(QDate(2099, 12, 31), QTime(23, 59, 59)));
@@ -1488,7 +1495,10 @@ void FRM_Principale::comparerLesProgres(bool checked) {
            "    la.origine"
            "    , la.categorie"
            "    , la.titre"
-           "    , pa.done progres_fait"
+           "    , CASE WHEN pa.done IS NULL"
+           "           THEN 'false'"
+           "           ELSE 'true'"
+           "           END progres_fait"
            "    , la.description"
            "    , la.condition_texte"
            "    , CASE WHEN pa.condition IS NULL"
@@ -2970,7 +2980,7 @@ void FRM_Principale::comparaisonVersion(bool ecrireFichier){
             arguments << "--updater";
             if (param->getMiseAJourBeta()) {
                 arguments << "--addTempRepository";
-                arguments << "https://advancements.blackwizard.fr/repository/beta";
+                arguments << "https://advancements.blackwizard.fr/repository-64/beta";
             }
             qpOutilDeMaintenance->setProgram("maintenancetool.exe");
             qpOutilDeMaintenance->setArguments(arguments);
@@ -3534,7 +3544,7 @@ void FRM_Principale::definirModele() {
         m_smProgresRealisation->setHeaderData(0, Qt::Horizontal, tr("Origine"));
         m_smProgresRealisation->setHeaderData(1, Qt::Horizontal, tr("Catégorie"));
         m_smProgresRealisation->setHeaderData(2, Qt::Horizontal, tr("Progrès"));
-        m_smProgresRealisation->setHeaderData(3, Qt::Horizontal, tr("Progrès Faite"));
+        m_smProgresRealisation->setHeaderData(3, Qt::Horizontal, tr("Progrès Fait"));
         m_smProgresRealisation->setHeaderData(4, Qt::Horizontal, tr("Description"));
         m_smProgresRealisation->setHeaderData(5, Qt::Horizontal, tr("Critère"));
         m_smProgresRealisation->setHeaderData(6, Qt::Horizontal, tr("Critère Fait"));

@@ -147,6 +147,7 @@ compiler_rcc_clean:
 	-$(DEL_FILE) release\qrc_files.cpp release\qrc_img.cpp
 release/qrc_files.cpp: ../Minecraft_Advancements/files.qrc \
 		../../../Qt/5.15.0/mingw81_64/bin/rcc.exe \
+		../Minecraft_Advancements/files/MINECRAFTER.REG.TTF \
 		../Minecraft_Advancements/files/minecraft_Advancements.sql
 	D:\Qt\5.15.0\mingw81_64\bin\rcc.exe -name files ..\Minecraft_Advancements\files.qrc -o release\qrc_files.cpp
 

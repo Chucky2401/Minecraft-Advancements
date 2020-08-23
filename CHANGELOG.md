@@ -2,7 +2,15 @@
 
 Suivis des version
 
-## **V2.0.0b** - *23/08/2020*
+## **V2.0.0 Bêta 2** - *23/08/2020*
+
+### Correction
+
++ Pour les conditions de types *OU* non fait, rien n'était affiché dans la colonne **Progrès Fait**
++ Intégration de la police d'écriture pour **Vos Progrès**
++ Lors de la recherche de mise à jour Bêta, ajout de la bonne URL en 64 bits
+
+## **V2.0.0 Bêta 1** - *22/08/2020*
 
 ### Correction
 
