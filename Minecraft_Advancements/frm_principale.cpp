@@ -2980,7 +2980,10 @@ void FRM_Principale::comparaisonVersion(bool ecrireFichier){
             arguments << "--updater";
             if (param->getMiseAJourBeta()) {
                 arguments << "--addTempRepository";
-                arguments << "https://advancements.blackwizard.fr/repository-64/beta";
+                if (m_qsArchitecture == "i386")
+                    arguments << "https://advancements.blackwizard.fr/repository/beta";
+                else if (m_qsArchitecture == "x86_64")
+                    arguments << "https://advancements.blackwizard.fr/repository-64/beta";
             }
             qpOutilDeMaintenance->setProgram("maintenancetool.exe");
             qpOutilDeMaintenance->setArguments(arguments);
