@@ -208,6 +208,7 @@ private slots:
     //void readAllJsons(bool checked);
     void filtreTableOrigine(QString filtre);
     void filtreTableTitre(QString filtre);
+    void filtreTableCategorie(QString filtre);
     void filtreTableProgresFinis(QString filtre);
     void filtreTableConditionFait(QString filtre);
     void filtreTableTypeCondition(QString filtre);

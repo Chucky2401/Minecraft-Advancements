@@ -129,6 +129,8 @@ public:
     QLabel *label_6;
     QLabel *label_12;
     QCheckBox *qcbRegExp;
+    QLabel *label_14;
+    QComboBox *qcbFiltreCategorie;
     QHBoxLayout *horizontalLayout_9;
     QGroupBox *qgbOperations;
     QGridLayout *gridLayout_4;
@@ -504,7 +506,7 @@ public:
         FRM_Principale->setStatusBar(statusbar);
         qdwOpe = new QDockWidget(FRM_Principale);
         qdwOpe->setObjectName(QString::fromUtf8("qdwOpe"));
-        qdwOpe->setMinimumSize(QSize(957, 278));
+        qdwOpe->setMinimumSize(QSize(1007, 278));
         qdwOpe->setFloating(false);
         qdwOpe->setFeatures(QDockWidget::AllDockWidgetFeatures);
         dockWidgetContents_2 = new QWidget();
@@ -541,7 +543,7 @@ public:
 
         qcbFiltreTitre = new QComboBox(qgbFiltres);
         qcbFiltreTitre->setObjectName(QString::fromUtf8("qcbFiltreTitre"));
-        qcbFiltreTitre->setMinimumSize(QSize(200, 0));
+        qcbFiltreTitre->setMinimumSize(QSize(150, 0));
         qcbFiltreTitre->setEditable(true);
         qcbFiltreTitre->setMaxVisibleItems(30);
         qcbFiltreTitre->setInsertPolicy(QComboBox::NoInsert);
@@ -659,6 +661,17 @@ public:
         qcbRegExp->setObjectName(QString::fromUtf8("qcbRegExp"));
 
         gridLayout_3->addWidget(qcbRegExp, 1, 4, 1, 1);
+
+        label_14 = new QLabel(qgbFiltres);
+        label_14->setObjectName(QString::fromUtf8("label_14"));
+
+        gridLayout_3->addWidget(label_14, 1, 0, 1, 1);
+
+        qcbFiltreCategorie = new QComboBox(qgbFiltres);
+        qcbFiltreCategorie->setObjectName(QString::fromUtf8("qcbFiltreCategorie"));
+        qcbFiltreCategorie->setMinimumSize(QSize(150, 0));
+
+        gridLayout_3->addWidget(qcbFiltreCategorie, 1, 1, 1, 1);
 
 
         verticalLayout_2->addWidget(qgbFiltres);
@@ -899,6 +912,7 @@ public:
         label_6->setText(QCoreApplication::translate("FRM_Principale", "Type Condition", nullptr));
         label_12->setText(QCoreApplication::translate("FRM_Principale", "Au", nullptr));
         qcbRegExp->setText(QCoreApplication::translate("FRM_Principale", "Expression R\303\251guli\303\250re", nullptr));
+        label_14->setText(QCoreApplication::translate("FRM_Principale", "Cat\303\251gorie", nullptr));
         qgbOperations->setTitle(QCoreApplication::translate("FRM_Principale", "Op\303\251rations", nullptr));
         qpbClearFilter->setText(QCoreApplication::translate("FRM_Principale", "Effacer les filtres", nullptr));
         pbImprimer->setText(QCoreApplication::translate("FRM_Principale", "Imprimer", nullptr));

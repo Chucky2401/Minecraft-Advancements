@@ -13,11 +13,11 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     QApplication::setApplicationName("Minecraft Advancements");
-    QApplication::setApplicationVersion("2.0.1b");
+    QApplication::setApplicationVersion("2.0.2b");
     QCommandLineParser parser;
     bool test = false;
 
-    parser.setApplicationDescription(QApplication::translate("main", "Outil pour les recettes de No Man's Sky"));
+    parser.setApplicationDescription(QApplication::translate("main", "Comparer vos progrès Minecraft !"));
     parser.addHelpOption();
     parser.addVersionOption();
 

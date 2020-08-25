@@ -2,6 +2,20 @@
 
 Suivis des version
 
+## **V2.0.0 Bêta 3** - *25/08/2020*
+
+### Correction
+
++ Lors de l'utilisation sans BACAP, impossible de comparer les progrès
+
+### Modification
+
++ Message d'erreur plus parlant pour les erreurs d'ouverture des fichier JSON, en particulier pour langue BACAP
+
+### Ajout
+
++ Filtre sur la catégorie *(aventure, animal, etc.)*
+
 ## **V2.0.0 Bêta 2** - *23/08/2020*
 
 ### Correction

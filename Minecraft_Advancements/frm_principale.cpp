@@ -201,6 +201,7 @@ FRM_Principale::FRM_Principale(QWidget *parent, bool test)
     connect(ui->qpbReadAllJSONs, SIGNAL(clicked(bool)), this, SLOT(comparerLesProgres(bool)));
     // Filtres
     connect(ui->qcbFiltreOrigine, SIGNAL(currentTextChanged(QString)), this, SLOT(filtreTableOrigine(QString)));
+    connect(ui->qcbFiltreCategorie, &QComboBox::currentTextChanged, this, &FRM_Principale::filtreTableCategorie);
     connect(ui->qcbFiltreProgresFinis, SIGNAL(currentTextChanged(QString)), this, SLOT(filtreTableProgresFinis(QString)));
     connect(ui->qcbFiltreConditionFait, SIGNAL(currentTextChanged(QString)), this, SLOT(filtreTableConditionFait(QString)));
     connect(ui->qcbFiltreType, SIGNAL(currentTextChanged(QString)), this, SLOT(filtreTableTypeCondition(QString)));
@@ -1470,6 +1471,11 @@ void FRM_Principale::comparerLesProgres(bool checked) {
     if(checked){
     }
 
+    ui->qcbFiltreTitre->clear();
+    ui->qcbFiltreTitre->addItem("");
+    ui->qcbFiltreCategorie->clear();
+    ui->qcbFiltreCategorie->addItem("");
+
     QString qsDeleteVue = "DROP VIEW compare_advancements";
     QString qsRequeteVue = "CREATE VIEW 'compare_advancements' AS SELECT "
                   "la.origine"
@@ -1580,6 +1586,7 @@ void FRM_Principale::comparerLesProgres(bool checked) {
         QSqlQuery qsqListeTitre(bdd.getBase());
         bool bSeparateurFait = false;
 
+        // On ajoute les titres dans la combobox
         if (qsqListeTitre.exec("SELECT DISTINCT origine, titre FROM compare_advancements ORDER BY origine DESC, titre ASC")) {
             while (qsqListeTitre.next()) {
                 QString qsOrigine = qsqListeTitre.value("origine").toString();
@@ -1598,6 +1605,33 @@ void FRM_Principale::comparerLesProgres(bool checked) {
                 ui->qcbFiltreTitre->addItem(qsTitre);
                 QCoreApplication::processEvents();
             }
+
+            // On ajoute les catégories dans la combobox
+            QString qsLastOrigine = "";
+            QSqlQuery qsqListeCategorie(bdd.getBase());
+            //bool bSeparateurFait = false;
+
+            // On ajoute les titres dans la combobox
+            if (qsqListeCategorie.exec("SELECT DISTINCT categorie FROM compare_advancements ORDER BY categorie ASC")) {
+                while (qsqListeCategorie.next()) {
+                    //QString qsOrigine = qsqListeCategorie.value("origine").toString();
+                    QString qsCategorie = qsqListeCategorie.value("categorie").toString();
+
+//                    if (qsLastOrigine != qsOrigine) {
+//                        ui->qcbFiltreCategorie->addItem("----- " + qsOrigine + " -----");
+//                        qsLastOrigine = qsOrigine;
+//                    }
+
+//                    if (qsOrigine == "BACAP" && !bSeparateurFait) {
+//                        ui->qcbFiltreCategorie->insertSeparator(ui->qcbFiltreCategorie->count()-1);
+//                        bSeparateurFait = true;
+//                    }
+
+                    ui->qcbFiltreCategorie->addItem(qsCategorie);
+                    QCoreApplication::processEvents();
+                }
+            }
+
             // On cré le modèle et on le mets dans la vue
             definirModele();
 
@@ -2420,13 +2454,39 @@ void FRM_Principale::filtreTableOrigine(QString filtre) {
  * Slots lors du filtre sur le titre
  */
 void FRM_Principale::filtreTableTitre(QString filtre) {
+    proxyModelFiltreTitre->invalidate();
+    proxyModelFiltreTitre->setFilterKeyColumn(2);
     if (filtre != "----- Minecraft Vanilla -----" && filtre != "----- Blaze and Cave -----") {
-        proxyModelFiltreTitre->setFilterKeyColumn(2);
         if (ui->qcbRegExp->isChecked())
             proxyModelFiltreTitre->setFilterRegExp(QRegExp(filtre, Qt::CaseInsensitive, QRegExp::RegExp));
         else
             proxyModelFiltreTitre->setFilterRegExp(QRegExp(filtre, Qt::CaseInsensitive, QRegExp::FixedString));
+    } else {
+        if (ui->qcbRegExp->isChecked())
+            proxyModelFiltreTitre->setFilterRegExp(QRegExp("", Qt::CaseInsensitive, QRegExp::RegExp));
+        else
+            proxyModelFiltreTitre->setFilterRegExp(QRegExp("", Qt::CaseInsensitive, QRegExp::FixedString));
     }
+}
+
+/*
+ * Slots pour filtre sur la catégorie
+ */
+void FRM_Principale::filtreTableCategorie(QString filtre){
+    QString qsDataFiltre = ui->qcbFiltreCategorie->currentText();
+    int iIndexOfWhere = m_qslRequeteComparaison.indexOf(QRegExp(".*categorie = .+"));
+    int iTailleListeRequete = m_qslRequeteComparaison.size();
+
+    if(iIndexOfWhere != -1) {
+        m_qslRequeteComparaison.removeAt(iIndexOfWhere);
+        iTailleListeRequete--;
+    }
+
+    if (filtre != "") {
+        m_qslRequeteComparaison << "categorie = '" + qsDataFiltre + "'";
+    }
+
+    definirModele();
 }
 
 /*
@@ -2594,6 +2654,7 @@ void FRM_Principale::effacerLesFiltres(bool checked) {
     }
 
     ui->qcbFiltreOrigine->setCurrentIndex(0);
+    ui->qcbFiltreCategorie->setCurrentText(0);
     ui->qcbFiltreTitre->setCurrentText(0);
     ui->qcbFiltreProgresFinis->setCurrentIndex(0);
     ui->qcbFiltreConditionFait->setCurrentIndex(0);
@@ -3026,7 +3087,7 @@ QVariantMap FRM_Principale::ouvrirJson(QString fichier) {
     m_ouvertureJson = false;
     if(!qfFichierJson.open(QIODevice::ReadOnly)){
         //qDebug()<<"Failed to open "<< fichier;
-        afficherMessage(QMessageBox::Critical, "Ouverture fichier JSON en échec", "Impossible d'ouvrir le fichier");
+        afficherMessage(QMessageBox::Critical, "Ouverture fichier JSON en échec", "Impossible d'ouvrir le fichier", "Fichier bloquant :\n" + qfFichierJson.fileName());
         return QVariantMap();
         //exit(1);
     } else {
@@ -3041,7 +3102,7 @@ QVariantMap FRM_Principale::ouvrirJson(QString fichier) {
         if(qjdFichierJson.isNull()){
             //qDebug()<<"Failed to create JSON doc. Fichier :" << fichier;
             //qDebug() << error->errorString();
-            afficherMessage(QMessageBox::Critical, "Ouverture fichier JSON en échec", "Impossible de créer le document JSON", error->errorString());
+            afficherMessage(QMessageBox::Critical, "Ouverture fichier JSON en échec", "Impossible de créer le document JSON", "Détail :\n" + error->errorString() + "\n\nFichier :\n" + qfFichierJson.fileName());
             return QVariantMap();
             //exit(2);
         } else {
@@ -3195,8 +3256,6 @@ void FRM_Principale::traitementDossierBac(QString folder) {
                                 // Modification du bouton
                                 ui->qpbExtraireProgresBacap->setText("Ré-Importer Progrès");
                                 ui->qpbExtraireProgresBacap->setEnabled(true);
-                                m_bUpdateProgres = true;
-                                m_bProgresBlazeandcaveOK = true;
                                 // Info utilisateur
                                 ui->qlAdvancementsBacapExtrait->setText("Progrès importé !");
                                 ui->qlAdvancementsBacapExtrait->setStyleSheet("QLabel { color: green; }");
@@ -3207,8 +3266,6 @@ void FRM_Principale::traitementDossierBac(QString folder) {
                                 // Modification du bouton
                                 ui->qpbExtraireProgresBacap->setText("Ré-Importer Progrès");
                                 ui->qpbExtraireProgresBacap->setEnabled(true);
-                                m_bUpdateProgres = true;
-                                m_bProgresBlazeandcaveOK = true;
                                 // Info utilisateur
                                 ui->qlAdvancementsBacapExtrait->setText("Import progrès incomplet !");
                                 ui->qlAdvancementsBacapExtrait->setStyleSheet("QLabel { color: orange; }");
@@ -3235,8 +3292,6 @@ void FRM_Principale::traitementDossierBac(QString folder) {
                 // Modification du bouton
                 ui->qpbExtraireProgresBacap->setText("Importer Progrès");
                 ui->qpbExtraireProgresBacap->setEnabled(true);
-                m_bUpdateProgres = true;
-                m_bProgresBlazeandcaveOK = true;
                 // Info utilisateur
                 ui->qlAdvancementsBacapExtrait->setText("Progrès non importé !");
                 ui->qlAdvancementsBacapExtrait->setStyleSheet("QLabel { color: red; }");
@@ -3385,20 +3440,10 @@ void FRM_Principale::activationBoutonExtraction() {
     if (m_bVersionOK && m_bProgresVanillaOK && m_bProgresPersoOK) {
         ui->qpbReadAllJSONs->setEnabled(true);
         ui->qgbStats->setEnabled(true);
-    } else {
-        ui->qpbReadAllJSONs->setEnabled(false);
-        ui->qgbStats->setEnabled(false);
-    }
-
-    if (m_bVersionOK && m_bProgresBlazeandcaveOK && m_bProgresPersoOK) {
+    } else if (m_bVersionOK && m_bProgresBlazeandcaveOK && m_bProgresPersoOK) {
         ui->qpbReadAllJSONs->setEnabled(true);
         ui->qgbStats->setEnabled(true);
-    } else {
-        ui->qpbReadAllJSONs->setEnabled(false);
-        ui->qgbStats->setEnabled(false);
-    }
-
-    if (m_bVersionOK && m_bProgresVanillaOK && m_bProgresPersoOK && m_bProgresBlazeandcaveOK) {
+    } else if (m_bVersionOK && m_bProgresVanillaOK && m_bProgresPersoOK && m_bProgresBlazeandcaveOK) {
         ui->qpbReadAllJSONs->setEnabled(true);
         ui->qgbStats->setEnabled(true);
     } else {
@@ -3471,7 +3516,8 @@ void FRM_Principale::toutesLesTraductionsListe() {
 }
 
 /*
- *
+ * Definis le modèle à utiliser dans la QTableView
+ * S'occupe de compter les progrès pour les compteurs
  */
 void FRM_Principale::definirModele() {
     if (!ouvertureEnCours) {
@@ -3543,6 +3589,7 @@ void FRM_Principale::definirModele() {
         qsSqlCompteTout = qsSqlCompteTout.replace("CONDITION_MANQUANTE", qsConditionCompteFinal);
         QSqlQuery qsqCompteTout(qsSqlCompteTout, bdd.getBase()), qsqCompteVanilla(qsSqlCompteVanilla, bdd.getBase()), qsqCompteBacap(qsSqlCompteBacap, bdd.getBase());
 
+        // On configure le modèle pour l'afficher
         m_smProgresRealisation->setQuery(qsRequeteFinal, bdd.getBase());
         m_smProgresRealisation->setHeaderData(0, Qt::Horizontal, tr("Origine"));
         m_smProgresRealisation->setHeaderData(1, Qt::Horizontal, tr("Catégorie"));
@@ -3553,7 +3600,9 @@ void FRM_Principale::definirModele() {
         m_smProgresRealisation->setHeaderData(6, Qt::Horizontal, tr("Critère Fait"));
         m_smProgresRealisation->setHeaderData(7, Qt::Horizontal, tr("Date Fait"));
         m_smProgresRealisation->setHeaderData(8, Qt::Horizontal, tr("Type Critère"));
+
         proxyModelFiltreTitre->setSourceModel(m_smProgresRealisation);
+
         ui->tableView->setModel(proxyModelFiltreTitre);
         ui->tableView->setColumnWidth(0, 95);
         ui->tableView->setColumnWidth(1, 67);
@@ -3642,8 +3691,10 @@ void FRM_Principale::resetVue() {
     // On vide la vue
     proxyModelFiltreTitre->invalidate();
     m_smProgresRealisation->setQuery("", bdd.getBase());
+
     while (m_smProgresRealisation->rowCount() > 0)
         m_smProgresRealisation->removeRows(0, m_smProgresRealisation->rowCount());
+
     // On réinitialise la requête de filtre
     m_qslRequeteComparaison.clear();
     m_qslRequeteComparaison << "SELECT * FROM compare_advancements";
@@ -3694,6 +3745,13 @@ void FRM_Principale::restoreTypeGraphique(QString type) {
         m_qsTypeGraphique = "Ligne";
     }
 }
+
+
+/*
+ *  ~~~~~~~~~~~~~~~~~~~~~~~
+ *  | Pour le développeur |
+ *  ~~~~~~~~~~~~~~~~~~~~~~~
+ */
 
 /*
  * Utiliser dans le bouton de test
