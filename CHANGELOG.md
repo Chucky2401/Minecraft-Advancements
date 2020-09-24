@@ -2,7 +2,7 @@
 
 Suivis des version
 
-## **V2.0.0** - *TBD*
+## **V2.0.0** - *24/09/2020*
 
 ### Modification
 
