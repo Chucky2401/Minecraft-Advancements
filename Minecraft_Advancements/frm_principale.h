@@ -137,7 +137,6 @@ private:
     QString m_qsNumeroVersion;
     QStringList m_qslListVersionJar;
     QString m_qsDossierSauvegarde;
-    //QVariantMap m_qvmJsonProgresPerso;
     // Traduction
     QStringList m_qslClesToutesLesTrads;
     QStringList m_qslToutesLesTrads;
@@ -149,12 +148,7 @@ private:
     QStringList m_qslRequeteComparaison;
     QList<QStandardItem *> m_qlLigneProgres;
     QStandardItemModel *m_qsimProgresRealisation;
-    //QSortFilterProxyModel *proxModelFiltreOrigine;
     QSortFilterProxyModel *proxyModelFiltreTitre;
-    //QSortFilterProxyModel *proxyModelFiltreProgresFinis;
-    //QSortFilterProxyModel *proxyModelFiltreConditionFaite;
-    //QSortFilterProxyModel *proxyModelFiltreTypeCondition;
-    //DateEtHeureFilterProxyModel *proxyModelFiltreDate;
     QAbstractItemModel *m_defaultModelCompleter;
     QSqlQueryModel *plainModel;
     SqlModel *m_smProgresRealisation;
@@ -193,7 +187,6 @@ private slots:
 //    void dockWidgetOperationClosing(bool closing);
     //Configuration
     void choixLauncher(int index);
-    //void choixVersion(int index);
     void choixVersion(QString text);
     void choixFichierAdvancements(bool checked);
     void extraireProgres(bool checked);
@@ -203,9 +196,6 @@ private slots:
     void exclureStats(int statut);
     // Lecture et affichage
     void comparerLesProgres(bool checked);
-    //void readJSONsVanilla(bool checked);
-    //void readJSONsBlazeandcave(bool checked);
-    //void readAllJsons(bool checked);
     void filtreTableOrigine(QString filtre);
     void filtreTableTitre(QString filtre);
     void filtreTableCategorie(QString filtre);

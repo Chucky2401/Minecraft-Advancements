@@ -6,7 +6,7 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>1000</width>
+    <width>1007</width>
     <height>850</height>
    </rect>
   </property>
@@ -434,55 +434,7 @@
        <number>0</number>
       </property>
       <item>
-       <widget class="QPushButton" name="qpbReadJSONsVanilla">
-        <property name="text">
-         <string>Comparer progrès Vanilla (seulement)</string>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="qpbReadJSONsBlazeandcave">
-        <property name="text">
-         <string>Comparer progrès BACAP (seulement)</string>
-        </property>
-       </widget>
-      </item>
-      <item>
        <spacer name="horizontalSpacer_4">
-        <property name="orientation">
-         <enum>Qt::Horizontal</enum>
-        </property>
-        <property name="sizeHint" stdset="0">
-         <size>
-          <width>40</width>
-          <height>20</height>
-         </size>
-        </property>
-       </spacer>
-      </item>
-      <item>
-       <widget class="Line" name="line_5">
-        <property name="orientation">
-         <enum>Qt::Vertical</enum>
-        </property>
-       </widget>
-      </item>
-      <item>
-       <widget class="QPushButton" name="qpbReadAllJSONs">
-        <property name="text">
-         <string>Comparer tous les progrès</string>
-        </property>
-       </widget>
-      </item>
-     </layout>
-    </item>
-    <item>
-     <layout class="QHBoxLayout" name="horizontalLayout_3">
-      <property name="topMargin">
-       <number>0</number>
-      </property>
-      <item>
-       <spacer name="horizontalSpacer">
         <property name="orientation">
          <enum>Qt::Horizontal</enum>
         </property>
@@ -501,6 +453,20 @@
         </property>
        </widget>
       </item>
+      <item>
+       <widget class="Line" name="line_5">
+        <property name="orientation">
+         <enum>Qt::Vertical</enum>
+        </property>
+       </widget>
+      </item>
+      <item>
+       <widget class="QPushButton" name="qpbReadAllJSONs">
+        <property name="text">
+         <string>Comparer tous les progrès</string>
+        </property>
+       </widget>
+      </item>
      </layout>
     </item>
    </layout>
@@ -510,7 +476,7 @@
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>1000</width>
+     <width>1007</width>
      <height>21</height>
     </rect>
    </property>

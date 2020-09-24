@@ -88,14 +88,10 @@ public:
     QLabel *qlVosProgres;
     QTableView *tableView;
     QHBoxLayout *horizontalLayout_5;
-    QPushButton *qpbReadJSONsVanilla;
-    QPushButton *qpbReadJSONsBlazeandcave;
     QSpacerItem *horizontalSpacer_4;
+    QPushButton *qpbReadJSON;
     QFrame *line_5;
     QPushButton *qpbReadAllJSONs;
-    QHBoxLayout *horizontalLayout_3;
-    QSpacerItem *horizontalSpacer;
-    QPushButton *qpbReadJSON;
     QMenuBar *qmbMenuPrincipal;
     QMenu *qmFichier;
     QMenu *qmOutils;
@@ -162,7 +158,7 @@ public:
     {
         if (FRM_Principale->objectName().isEmpty())
             FRM_Principale->setObjectName(QString::fromUtf8("FRM_Principale"));
-        FRM_Principale->resize(1000, 850);
+        FRM_Principale->resize(1007, 850);
         qaQuitter = new QAction(FRM_Principale);
         qaQuitter->setObjectName(QString::fromUtf8("qaQuitter"));
         QIcon icon;
@@ -446,19 +442,14 @@ public:
         horizontalLayout_5 = new QHBoxLayout();
         horizontalLayout_5->setObjectName(QString::fromUtf8("horizontalLayout_5"));
         horizontalLayout_5->setContentsMargins(-1, 0, -1, -1);
-        qpbReadJSONsVanilla = new QPushButton(centralwidget);
-        qpbReadJSONsVanilla->setObjectName(QString::fromUtf8("qpbReadJSONsVanilla"));
-
-        horizontalLayout_5->addWidget(qpbReadJSONsVanilla);
-
-        qpbReadJSONsBlazeandcave = new QPushButton(centralwidget);
-        qpbReadJSONsBlazeandcave->setObjectName(QString::fromUtf8("qpbReadJSONsBlazeandcave"));
-
-        horizontalLayout_5->addWidget(qpbReadJSONsBlazeandcave);
-
         horizontalSpacer_4 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
         horizontalLayout_5->addItem(horizontalSpacer_4);
+
+        qpbReadJSON = new QPushButton(centralwidget);
+        qpbReadJSON->setObjectName(QString::fromUtf8("qpbReadJSON"));
+
+        horizontalLayout_5->addWidget(qpbReadJSON);
 
         line_5 = new QFrame(centralwidget);
         line_5->setObjectName(QString::fromUtf8("line_5"));
@@ -475,25 +466,10 @@ public:
 
         verticalLayout->addLayout(horizontalLayout_5);
 
-        horizontalLayout_3 = new QHBoxLayout();
-        horizontalLayout_3->setObjectName(QString::fromUtf8("horizontalLayout_3"));
-        horizontalLayout_3->setContentsMargins(-1, 0, -1, -1);
-        horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-
-        horizontalLayout_3->addItem(horizontalSpacer);
-
-        qpbReadJSON = new QPushButton(centralwidget);
-        qpbReadJSON->setObjectName(QString::fromUtf8("qpbReadJSON"));
-
-        horizontalLayout_3->addWidget(qpbReadJSON);
-
-
-        verticalLayout->addLayout(horizontalLayout_3);
-
         FRM_Principale->setCentralWidget(centralwidget);
         qmbMenuPrincipal = new QMenuBar(FRM_Principale);
         qmbMenuPrincipal->setObjectName(QString::fromUtf8("qmbMenuPrincipal"));
-        qmbMenuPrincipal->setGeometry(QRect(0, 0, 1000, 21));
+        qmbMenuPrincipal->setGeometry(QRect(0, 0, 1007, 21));
         qmFichier = new QMenu(qmbMenuPrincipal);
         qmFichier->setObjectName(QString::fromUtf8("qmFichier"));
         qmOutils = new QMenu(qmbMenuPrincipal);
@@ -891,10 +867,8 @@ public:
         qlProgresPerso->setText(QCoreApplication::translate("FRM_Principale", "TextLabel", nullptr));
         qlDernierImportPerso->setText(QCoreApplication::translate("FRM_Principale", "TextLabel", nullptr));
         qlVosProgres->setText(QCoreApplication::translate("FRM_Principale", "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt; color:#8bc34a;\">Vos Progres</span></p></body></html>", nullptr));
-        qpbReadJSONsVanilla->setText(QCoreApplication::translate("FRM_Principale", "Comparer progr\303\250s Vanilla (seulement)", nullptr));
-        qpbReadJSONsBlazeandcave->setText(QCoreApplication::translate("FRM_Principale", "Comparer progr\303\250s BACAP (seulement)", nullptr));
-        qpbReadAllJSONs->setText(QCoreApplication::translate("FRM_Principale", "Comparer tous les progr\303\250s", nullptr));
         qpbReadJSON->setText(QCoreApplication::translate("FRM_Principale", "Read JSON (TEST)", nullptr));
+        qpbReadAllJSONs->setText(QCoreApplication::translate("FRM_Principale", "Comparer tous les progr\303\250s", nullptr));
         qmFichier->setTitle(QCoreApplication::translate("FRM_Principale", "&Fichier", nullptr));
         qmOutils->setTitle(QCoreApplication::translate("FRM_Principale", "&Outils", nullptr));
         qmAide->setTitle(QCoreApplication::translate("FRM_Principale", "&?", nullptr));

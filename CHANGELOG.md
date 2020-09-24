@@ -2,6 +2,12 @@
 
 Suivis des version
 
+## **V2.0.0** - *TBD*
+
+### Modification
+
++ Chargement de tous les progrès dès le départ pour éviter un problème de filtre qui n'affiche rien
+
 ## **V2.0.0 Bêta 3** - *25/08/2020*
 
 ### Correction
