@@ -19,6 +19,14 @@ public:
     void initialisation(bool test = false);
 
     QString getPath();
+
+    void setBddPath(QString path);
+    QString getBddPath();
+    QString getIniBddPath();
+
+    void setBddName(QString name);
+    QString getBddName();
+
     void setGeometrie(QByteArray geometrie);
     void setEtat(QByteArray etat);
     void setGeometrieEtat(QByteArray geometrie, QByteArray etat);
@@ -26,6 +34,14 @@ public:
     QByteArray getGeometrie();
     QByteArray getIniEtat();
     QByteArray getEtat();
+
+    void setGeometrieDock(QByteArray geometrie);
+    QByteArray getIniGeometrieDock();
+    QByteArray getGeometrieDock();
+
+    void setDockIsFloating(bool floating);
+    bool getIniDockIsFloating();
+    bool getDockIsFloating();
 
     void setVerificationAutoMiseAJour(bool enabled);
     bool getIniVerificationAutoMiseAJour();
@@ -73,6 +89,14 @@ public:
     bool getIniStatistics();
     bool getStatistics();
 
+    void setTypeGraphique(QString type);
+    QString getIniTypeGraphique();
+    QString getTypeGraphique();
+
+    void setProgresMasque(QStringList progres);
+    QStringList getIniProgresMasque();
+    QStringList getProgresMasque();
+
     void setFichierAdvancementsPerso(QString fichier);
     QString getIniFichierAdvancementsPerso();
     QString getFichierAdvancementsPerso();
@@ -85,10 +109,16 @@ private:
     const QVariant settingDefaultByteArray = "DNE";
 
     QString m_qsAppdataPath;
+    QString m_qsPathRoamingBdd;
     QSettings *iniParam;
+    QString bddPath;
+    QString bddName;
     QByteArray geometrie;
     QByteArray etat;
+    QByteArray geometrieDock;
     bool restoreSizePos;
+    bool restoreSizePosDock;
+    bool dockIsFloating;
     bool m_verificationAutoMiseAJour;
     int m_nombreJourMiseAJour;
     QDate m_derniereVerificationMiseAJour;
@@ -102,6 +132,8 @@ private:
     bool m_milestones;
     bool m_statistics;
     QString m_fichierAdvancementsPerso;
+    QStringList m_qslProgresMasque;
+    QString m_qsTypeGraphique;
 
 };
 

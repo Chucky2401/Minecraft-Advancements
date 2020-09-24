@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <Installer>
     <Name>Minecraft Advancements</Name>
-    <Version>1.0.0</Version>
+    <Version>2.0.4</Version>
     <Title>Minecraft Advancements</Title>
     <Publisher>Black Wizard Company</Publisher>
-    <ProductUrl>https://chucky2401.github.io/Minecraft-Advancements/</ProductUrl>
+    <ProductUrl>https://www.blackwizard.fr/le-projet-minecraft-advancements/</ProductUrl>
     <InstallerWindowIcon>minecraft.png</InstallerWindowIcon>
     <InstallerApplicationIcon>minecraft.ico</InstallerApplicationIcon>
     <StartMenuDir>BW Company</StartMenuDir>

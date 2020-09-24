@@ -4,6 +4,8 @@
 #include <Qt>
 #include <QTextDocument>
 #include <QMainWindow>
+#include <QStatusBar>
+#include <QProgressBar>
 #include <QCloseEvent>
 
 #include <QTemporaryDir>
@@ -25,6 +27,7 @@
 
 #include <QDateTime>
 #include <QStandardItemModel>
+#include <QSqlQueryModel>
 #include <QStandardItem>
 #include <QSortFilterProxyModel>
 #include <QCompleter>
@@ -42,8 +45,11 @@
 #include <QDebug>
 
 #include "dateetheurefilterproxymodel.h"
+#include "sqlmodel.h"
 #include "settings/settings.h"
+#include "settings/database.h"
 #include "settings/dia_parametres.h"
+#include "statistiques.h"
 #include "dia_apropos.h"
 
 QT_BEGIN_NAMESPACE
@@ -74,7 +80,14 @@ private:
     void traitementDossierBac(QString folder);
     void activationBoutonExtraction();
     void toutesLesTraductions(QVariantMap jsonLang);
+    void toutesLesTraductionsListe();
+    void definirModele();
     void effacerFiltreDate();
+    void resetVue();
+    void afficherMessage(int type, QString text, QString information, QString detail = "");
+    bool getEtatFenGraphiqueStats();
+    void setEtatFenGraphiqueStats(bool stated);
+    void restoreTypeGraphique(QString type);
 
 // Fonction protéger
 protected:
@@ -84,8 +97,15 @@ protected:
 private:
     //GUI
     Ui::FRM_Principale *ui;
+    QStatusBar *m_statusBar;
+    QProgressBar *m_progressExtractionProgresVanilla;
+    QLabel *m_labelExtractionProgresVanilla;
+    QString m_qsArchitecture;
+    // Constante
+    const QString connectionName = "principal";
     // Booléen
     bool ouvertureEnCours;
+    bool m_ouvertureJson;
     bool m_bErreurExtraction;
     bool m_bVersionOK;
     bool m_bProgresVanillaOK;
@@ -95,6 +115,7 @@ private:
     QTemporaryDir m_tempDir;
     QString m_qsAppDataPath;
     QString m_qsUserName;
+    QMessageBox m_qmbMessage;
     // Cache
     bool m_bUpdateProgres;
     QDir m_qdDossierAdvancedments;
@@ -116,7 +137,6 @@ private:
     QString m_qsNumeroVersion;
     QStringList m_qslListVersionJar;
     QString m_qsDossierSauvegarde;
-    QVariantMap m_qvmJsonProgresPerso;
     // Traduction
     QStringList m_qslClesToutesLesTrads;
     QStringList m_qslToutesLesTrads;
@@ -125,19 +145,27 @@ private:
     QString m_qsDossierAExclure;
     // Listing Progrés
     bool bTousLesProgres;
+    QStringList m_qslRequeteComparaison;
     QList<QStandardItem *> m_qlLigneProgres;
     QStandardItemModel *m_qsimProgresRealisation;
-    QSortFilterProxyModel *proxModelFiltreOrigine;
     QSortFilterProxyModel *proxyModelFiltreTitre;
-    QSortFilterProxyModel *proxyModelFiltreProgresFinis;
-    QSortFilterProxyModel *proxyModelFiltreConditionFaite;
-    QSortFilterProxyModel *proxyModelFiltreTypeCondition;
-    DateEtHeureFilterProxyModel *proxyModelFiltreDate;
     QAbstractItemModel *m_defaultModelCompleter;
+    QSqlQueryModel *plainModel;
+    SqlModel *m_smProgresRealisation;
     QCompleter *m_defaultCompleter;
     QCompleter *m_sansCompleter;
+    QModelIndex m_qmiDataSelectionne;
+    QMenu *m_qmPopup;
+    QAction *m_qaPopupDeleteAction;
+    QAction *m_qaPopupRestoreAction;
+    QStringList m_qslProgresMasques;
     // Settings
     class Settings *param;
+    class database bdd;
+    // Fenêtres complémentaires
+    Statistiques *graphiqueStatistiques;
+    QString m_qsTypeGraphique;
+    bool fenGraphiqueStatsOuverte;
     DIA_Parametres *diaParametres;
     DIA_apropos *diaAPropos;
     // Mise à jour
@@ -154,20 +182,23 @@ signals:
 
 // Slots privés
 private slots:
+    // GUI
+    void dockWidgetOperationFloating(bool floating);
+//    void dockWidgetOperationClosing(bool closing);
     //Configuration
     void choixLauncher(int index);
-    //void choixVersion(int index);
     void choixVersion(QString text);
     void choixFichierAdvancements(bool checked);
     void extraireProgres(bool checked);
     void selectionDossierBlazeandcave(bool checked);
+    void importProgresBlazeandcave(bool checked);
+    void importProgresPerso(bool checked);
     void exclureStats(int statut);
     // Lecture et affichage
-    void readJSONsVanilla(bool checked);
-    void readJSONsBlazeandcave(bool checked);
-    void readAllJsons(bool checked);
+    void comparerLesProgres(bool checked);
     void filtreTableOrigine(QString filtre);
     void filtreTableTitre(QString filtre);
+    void filtreTableCategorie(QString filtre);
     void filtreTableProgresFinis(QString filtre);
     void filtreTableConditionFait(QString filtre);
     void filtreTableTypeCondition(QString filtre);
@@ -176,9 +207,16 @@ private slots:
     void effacerFiltresSurLesDates(bool checked);
     void etatAutoCompletion(int etat);
     void dataSelectionnee(const QModelIndex index);
+    void customMenuRequested(QPoint pos);
+    void masquerProgres(bool booleen);
+    void restaurerProgres(bool booleen);
     // Impression
     void imprimerTable(bool checked);
-    // Fenêtres complémentaire
+    // Fenêtres complémentaires
+    void graphiqueLigne(bool checked);
+    void graphiqueSpline(bool checked);
+    void ouvrirFenGraphiqueStats(bool clicked);
+    void fenGraphiqueStatsClose(int result);
     void ouvrirAPropos();
     void ouvrirParametres();
     // Mise à jour

@@ -11,5 +11,9 @@
         <file>img/icons8_print_24px.png</file>
         <file>img/icons8_broom_24px.png</file>
         <file>img/icons8_day_off_24px.png</file>
+        <file>img/wallpaper.png</file>
+        <file>img/icons8_work_24px.png</file>
+        <file>img/icons8_delete_24px.png</file>
+        <file>img/icons8_restart_24px.png</file>
     </qresource>
 </RCC>

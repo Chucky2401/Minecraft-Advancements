@@ -2,9 +2,14 @@ debug/dateetheurefilterproxymodel.o
 debug/dia_apropos.o
 debug/main.o
 debug/frm_principale.o
+debug/database.o
 debug/dia_parametres.o
 debug/settings.o
+debug/sqlmodel.o
+debug/statistiques.o
+debug/qrc_files.o
 debug/qrc_img.o
 debug/moc_dia_apropos.o
 debug/moc_frm_principale.o
 debug/moc_dia_parametres.o
+debug/moc_statistiques.o

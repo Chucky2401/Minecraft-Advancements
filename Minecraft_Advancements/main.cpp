@@ -13,11 +13,11 @@ int main(int argc, char *argv[])
 {
     QApplication app(argc, argv);
     QApplication::setApplicationName("Minecraft Advancements");
-    QApplication::setApplicationVersion("1.0.0");
+    QApplication::setApplicationVersion("2.0.4");
     QCommandLineParser parser;
     bool test = false;
 
-    parser.setApplicationDescription(QApplication::translate("main", "Outil pour les recettes de No Man's Sky"));
+    parser.setApplicationDescription(QApplication::translate("main", "Comparer vos progrès Minecraft !"));
     parser.addHelpOption();
     parser.addVersionOption();
 
@@ -35,8 +35,8 @@ int main(int argc, char *argv[])
     QPixmap pixmap(":/img/Splash-Screen.png");
     QSplashScreen splash(pixmap);
     splash.show();
-    //app.processEvents();
-    QTime dieTime= QTime::currentTime().addSecs(1);
+    app.processEvents();
+    QTime dieTime = QTime::currentTime().addSecs(1);
     while (QTime::currentTime() < dieTime)
         QCoreApplication::processEvents(QEventLoop::AllEvents, 100);
 

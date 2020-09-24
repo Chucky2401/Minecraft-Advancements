@@ -1,17 +1,4 @@
 {
-    # BlazeandCave's Advancements Pack Language File
-     
-    # How to use: Name and descriptions of advancement to left of : and put translation to right of :, inside the speech marks "" like this: "Advancement Description"
-    # Some advancement titles make use of puns that would work in English but probably not in other languages. Be creative if you wish if you can find any puns in foreign languages.
-    # This file will be updated with new advancements with each new update.
-    # Currently the text that appears with reward functions are not translatable - support for translating the reward functions messages will come in a later update.
-    # Language: Français (French)
-    # Author: Personnedu59, Zangdarss, Chucky2401
-    # Pack version supported: 1.10
-    # All language entries are organised in alphabetical order of file name as of 1.3
-    # All new advancements added in updates later than 1.3 (1.4, 1.5 and so on) will be put at the bottom of the file for easy locating and adding by translators
-    # Adventuring tab as of 1.3
-
     "Adventuring Time": "Partons à l’aventure",
     "Discover every biome": "Découvrir tous les biomes",
     "Boaty McBoatface": "Boaty McBoatface",
@@ -96,8 +83,6 @@
     "Find a witch hut in a swamp": "Trouver une cabane dans un marais",
     "Wololo!": "Wololo !",
     "Defeat an Evoker": "Tuer un Evocateur",
-
-    # Building tab as of 1.3
     "A Masterpiece!": "Une œuvre d’art !",
     "Put up a painting": "Placer un tableau",
     "Ah, My Old Enemy...": "Ah, mon cher  ennemi…",
@@ -188,8 +173,6 @@
     "Collect all six types of wood": "Avoir les 6 types de bois",
     "Your Door Was Locked": "Ouvre moi ta porte",
     "Craft a door to stop monsters from entering your house": "Crafter une porte pour empêcher les monstres d’entrer",
-
-    # Combat tab as of 1.3
     "Blast Shield": "Bouclier nucléair",
     "Survive a creeper's blast with your shield": "Survivre à une explosion de creeper grâce à votre bouclier",
     "Bombs Away!": "Bombardier !",
@@ -278,8 +261,6 @@
     "Kill a creeper": "Tuer un Creeper",
     "Witch!": "Des bonbons ou un sort !",
     "Kill a witch": "Tue rune Sorcière",
-
-    # Enchanting tab as of 1.3
     "Armor for the masses": "Armure blindée",
     "Obtain every protection related enchantment": "Obtenir tous les enchantements avec protection",
     "Bane of one-shotting spiders": "Fléau des petites bêtes pleines de pattes",
@@ -332,8 +313,6 @@
     "Obtain Mending on an item": "Obtenir raccommodage",
     "Undead Slayer": "Tueur de morts-vivants",
     "Obtain Smite V": "Obtenir Châtiment V",
-
-    # End tab as of 1.3
     "Anti-Gravity Generator": "Anti-gravité",
     "Bring a shulker into the overworld and let it give you anti-gravity": "Ramener un Shulker dans le monde principal et laisser le vous faire léviter",
     "Cow Jumped Over The Moon": "Une vache sur la Lune",
@@ -388,8 +367,6 @@
     "Fly up to a ridiculous height": "Voler à une hauteur ridicule",
     "You Need a Mint": "Prends un chewing-gum",
     "Collect dragon's breath in a glass bottle": "Collecter le souffle du dragon",
-
-    # Farming tab as of 1.3
     "24 Carrot Gold": "De l’or plein les dents",
     "Eat a golden carrot": "Manger une carotte dorée",
     "A Balanced Diet": "Une alimentation équilibrée",
@@ -492,8 +469,6 @@
     "Craft a carrot on a stick so you can ride a pig off a cliff": "Crafter une carotte sur un baton pour faire tomber un cochon chevauché d’une falaise",
     "You Lead, I'll Follow": "A à à à la queueleuleu",
     "Craft a lead for forming a llama caravan": "Crafter une laisse pour former une caravane de Lamas",
-
-    # Mining tab as of 1.3
     "Acquire Hardware": "L’âge de fer",
     "Smelt an iron ingot": "Faire un lingot de fer",
     "Bling Bling Gone": "Bling bling crac",
@@ -562,8 +537,6 @@
     "Break all five types of shovels": "Casser les cinqs types de pelles",
     "What's the time, Mr Wolf?": "Quelle heure est-il, monsieur crocodile ?",
     "Time to clean your clocks! (Or, craft them!)": "L’heure de laver votre montre !(ou d’en crafter une)",
-
-    # Nether tab as of 1.3
     "A Terrible Fortress": "Une terrible forteresse",
     "Break your way into a Nether Fortress": "Visiter une forteresse",
     "Basis of Brewing": "La base des potions",
@@ -614,8 +587,6 @@
     "Rescue a Ghast from the Nether, bring it safely home to the Overworld... and then kill it": "Sauver un Ghast du nether, l’amener dans le monde principal… puis le tuer",
     "Withering Heights": "Les Witherables",
     "Summon the Wither": "Invoquer le Wither",
-
-    # Potions tab as of 1.3
     "A Furious Cocktail": "Mélange dangeureux",
     "Have every potion effect applied at the same time": "Avoir tous les effets de potion appliqués sur soi en même temps",
     "A Much More Doable Challenge": "Un challenge bien plus dur",
@@ -648,8 +619,6 @@
     "Brew and drink an invisibility potion": "Faire et boire une potion d’invisibilité",
     "Zombie Doctor": "Zombiologue",
     "Cure a zombie villager": "Soigner un Zombie Villageois",
-
-    # Redstone tab as of 1.3
     "Bling Plate": "Assiette bling bling",
     "Dine in style! (No, not really)": "Dîner comme un roi (non pas vraiment)",
     "Comparing Comparator": "Comparons le comparateur",
@@ -688,8 +657,6 @@
     "Craft a trapped chest to troll your friends": "Crafter un coffre piégé pour piéger vos amis",
     "Under Pressure": "Sous pression",
     "Craft a pressure plate": "Crafter une plaque de pression",
-
-    # All advancements added in version 1.4 are here
     "Beginning": "Les débuts",
     "A brave new world": "Un tout nouveau monde",
     "Time to Chop!": "Bûcheron",
@@ -919,8 +886,6 @@
     "Collect a stack of shulker shells": "Collecter 64 carapaces de Shulker",
     "Void Walker": "Marcheur du néant",
     "Explore every end biome": "Explorer tous les biomes de l’end",
-
-    # All advancements added in version 1.5 are here
     "Iconic Merchandising Prop": "Encore un niveau supérieur ?",
     "Create a pickaxe of the highest calibre": "Obtenir une pioche d’un bien meilleur calibre",
     "Living Like Kings": "Vivre comme un roi",
@@ -1020,8 +985,6 @@
     "Craft every type of tipped arrow": "Crafter tous les types de flèches",
     "Somewhere Over The Rainbow...": "Somewhere, over the rainbow…",
     "Craft all 16 shulker box types": "Crafter les 16 couleurs de boîte de Shulker",
-
-    # All advancements added in version 1.6 are here
     "Beethoven": "Beethoven",
     "Craft a jukebox with planks and a diamond": "Crafter un jukebox avec des planches et un diamant",
     "Blast it!": "(H)au(t) fourneau",
@@ -1267,8 +1230,6 @@
     "Get killed by an Enderman in The End": "Se faire tuer par un Enderman dans l’end",
     "The Beginning": "Le début",
     "Say goodbye to the Wither...": "Dites au revoir au Wither",
-
-    # All advancements added in version 1.7 are here
     "I don't like sand": "Je n’aime pas le sable",
     "It's coarse, and rough, and irritating, and it gets everywhere": "C’est dur, irritant, chaud et ça va partout",
     "Insomniac": "Insomniaque",
@@ -1451,8 +1412,6 @@
     "Construct a village in the End and defend it from a raid": "Construire un village dans l’end et le défendre face à un raid",
     "Zombie Apocalypse": "L’apocalypse de Zombies",
     "Obtain a stack of Zombie Heads": "Obtenir 64 têtes de Zombie",
-
-    # All advancements added in version 1.8 are here
     "Ya like jazz?": "T’aimes le jazz ?",
     "Breed two bees using flowers": "Faire se reproduire deux abeilles avec des fleurs",
     "Winnie the Pooh": "Winnie l’ourson",
@@ -1488,8 +1447,6 @@
     "Move a Bee Nest with 3 bees inside using Silk Touch": "Déplacer une ruche contenant 3 Abeilles avec toucher de soie",
     "Bee Our Guest": "J’irai butiner chez vous",
     "Use a bottle to collect Honey from a Beehive with a campfire beneath it so you don't aggravate the bees": "Utiliser une fiole pour collecter du miel d’un nid d’Abeilles avec un feu de camp en dessous pour ne pas rendre les Abeilles furieuses",
-
-    # All advancements added in version 1.9 are here
     "BlazeandCave's Advancements" : "Les progrès de BlazeandCave",
     "Loads of brand new advancements for your Minecraft world!" : "Beaucoup de nouveaux progrès pour votre monde Minecraft !",
     "Mining Milestone" : "Mineur accompli",
@@ -1536,8 +1493,6 @@
     "Moskstraumen" : "Moskstraumen",
     "Ring a bell in a village" : "Sonner une cloche dans un village",
     "Ring a bell in the Nether" : "Sonner une cloche dans le Nether",
-
-    # All advancements added in version 1.10 are here
     "Dungeons and Spawners" : "Donjon et Spawner.",
     "Open a chest in a dungeon deep underground" : "Ouvrir un coffre dans un donjon au sous-sol",
     "Steals on Wheels" : "Voler sur les roues",
@@ -1782,8 +1737,6 @@
     "Reach an altitude of 10,000 blocks above the world" : "Atteindre l'altitude de 10 000 blocs au dessus du monde",
     "Dragon vs Wither: Pre-Sequel" : "Dragon contre Wither : Pré-Sequel",
     "Defeat the Wither while wearing a Dragon head... without touching the ground" : "Vaincre le Wither en portant une tête de dragon... sans toucher le sol",
-
-    # All advancements that get added in versions 1.10 or later will be added down here for easy locating by translators who wish to update their language file
     "Knowledge is Power" : "La connaissance, c'est le pouvoir !",
     "Obtain all the special banner patterns" : "Obtenir tous les modèles de bannières spéciales",
     "Play a music disc in a jukebox" : "Lire un disque de musique dans le JukeBox",
@@ -1802,6 +1755,4 @@
     "Reach 300 experience levels" :"Atteignez 300 niveaux d'expérience",
     "Fly 1000km with elytra" : "Voler 1000 Km avec les Elytres",
     "Use a treasure map to find Buried Treasure" : "Utiliser une carte au trésor pour trouver un Trésor Enfoui"
-
-    # All advancements that get added in versions 1.11 or later will be added down here for easy locating by translators who wish to update their language file
 }

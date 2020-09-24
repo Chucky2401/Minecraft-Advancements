@@ -26,10 +26,6 @@
 **
 ****************************************************************************/
 
-function Controller() {
-
-}
-
 function Component()
 {
     if (installer.isUpdater()) {
@@ -56,7 +52,7 @@ function Component()
 
 Component.prototype.createOperations = function()
 {
-    
+
     component.createOperations();
 
     if (installer.isInstaller()) {

@@ -16,6 +16,7 @@
 #include <QtWidgets/QCheckBox>
 #include <QtWidgets/QComboBox>
 #include <QtWidgets/QDateTimeEdit>
+#include <QtWidgets/QDockWidget>
 #include <QtWidgets/QFrame>
 #include <QtWidgets/QGridLayout>
 #include <QtWidgets/QGroupBox>
@@ -26,8 +27,8 @@
 #include <QtWidgets/QMainWindow>
 #include <QtWidgets/QMenu>
 #include <QtWidgets/QMenuBar>
-#include <QtWidgets/QProgressBar>
 #include <QtWidgets/QPushButton>
+#include <QtWidgets/QRadioButton>
 #include <QtWidgets/QSpacerItem>
 #include <QtWidgets/QStatusBar>
 #include <QtWidgets/QTableView>
@@ -59,83 +60,105 @@ public:
     QPushButton *qpbSelectionDossierLanceur;
     QGridLayout *gdVersion;
     QComboBox *qcbVersion;
-    QLabel *qlVersion;
-    QPushButton *qpbExtraireProgres;
     QLineEdit *qleCheminVersion;
-    QLabel *qlLangExtraite;
-    QLabel *qlAdvancementsExtrait;
+    QLabel *qlVersion;
+    QPushButton *qpbExtraireProgresVanilla;
+    QHBoxLayout *horizontalLayout_2;
+    QLabel *qlAdvancementsVanillaExtrait;
+    QLabel *qlDernierImportVanilla;
     QFrame *line;
     QGridLayout *gridLayout_6;
     QPushButton *qpbDossierBlazeandcave;
     QLabel *qlDossierBlazeandcave;
-    QCheckBox *qcbStatistiques;
     QLineEdit *qleDossierBlazeandcave;
-    QCheckBox *qcbMilestones;
+    QPushButton *qpbExtraireProgresBacap;
+    QHBoxLayout *horizontalLayout;
+    QLabel *qlAdvancementsBacapExtrait;
+    QLabel *qlDernierImportBacap;
     QFrame *line_3;
     QGridLayout *gridLayout;
-    QPushButton *qpbSelectionFichierProgres;
     QLineEdit *qleFichierProgres;
+    QPushButton *qpbSelectionFichierProgres;
+    QPushButton *qpbImportProgresJoueur;
     QLabel *qlFichierProgres;
-    QLabel *qlProgresPersoOuvert;
+    QHBoxLayout *horizontalLayout_4;
+    QLabel *qlProgresPerso;
+    QLabel *qlDernierImportPerso;
     QFrame *line_2;
-    QHBoxLayout *horizontalLayout_8;
-    QSpacerItem *horizontalSpacer;
-    QVBoxLayout *verticalLayout_2;
-    QSpacerItem *horizontalSpacer_2;
+    QLabel *qlVosProgres;
+    QTableView *tableView;
     QHBoxLayout *horizontalLayout_5;
-    QPushButton *qpbReadJSONsVanilla;
-    QPushButton *qpbReadJSONsBlazeandcave;
+    QSpacerItem *horizontalSpacer_4;
+    QPushButton *qpbReadJSON;
     QFrame *line_5;
     QPushButton *qpbReadAllJSONs;
-    QFrame *lineInDebug;
-    QPushButton *qpbReadJSON;
-    QProgressBar *qpbTraitementProgres;
-    QTableView *tableView;
-    QHBoxLayout *horizontalLayout_7;
+    QMenuBar *qmbMenuPrincipal;
+    QMenu *qmFichier;
+    QMenu *qmOutils;
+    QMenu *qmAide;
+    QStatusBar *statusbar;
+    QDockWidget *qdwOpe;
+    QWidget *dockWidgetContents_2;
+    QVBoxLayout *verticalLayout_2;
     QGroupBox *qgbFiltres;
     QGridLayout *gridLayout_3;
-    QLabel *label;
-    QComboBox *qcbFiltreType;
+    QSpacerItem *horizontalSpacer_2;
+    QCheckBox *qcbStatistiques;
+    QCheckBox *qcbMilestones;
     QLabel *label_13;
-    QCheckBox *qcbRegExp;
-    QLabel *label_6;
-    QComboBox *qcbFiltreProgresFinis;
+    QComboBox *qcbFiltreTitre;
+    QLabel *label_2;
+    QLabel *label_11;
+    QFrame *line_8;
+    QCheckBox *qcbAutoCompletion;
+    QComboBox *qcbFiltreOrigine;
+    QFrame *line_7;
     QLabel *label_4;
     QDateTimeEdit *qdteFrom;
-    QDateTimeEdit *qdteTo;
-    QLabel *label_12;
+    QComboBox *qcbFiltreType;
     QLabel *label_3;
-    QComboBox *qcbFiltreOrigine;
-    QLabel *label_11;
-    QLabel *label_2;
-    QCheckBox *qcbAutoCompletion;
-    QComboBox *qcbFiltreTitre;
+    QFrame *line_9;
+    QDateTimeEdit *qdteTo;
+    QComboBox *qcbFiltreProgresFinis;
+    QLabel *label;
     QComboBox *qcbFiltreConditionFait;
-    QSpacerItem *horizontalSpacer_4;
+    QLabel *label_6;
+    QLabel *label_12;
+    QCheckBox *qcbRegExp;
+    QLabel *label_14;
+    QComboBox *qcbFiltreCategorie;
     QHBoxLayout *horizontalLayout_9;
     QGroupBox *qgbOperations;
     QGridLayout *gridLayout_4;
     QPushButton *qpbClearFilter;
     QPushButton *pbImprimer;
     QPushButton *qpbResetDates;
+    QGroupBox *qgbStats;
+    QGridLayout *gridLayout_5;
+    QRadioButton *qrbCerce;
+    QRadioButton *qrbLigne;
+    QPushButton *qpbAfficherGraphique;
     QSpacerItem *horizontalSpacer_3;
     QGroupBox *groupBox;
-    QGridLayout *gridLayout_5;
-    QLabel *label_8;
-    QLabel *label_7;
+    QGridLayout *gridLayout_2;
+    QLabel *qlVanilla;
+    QLabel *qlBacap;
+    QLabel *qlTotal;
+    QLabel *qlTitreVanilla;
+    QLabel *qlTitreBacap;
+    QLabel *qlTitreTotal;
+    QGroupBox *qgbLegende;
+    QVBoxLayout *verticalLayout_4;
     QLabel *label_9;
+    QLabel *label_7;
+    QLabel *label_8;
     QLabel *label_10;
-    QMenuBar *qmbMenuPrincipal;
-    QMenu *qmFichier;
-    QMenu *qmOutils;
-    QMenu *qmAide;
-    QStatusBar *statusbar;
 
     void setupUi(QMainWindow *FRM_Principale)
     {
         if (FRM_Principale->objectName().isEmpty())
             FRM_Principale->setObjectName(QString::fromUtf8("FRM_Principale"));
-        FRM_Principale->resize(1000, 800);
+        FRM_Principale->resize(1007, 850);
         qaQuitter = new QAction(FRM_Principale);
         qaQuitter->setObjectName(QString::fromUtf8("qaQuitter"));
         QIcon icon;
@@ -241,18 +264,6 @@ public:
 
         gdVersion->addWidget(qcbVersion, 0, 1, 1, 1);
 
-        qlVersion = new QLabel(centralwidget);
-        qlVersion->setObjectName(QString::fromUtf8("qlVersion"));
-        qlVersion->setMinimumSize(QSize(140, 0));
-        qlVersion->setMaximumSize(QSize(120, 16777215));
-
-        gdVersion->addWidget(qlVersion, 0, 0, 1, 1);
-
-        qpbExtraireProgres = new QPushButton(centralwidget);
-        qpbExtraireProgres->setObjectName(QString::fromUtf8("qpbExtraireProgres"));
-
-        gdVersion->addWidget(qpbExtraireProgres, 0, 4, 1, 1);
-
         qleCheminVersion = new QLineEdit(centralwidget);
         qleCheminVersion->setObjectName(QString::fromUtf8("qleCheminVersion"));
         qleCheminVersion->setCursor(QCursor(Qt::ArrowCursor));
@@ -260,18 +271,36 @@ public:
 
         gdVersion->addWidget(qleCheminVersion, 0, 2, 1, 1);
 
-        qlLangExtraite = new QLabel(centralwidget);
-        qlLangExtraite->setObjectName(QString::fromUtf8("qlLangExtraite"));
+        qlVersion = new QLabel(centralwidget);
+        qlVersion->setObjectName(QString::fromUtf8("qlVersion"));
+        qlVersion->setMinimumSize(QSize(140, 0));
+        qlVersion->setMaximumSize(QSize(120, 16777215));
 
-        gdVersion->addWidget(qlLangExtraite, 1, 2, 1, 1);
+        gdVersion->addWidget(qlVersion, 0, 0, 1, 1);
 
-        qlAdvancementsExtrait = new QLabel(centralwidget);
-        qlAdvancementsExtrait->setObjectName(QString::fromUtf8("qlAdvancementsExtrait"));
+        qpbExtraireProgresVanilla = new QPushButton(centralwidget);
+        qpbExtraireProgresVanilla->setObjectName(QString::fromUtf8("qpbExtraireProgresVanilla"));
 
-        gdVersion->addWidget(qlAdvancementsExtrait, 1, 0, 1, 2);
+        gdVersion->addWidget(qpbExtraireProgresVanilla, 0, 3, 1, 2);
 
 
         verticalLayout->addLayout(gdVersion);
+
+        horizontalLayout_2 = new QHBoxLayout();
+        horizontalLayout_2->setObjectName(QString::fromUtf8("horizontalLayout_2"));
+        horizontalLayout_2->setContentsMargins(-1, 0, -1, -1);
+        qlAdvancementsVanillaExtrait = new QLabel(centralwidget);
+        qlAdvancementsVanillaExtrait->setObjectName(QString::fromUtf8("qlAdvancementsVanillaExtrait"));
+
+        horizontalLayout_2->addWidget(qlAdvancementsVanillaExtrait);
+
+        qlDernierImportVanilla = new QLabel(centralwidget);
+        qlDernierImportVanilla->setObjectName(QString::fromUtf8("qlDernierImportVanilla"));
+
+        horizontalLayout_2->addWidget(qlDernierImportVanilla);
+
+
+        verticalLayout->addLayout(horizontalLayout_2);
 
         line = new QFrame(centralwidget);
         line->setObjectName(QString::fromUtf8("line"));
@@ -291,15 +320,10 @@ public:
 
         qlDossierBlazeandcave = new QLabel(centralwidget);
         qlDossierBlazeandcave->setObjectName(QString::fromUtf8("qlDossierBlazeandcave"));
-        qlDossierBlazeandcave->setMinimumSize(QSize(120, 0));
+        qlDossierBlazeandcave->setMinimumSize(QSize(140, 0));
         qlDossierBlazeandcave->setMaximumSize(QSize(120, 16777215));
 
         gridLayout_6->addWidget(qlDossierBlazeandcave, 0, 0, 1, 1);
-
-        qcbStatistiques = new QCheckBox(centralwidget);
-        qcbStatistiques->setObjectName(QString::fromUtf8("qcbStatistiques"));
-
-        gridLayout_6->addWidget(qcbStatistiques, 2, 1, 1, 1);
 
         qleDossierBlazeandcave = new QLineEdit(centralwidget);
         qleDossierBlazeandcave->setObjectName(QString::fromUtf8("qleDossierBlazeandcave"));
@@ -308,14 +332,29 @@ public:
 
         gridLayout_6->addWidget(qleDossierBlazeandcave, 0, 1, 1, 1);
 
-        qcbMilestones = new QCheckBox(centralwidget);
-        qcbMilestones->setObjectName(QString::fromUtf8("qcbMilestones"));
-        qcbMilestones->setMinimumSize(QSize(140, 0));
+        qpbExtraireProgresBacap = new QPushButton(centralwidget);
+        qpbExtraireProgresBacap->setObjectName(QString::fromUtf8("qpbExtraireProgresBacap"));
 
-        gridLayout_6->addWidget(qcbMilestones, 2, 0, 1, 1);
+        gridLayout_6->addWidget(qpbExtraireProgresBacap, 0, 3, 1, 1);
 
 
         verticalLayout->addLayout(gridLayout_6);
+
+        horizontalLayout = new QHBoxLayout();
+        horizontalLayout->setObjectName(QString::fromUtf8("horizontalLayout"));
+        horizontalLayout->setContentsMargins(-1, 0, -1, -1);
+        qlAdvancementsBacapExtrait = new QLabel(centralwidget);
+        qlAdvancementsBacapExtrait->setObjectName(QString::fromUtf8("qlAdvancementsBacapExtrait"));
+
+        horizontalLayout->addWidget(qlAdvancementsBacapExtrait);
+
+        qlDernierImportBacap = new QLabel(centralwidget);
+        qlDernierImportBacap->setObjectName(QString::fromUtf8("qlDernierImportBacap"));
+
+        horizontalLayout->addWidget(qlDernierImportBacap);
+
+
+        verticalLayout->addLayout(horizontalLayout);
 
         line_3 = new QFrame(centralwidget);
         line_3->setObjectName(QString::fromUtf8("line_3"));
@@ -327,35 +366,51 @@ public:
         gridLayout = new QGridLayout();
         gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
         gridLayout->setContentsMargins(-1, 0, -1, -1);
-        qpbSelectionFichierProgres = new QPushButton(centralwidget);
-        qpbSelectionFichierProgres->setObjectName(QString::fromUtf8("qpbSelectionFichierProgres"));
-        qpbSelectionFichierProgres->setMaximumSize(QSize(30, 16777215));
-        qpbSelectionFichierProgres->setIcon(icon5);
-
-        gridLayout->addWidget(qpbSelectionFichierProgres, 1, 2, 1, 1);
-
         qleFichierProgres = new QLineEdit(centralwidget);
         qleFichierProgres->setObjectName(QString::fromUtf8("qleFichierProgres"));
         qleFichierProgres->setMaximumSize(QSize(16777215, 16777215));
         qleFichierProgres->setCursor(QCursor(Qt::ArrowCursor));
         qleFichierProgres->setReadOnly(true);
 
-        gridLayout->addWidget(qleFichierProgres, 1, 1, 1, 1);
+        gridLayout->addWidget(qleFichierProgres, 0, 1, 1, 1);
+
+        qpbSelectionFichierProgres = new QPushButton(centralwidget);
+        qpbSelectionFichierProgres->setObjectName(QString::fromUtf8("qpbSelectionFichierProgres"));
+        qpbSelectionFichierProgres->setMaximumSize(QSize(30, 16777215));
+        qpbSelectionFichierProgres->setIcon(icon5);
+
+        gridLayout->addWidget(qpbSelectionFichierProgres, 0, 2, 1, 1);
+
+        qpbImportProgresJoueur = new QPushButton(centralwidget);
+        qpbImportProgresJoueur->setObjectName(QString::fromUtf8("qpbImportProgresJoueur"));
+
+        gridLayout->addWidget(qpbImportProgresJoueur, 0, 3, 1, 1);
 
         qlFichierProgres = new QLabel(centralwidget);
         qlFichierProgres->setObjectName(QString::fromUtf8("qlFichierProgres"));
         qlFichierProgres->setMinimumSize(QSize(140, 0));
         qlFichierProgres->setMaximumSize(QSize(120, 16777215));
 
-        gridLayout->addWidget(qlFichierProgres, 1, 0, 1, 1);
-
-        qlProgresPersoOuvert = new QLabel(centralwidget);
-        qlProgresPersoOuvert->setObjectName(QString::fromUtf8("qlProgresPersoOuvert"));
-
-        gridLayout->addWidget(qlProgresPersoOuvert, 2, 0, 1, 1);
+        gridLayout->addWidget(qlFichierProgres, 0, 0, 1, 1);
 
 
         verticalLayout->addLayout(gridLayout);
+
+        horizontalLayout_4 = new QHBoxLayout();
+        horizontalLayout_4->setObjectName(QString::fromUtf8("horizontalLayout_4"));
+        horizontalLayout_4->setContentsMargins(-1, 0, -1, -1);
+        qlProgresPerso = new QLabel(centralwidget);
+        qlProgresPerso->setObjectName(QString::fromUtf8("qlProgresPerso"));
+
+        horizontalLayout_4->addWidget(qlProgresPerso);
+
+        qlDernierImportPerso = new QLabel(centralwidget);
+        qlDernierImportPerso->setObjectName(QString::fromUtf8("qlDernierImportPerso"));
+
+        horizontalLayout_4->addWidget(qlDernierImportPerso);
+
+
+        verticalLayout->addLayout(horizontalLayout_4);
 
         line_2 = new QFrame(centralwidget);
         line_2->setObjectName(QString::fromUtf8("line_2"));
@@ -364,38 +419,37 @@ public:
 
         verticalLayout->addWidget(line_2);
 
-        horizontalLayout_8 = new QHBoxLayout();
-        horizontalLayout_8->setObjectName(QString::fromUtf8("horizontalLayout_8"));
-        horizontalLayout_8->setContentsMargins(-1, 0, -1, 0);
-        horizontalSpacer = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
+        qlVosProgres = new QLabel(centralwidget);
+        qlVosProgres->setObjectName(QString::fromUtf8("qlVosProgres"));
+        QFont font;
+        font.setFamily(QString::fromUtf8("Minecrafter"));
+        font.setPointSize(10);
+        qlVosProgres->setFont(font);
+        qlVosProgres->setTextFormat(Qt::RichText);
+        qlVosProgres->setScaledContents(false);
 
-        horizontalLayout_8->addItem(horizontalSpacer);
+        verticalLayout->addWidget(qlVosProgres);
 
-        verticalLayout_2 = new QVBoxLayout();
-        verticalLayout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
-        verticalLayout_2->setContentsMargins(-1, 0, -1, -1);
+        tableView = new QTableView(centralwidget);
+        tableView->setObjectName(QString::fromUtf8("tableView"));
+        tableView->setSizeAdjustPolicy(QAbstractScrollArea::AdjustIgnored);
+        tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
+        tableView->setAlternatingRowColors(true);
+        tableView->setSortingEnabled(true);
 
-        horizontalLayout_8->addLayout(verticalLayout_2);
-
-        horizontalSpacer_2 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-
-        horizontalLayout_8->addItem(horizontalSpacer_2);
-
-
-        verticalLayout->addLayout(horizontalLayout_8);
+        verticalLayout->addWidget(tableView);
 
         horizontalLayout_5 = new QHBoxLayout();
         horizontalLayout_5->setObjectName(QString::fromUtf8("horizontalLayout_5"));
         horizontalLayout_5->setContentsMargins(-1, 0, -1, -1);
-        qpbReadJSONsVanilla = new QPushButton(centralwidget);
-        qpbReadJSONsVanilla->setObjectName(QString::fromUtf8("qpbReadJSONsVanilla"));
+        horizontalSpacer_4 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
-        horizontalLayout_5->addWidget(qpbReadJSONsVanilla);
+        horizontalLayout_5->addItem(horizontalSpacer_4);
 
-        qpbReadJSONsBlazeandcave = new QPushButton(centralwidget);
-        qpbReadJSONsBlazeandcave->setObjectName(QString::fromUtf8("qpbReadJSONsBlazeandcave"));
+        qpbReadJSON = new QPushButton(centralwidget);
+        qpbReadJSON->setObjectName(QString::fromUtf8("qpbReadJSON"));
 
-        horizontalLayout_5->addWidget(qpbReadJSONsBlazeandcave);
+        horizontalLayout_5->addWidget(qpbReadJSON);
 
         line_5 = new QFrame(centralwidget);
         line_5->setObjectName(QString::fromUtf8("line_5"));
@@ -409,76 +463,106 @@ public:
 
         horizontalLayout_5->addWidget(qpbReadAllJSONs);
 
-        lineInDebug = new QFrame(centralwidget);
-        lineInDebug->setObjectName(QString::fromUtf8("lineInDebug"));
-        lineInDebug->setFrameShape(QFrame::VLine);
-        lineInDebug->setFrameShadow(QFrame::Sunken);
-
-        horizontalLayout_5->addWidget(lineInDebug);
-
-        qpbReadJSON = new QPushButton(centralwidget);
-        qpbReadJSON->setObjectName(QString::fromUtf8("qpbReadJSON"));
-
-        horizontalLayout_5->addWidget(qpbReadJSON);
-
 
         verticalLayout->addLayout(horizontalLayout_5);
 
-        qpbTraitementProgres = new QProgressBar(centralwidget);
-        qpbTraitementProgres->setObjectName(QString::fromUtf8("qpbTraitementProgres"));
-        qpbTraitementProgres->setValue(24);
-
-        verticalLayout->addWidget(qpbTraitementProgres);
-
-        tableView = new QTableView(centralwidget);
-        tableView->setObjectName(QString::fromUtf8("tableView"));
-        tableView->setSizeAdjustPolicy(QAbstractScrollArea::AdjustIgnored);
-        tableView->setEditTriggers(QAbstractItemView::NoEditTriggers);
-        tableView->setAlternatingRowColors(true);
-        tableView->setSortingEnabled(true);
-
-        verticalLayout->addWidget(tableView);
-
-        horizontalLayout_7 = new QHBoxLayout();
-        horizontalLayout_7->setObjectName(QString::fromUtf8("horizontalLayout_7"));
-        horizontalLayout_7->setContentsMargins(-1, 0, -1, -1);
-        qgbFiltres = new QGroupBox(centralwidget);
+        FRM_Principale->setCentralWidget(centralwidget);
+        qmbMenuPrincipal = new QMenuBar(FRM_Principale);
+        qmbMenuPrincipal->setObjectName(QString::fromUtf8("qmbMenuPrincipal"));
+        qmbMenuPrincipal->setGeometry(QRect(0, 0, 1007, 21));
+        qmFichier = new QMenu(qmbMenuPrincipal);
+        qmFichier->setObjectName(QString::fromUtf8("qmFichier"));
+        qmOutils = new QMenu(qmbMenuPrincipal);
+        qmOutils->setObjectName(QString::fromUtf8("qmOutils"));
+        qmAide = new QMenu(qmbMenuPrincipal);
+        qmAide->setObjectName(QString::fromUtf8("qmAide"));
+        FRM_Principale->setMenuBar(qmbMenuPrincipal);
+        statusbar = new QStatusBar(FRM_Principale);
+        statusbar->setObjectName(QString::fromUtf8("statusbar"));
+        FRM_Principale->setStatusBar(statusbar);
+        qdwOpe = new QDockWidget(FRM_Principale);
+        qdwOpe->setObjectName(QString::fromUtf8("qdwOpe"));
+        qdwOpe->setMinimumSize(QSize(1007, 278));
+        qdwOpe->setFloating(false);
+        qdwOpe->setFeatures(QDockWidget::AllDockWidgetFeatures);
+        dockWidgetContents_2 = new QWidget();
+        dockWidgetContents_2->setObjectName(QString::fromUtf8("dockWidgetContents_2"));
+        dockWidgetContents_2->setAutoFillBackground(false);
+        verticalLayout_2 = new QVBoxLayout(dockWidgetContents_2);
+        verticalLayout_2->setObjectName(QString::fromUtf8("verticalLayout_2"));
+        verticalLayout_2->setSizeConstraint(QLayout::SetNoConstraint);
+        qgbFiltres = new QGroupBox(dockWidgetContents_2);
         qgbFiltres->setObjectName(QString::fromUtf8("qgbFiltres"));
         qgbFiltres->setMinimumSize(QSize(0, 0));
         gridLayout_3 = new QGridLayout(qgbFiltres);
         gridLayout_3->setObjectName(QString::fromUtf8("gridLayout_3"));
-        label = new QLabel(qgbFiltres);
-        label->setObjectName(QString::fromUtf8("label"));
-        label->setMinimumSize(QSize(0, 0));
-        label->setMaximumSize(QSize(100, 16777215));
+        gridLayout_3->setSizeConstraint(QLayout::SetNoConstraint);
+        horizontalSpacer_2 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
-        gridLayout_3->addWidget(label, 0, 2, 1, 1);
+        gridLayout_3->addItem(horizontalSpacer_2, 1, 12, 1, 1);
 
-        qcbFiltreType = new QComboBox(qgbFiltres);
-        qcbFiltreType->setObjectName(QString::fromUtf8("qcbFiltreType"));
+        qcbStatistiques = new QCheckBox(qgbFiltres);
+        qcbStatistiques->setObjectName(QString::fromUtf8("qcbStatistiques"));
 
-        gridLayout_3->addWidget(qcbFiltreType, 2, 6, 1, 1);
+        gridLayout_3->addWidget(qcbStatistiques, 1, 8, 1, 1);
+
+        qcbMilestones = new QCheckBox(qgbFiltres);
+        qcbMilestones->setObjectName(QString::fromUtf8("qcbMilestones"));
+        qcbMilestones->setMinimumSize(QSize(140, 0));
+
+        gridLayout_3->addWidget(qcbMilestones, 0, 8, 1, 1);
 
         label_13 = new QLabel(qgbFiltres);
         label_13->setObjectName(QString::fromUtf8("label_13"));
 
-        gridLayout_3->addWidget(label_13, 1, 7, 1, 1);
+        gridLayout_3->addWidget(label_13, 1, 10, 1, 1);
 
-        qcbRegExp = new QCheckBox(qgbFiltres);
-        qcbRegExp->setObjectName(QString::fromUtf8("qcbRegExp"));
+        qcbFiltreTitre = new QComboBox(qgbFiltres);
+        qcbFiltreTitre->setObjectName(QString::fromUtf8("qcbFiltreTitre"));
+        qcbFiltreTitre->setMinimumSize(QSize(150, 0));
+        qcbFiltreTitre->setEditable(true);
+        qcbFiltreTitre->setMaxVisibleItems(30);
+        qcbFiltreTitre->setInsertPolicy(QComboBox::NoInsert);
 
-        gridLayout_3->addWidget(qcbRegExp, 1, 3, 1, 1);
+        gridLayout_3->addWidget(qcbFiltreTitre, 0, 4, 1, 2);
 
-        label_6 = new QLabel(qgbFiltres);
-        label_6->setObjectName(QString::fromUtf8("label_6"));
+        label_2 = new QLabel(qgbFiltres);
+        label_2->setObjectName(QString::fromUtf8("label_2"));
+        label_2->setMinimumSize(QSize(0, 0));
+        label_2->setMaximumSize(QSize(100, 16777215));
 
-        gridLayout_3->addWidget(label_6, 2, 5, 1, 1);
+        gridLayout_3->addWidget(label_2, 2, 3, 1, 1);
 
-        qcbFiltreProgresFinis = new QComboBox(qgbFiltres);
-        qcbFiltreProgresFinis->setObjectName(QString::fromUtf8("qcbFiltreProgresFinis"));
-        qcbFiltreProgresFinis->setMinimumSize(QSize(100, 0));
+        label_11 = new QLabel(qgbFiltres);
+        label_11->setObjectName(QString::fromUtf8("label_11"));
+        label_11->setAlignment(Qt::AlignCenter);
 
-        gridLayout_3->addWidget(qcbFiltreProgresFinis, 2, 1, 1, 1);
+        gridLayout_3->addWidget(label_11, 0, 10, 1, 2);
+
+        line_8 = new QFrame(qgbFiltres);
+        line_8->setObjectName(QString::fromUtf8("line_8"));
+        line_8->setFrameShape(QFrame::VLine);
+        line_8->setFrameShadow(QFrame::Sunken);
+
+        gridLayout_3->addWidget(line_8, 0, 6, 3, 1);
+
+        qcbAutoCompletion = new QCheckBox(qgbFiltres);
+        qcbAutoCompletion->setObjectName(QString::fromUtf8("qcbAutoCompletion"));
+
+        gridLayout_3->addWidget(qcbAutoCompletion, 1, 5, 1, 1);
+
+        qcbFiltreOrigine = new QComboBox(qgbFiltres);
+        qcbFiltreOrigine->setObjectName(QString::fromUtf8("qcbFiltreOrigine"));
+        qcbFiltreOrigine->setMinimumSize(QSize(100, 0));
+
+        gridLayout_3->addWidget(qcbFiltreOrigine, 0, 1, 1, 1);
+
+        line_7 = new QFrame(qgbFiltres);
+        line_7->setObjectName(QString::fromUtf8("line_7"));
+        line_7->setFrameShape(QFrame::VLine);
+        line_7->setFrameShadow(QFrame::Sunken);
+
+        gridLayout_3->addWidget(line_7, 0, 2, 3, 1);
 
         label_4 = new QLabel(qgbFiltres);
         label_4->setObjectName(QString::fromUtf8("label_4"));
@@ -491,18 +575,12 @@ public:
         qdteFrom->setObjectName(QString::fromUtf8("qdteFrom"));
         qdteFrom->setCalendarPopup(true);
 
-        gridLayout_3->addWidget(qdteFrom, 1, 8, 1, 1);
+        gridLayout_3->addWidget(qdteFrom, 1, 11, 1, 1);
 
-        qdteTo = new QDateTimeEdit(qgbFiltres);
-        qdteTo->setObjectName(QString::fromUtf8("qdteTo"));
-        qdteTo->setCalendarPopup(true);
+        qcbFiltreType = new QComboBox(qgbFiltres);
+        qcbFiltreType->setObjectName(QString::fromUtf8("qcbFiltreType"));
 
-        gridLayout_3->addWidget(qdteTo, 2, 8, 1, 1);
-
-        label_12 = new QLabel(qgbFiltres);
-        label_12->setObjectName(QString::fromUtf8("label_12"));
-
-        gridLayout_3->addWidget(label_12, 2, 7, 1, 1);
+        gridLayout_3->addWidget(qcbFiltreType, 2, 8, 1, 1);
 
         label_3 = new QLabel(qgbFiltres);
         label_3->setObjectName(QString::fromUtf8("label_3"));
@@ -511,38 +589,31 @@ public:
 
         gridLayout_3->addWidget(label_3, 0, 0, 1, 1);
 
-        qcbFiltreOrigine = new QComboBox(qgbFiltres);
-        qcbFiltreOrigine->setObjectName(QString::fromUtf8("qcbFiltreOrigine"));
-        qcbFiltreOrigine->setMinimumSize(QSize(100, 0));
+        line_9 = new QFrame(qgbFiltres);
+        line_9->setObjectName(QString::fromUtf8("line_9"));
+        line_9->setFrameShape(QFrame::VLine);
+        line_9->setFrameShadow(QFrame::Sunken);
 
-        gridLayout_3->addWidget(qcbFiltreOrigine, 0, 1, 1, 1);
+        gridLayout_3->addWidget(line_9, 0, 9, 3, 1);
 
-        label_11 = new QLabel(qgbFiltres);
-        label_11->setObjectName(QString::fromUtf8("label_11"));
-        label_11->setAlignment(Qt::AlignCenter);
+        qdteTo = new QDateTimeEdit(qgbFiltres);
+        qdteTo->setObjectName(QString::fromUtf8("qdteTo"));
+        qdteTo->setCalendarPopup(true);
 
-        gridLayout_3->addWidget(label_11, 0, 7, 1, 2);
+        gridLayout_3->addWidget(qdteTo, 2, 11, 1, 1);
 
-        label_2 = new QLabel(qgbFiltres);
-        label_2->setObjectName(QString::fromUtf8("label_2"));
-        label_2->setMinimumSize(QSize(0, 0));
-        label_2->setMaximumSize(QSize(100, 16777215));
+        qcbFiltreProgresFinis = new QComboBox(qgbFiltres);
+        qcbFiltreProgresFinis->setObjectName(QString::fromUtf8("qcbFiltreProgresFinis"));
+        qcbFiltreProgresFinis->setMinimumSize(QSize(100, 0));
 
-        gridLayout_3->addWidget(label_2, 2, 2, 1, 1);
+        gridLayout_3->addWidget(qcbFiltreProgresFinis, 2, 1, 1, 1);
 
-        qcbAutoCompletion = new QCheckBox(qgbFiltres);
-        qcbAutoCompletion->setObjectName(QString::fromUtf8("qcbAutoCompletion"));
+        label = new QLabel(qgbFiltres);
+        label->setObjectName(QString::fromUtf8("label"));
+        label->setMinimumSize(QSize(0, 0));
+        label->setMaximumSize(QSize(100, 16777215));
 
-        gridLayout_3->addWidget(qcbAutoCompletion, 1, 4, 1, 1);
-
-        qcbFiltreTitre = new QComboBox(qgbFiltres);
-        qcbFiltreTitre->setObjectName(QString::fromUtf8("qcbFiltreTitre"));
-        qcbFiltreTitre->setMinimumSize(QSize(200, 0));
-        qcbFiltreTitre->setEditable(true);
-        qcbFiltreTitre->setMaxVisibleItems(30);
-        qcbFiltreTitre->setInsertPolicy(QComboBox::NoInsert);
-
-        gridLayout_3->addWidget(qcbFiltreTitre, 0, 3, 1, 2);
+        gridLayout_3->addWidget(label, 0, 3, 1, 1);
 
         qcbFiltreConditionFait = new QComboBox(qgbFiltres);
         qcbFiltreConditionFait->setObjectName(QString::fromUtf8("qcbFiltreConditionFait"));
@@ -550,25 +621,50 @@ public:
         qcbFiltreConditionFait->setEditable(false);
         qcbFiltreConditionFait->setInsertPolicy(QComboBox::NoInsert);
 
-        gridLayout_3->addWidget(qcbFiltreConditionFait, 2, 3, 1, 2);
+        gridLayout_3->addWidget(qcbFiltreConditionFait, 2, 4, 1, 2);
+
+        label_6 = new QLabel(qgbFiltres);
+        label_6->setObjectName(QString::fromUtf8("label_6"));
+
+        gridLayout_3->addWidget(label_6, 2, 7, 1, 1);
+
+        label_12 = new QLabel(qgbFiltres);
+        label_12->setObjectName(QString::fromUtf8("label_12"));
+
+        gridLayout_3->addWidget(label_12, 2, 10, 1, 1);
+
+        qcbRegExp = new QCheckBox(qgbFiltres);
+        qcbRegExp->setObjectName(QString::fromUtf8("qcbRegExp"));
+
+        gridLayout_3->addWidget(qcbRegExp, 1, 4, 1, 1);
+
+        label_14 = new QLabel(qgbFiltres);
+        label_14->setObjectName(QString::fromUtf8("label_14"));
+
+        gridLayout_3->addWidget(label_14, 1, 0, 1, 1);
+
+        qcbFiltreCategorie = new QComboBox(qgbFiltres);
+        qcbFiltreCategorie->setObjectName(QString::fromUtf8("qcbFiltreCategorie"));
+        qcbFiltreCategorie->setMinimumSize(QSize(150, 0));
+
+        gridLayout_3->addWidget(qcbFiltreCategorie, 1, 1, 1, 1);
 
 
-        horizontalLayout_7->addWidget(qgbFiltres);
-
-        horizontalSpacer_4 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
-
-        horizontalLayout_7->addItem(horizontalSpacer_4);
-
-
-        verticalLayout->addLayout(horizontalLayout_7);
+        verticalLayout_2->addWidget(qgbFiltres);
 
         horizontalLayout_9 = new QHBoxLayout();
         horizontalLayout_9->setObjectName(QString::fromUtf8("horizontalLayout_9"));
+        horizontalLayout_9->setSizeConstraint(QLayout::SetDefaultConstraint);
         horizontalLayout_9->setContentsMargins(-1, 0, -1, -1);
-        qgbOperations = new QGroupBox(centralwidget);
+        qgbOperations = new QGroupBox(dockWidgetContents_2);
         qgbOperations->setObjectName(QString::fromUtf8("qgbOperations"));
+        qgbOperations->setFlat(false);
+        qgbOperations->setCheckable(false);
         gridLayout_4 = new QGridLayout(qgbOperations);
         gridLayout_4->setObjectName(QString::fromUtf8("gridLayout_4"));
+        gridLayout_4->setSizeConstraint(QLayout::SetNoConstraint);
+        gridLayout_4->setVerticalSpacing(0);
+        gridLayout_4->setContentsMargins(-1, 0, -1, 0);
         qpbClearFilter = new QPushButton(qgbOperations);
         qpbClearFilter->setObjectName(QString::fromUtf8("qpbClearFilter"));
         QIcon icon6;
@@ -594,58 +690,111 @@ public:
 
         horizontalLayout_9->addWidget(qgbOperations);
 
+        qgbStats = new QGroupBox(dockWidgetContents_2);
+        qgbStats->setObjectName(QString::fromUtf8("qgbStats"));
+        gridLayout_5 = new QGridLayout(qgbStats);
+        gridLayout_5->setObjectName(QString::fromUtf8("gridLayout_5"));
+        qrbCerce = new QRadioButton(qgbStats);
+        qrbCerce->setObjectName(QString::fromUtf8("qrbCerce"));
+
+        gridLayout_5->addWidget(qrbCerce, 1, 0, 1, 1);
+
+        qrbLigne = new QRadioButton(qgbStats);
+        qrbLigne->setObjectName(QString::fromUtf8("qrbLigne"));
+
+        gridLayout_5->addWidget(qrbLigne, 0, 0, 1, 1);
+
+        qpbAfficherGraphique = new QPushButton(qgbStats);
+        qpbAfficherGraphique->setObjectName(QString::fromUtf8("qpbAfficherGraphique"));
+
+        gridLayout_5->addWidget(qpbAfficherGraphique, 2, 0, 1, 1);
+
+
+        horizontalLayout_9->addWidget(qgbStats);
+
         horizontalSpacer_3 = new QSpacerItem(40, 20, QSizePolicy::Expanding, QSizePolicy::Minimum);
 
         horizontalLayout_9->addItem(horizontalSpacer_3);
 
-        groupBox = new QGroupBox(centralwidget);
+        groupBox = new QGroupBox(dockWidgetContents_2);
         groupBox->setObjectName(QString::fromUtf8("groupBox"));
-        gridLayout_5 = new QGridLayout(groupBox);
-        gridLayout_5->setObjectName(QString::fromUtf8("gridLayout_5"));
-        label_8 = new QLabel(groupBox);
-        label_8->setObjectName(QString::fromUtf8("label_8"));
-        label_8->setTextFormat(Qt::RichText);
+        gridLayout_2 = new QGridLayout(groupBox);
+        gridLayout_2->setObjectName(QString::fromUtf8("gridLayout_2"));
+        qlVanilla = new QLabel(groupBox);
+        qlVanilla->setObjectName(QString::fromUtf8("qlVanilla"));
+        qlVanilla->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
 
-        gridLayout_5->addWidget(label_8, 2, 0, 1, 1);
+        gridLayout_2->addWidget(qlVanilla, 0, 1, 1, 1);
 
-        label_7 = new QLabel(groupBox);
-        label_7->setObjectName(QString::fromUtf8("label_7"));
-        label_7->setTextFormat(Qt::RichText);
+        qlBacap = new QLabel(groupBox);
+        qlBacap->setObjectName(QString::fromUtf8("qlBacap"));
+        qlBacap->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
 
-        gridLayout_5->addWidget(label_7, 1, 0, 1, 1);
+        gridLayout_2->addWidget(qlBacap, 1, 1, 1, 1);
 
-        label_9 = new QLabel(groupBox);
-        label_9->setObjectName(QString::fromUtf8("label_9"));
-        label_9->setTextFormat(Qt::RichText);
+        qlTotal = new QLabel(groupBox);
+        qlTotal->setObjectName(QString::fromUtf8("qlTotal"));
+        qlTotal->setAlignment(Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter);
 
-        gridLayout_5->addWidget(label_9, 0, 0, 1, 1);
+        gridLayout_2->addWidget(qlTotal, 2, 1, 1, 1);
 
-        label_10 = new QLabel(groupBox);
-        label_10->setObjectName(QString::fromUtf8("label_10"));
-        label_10->setTextFormat(Qt::RichText);
+        qlTitreVanilla = new QLabel(groupBox);
+        qlTitreVanilla->setObjectName(QString::fromUtf8("qlTitreVanilla"));
 
-        gridLayout_5->addWidget(label_10, 3, 0, 1, 1);
+        gridLayout_2->addWidget(qlTitreVanilla, 0, 0, 1, 1);
+
+        qlTitreBacap = new QLabel(groupBox);
+        qlTitreBacap->setObjectName(QString::fromUtf8("qlTitreBacap"));
+
+        gridLayout_2->addWidget(qlTitreBacap, 1, 0, 1, 1);
+
+        qlTitreTotal = new QLabel(groupBox);
+        qlTitreTotal->setObjectName(QString::fromUtf8("qlTitreTotal"));
+
+        gridLayout_2->addWidget(qlTitreTotal, 2, 0, 1, 1);
 
 
         horizontalLayout_9->addWidget(groupBox);
 
+        qgbLegende = new QGroupBox(dockWidgetContents_2);
+        qgbLegende->setObjectName(QString::fromUtf8("qgbLegende"));
+        verticalLayout_4 = new QVBoxLayout(qgbLegende);
+        verticalLayout_4->setObjectName(QString::fromUtf8("verticalLayout_4"));
+        verticalLayout_4->setSizeConstraint(QLayout::SetNoConstraint);
+        verticalLayout_4->setContentsMargins(-1, 0, -1, 0);
+        label_9 = new QLabel(qgbLegende);
+        label_9->setObjectName(QString::fromUtf8("label_9"));
+        label_9->setLineWidth(1);
+        label_9->setTextFormat(Qt::RichText);
 
-        verticalLayout->addLayout(horizontalLayout_9);
+        verticalLayout_4->addWidget(label_9);
 
-        FRM_Principale->setCentralWidget(centralwidget);
-        qmbMenuPrincipal = new QMenuBar(FRM_Principale);
-        qmbMenuPrincipal->setObjectName(QString::fromUtf8("qmbMenuPrincipal"));
-        qmbMenuPrincipal->setGeometry(QRect(0, 0, 1000, 21));
-        qmFichier = new QMenu(qmbMenuPrincipal);
-        qmFichier->setObjectName(QString::fromUtf8("qmFichier"));
-        qmOutils = new QMenu(qmbMenuPrincipal);
-        qmOutils->setObjectName(QString::fromUtf8("qmOutils"));
-        qmAide = new QMenu(qmbMenuPrincipal);
-        qmAide->setObjectName(QString::fromUtf8("qmAide"));
-        FRM_Principale->setMenuBar(qmbMenuPrincipal);
-        statusbar = new QStatusBar(FRM_Principale);
-        statusbar->setObjectName(QString::fromUtf8("statusbar"));
-        FRM_Principale->setStatusBar(statusbar);
+        label_7 = new QLabel(qgbLegende);
+        label_7->setObjectName(QString::fromUtf8("label_7"));
+        label_7->setTextFormat(Qt::RichText);
+
+        verticalLayout_4->addWidget(label_7);
+
+        label_8 = new QLabel(qgbLegende);
+        label_8->setObjectName(QString::fromUtf8("label_8"));
+        label_8->setTextFormat(Qt::RichText);
+
+        verticalLayout_4->addWidget(label_8);
+
+        label_10 = new QLabel(qgbLegende);
+        label_10->setObjectName(QString::fromUtf8("label_10"));
+        label_10->setTextFormat(Qt::RichText);
+
+        verticalLayout_4->addWidget(label_10);
+
+
+        horizontalLayout_9->addWidget(qgbLegende);
+
+
+        verticalLayout_2->addLayout(horizontalLayout_9);
+
+        qdwOpe->setWidget(dockWidgetContents_2);
+        FRM_Principale->addDockWidget(Qt::BottomDockWidgetArea, qdwOpe);
 
         qmbMenuPrincipal->addAction(qmFichier->menuAction());
         qmbMenuPrincipal->addAction(qmOutils->menuAction());
@@ -701,46 +850,63 @@ public:
         qlDossierLanceur->setText(QCoreApplication::translate("FRM_Principale", "Dossier Lanceur", nullptr));
         qpbSelectionDossierLanceur->setText(QString());
         qlVersion->setText(QCoreApplication::translate("FRM_Principale", "Version", nullptr));
-        qpbExtraireProgres->setText(QCoreApplication::translate("FRM_Principale", "Extraire Progr\303\250s", nullptr));
-        qlLangExtraite->setText(QCoreApplication::translate("FRM_Principale", "TextLabel", nullptr));
-        qlAdvancementsExtrait->setText(QCoreApplication::translate("FRM_Principale", "TextLabel", nullptr));
+        qpbExtraireProgresVanilla->setText(QCoreApplication::translate("FRM_Principale", "Extraire Progr\303\250s", nullptr));
+        qlAdvancementsVanillaExtrait->setText(QCoreApplication::translate("FRM_Principale", "TextLabel", nullptr));
+        qlDernierImportVanilla->setText(QCoreApplication::translate("FRM_Principale", "TextLabel", nullptr));
         qpbDossierBlazeandcave->setText(QString());
         qlDossierBlazeandcave->setText(QCoreApplication::translate("FRM_Principale", "Dossier 'Blaze and Cave'", nullptr));
-        qcbStatistiques->setText(QCoreApplication::translate("FRM_Principale", "Afficher les Statistiquess ?", nullptr));
         qleDossierBlazeandcave->setPlaceholderText(QCoreApplication::translate("FRM_Principale", "C:\\Users\\fake_Utilisateur\\AppData\\Roaming\\.minecraft\\saves\\Une_Sauvegarde\\datapacks\\bac_advancements", nullptr));
-        qcbMilestones->setText(QCoreApplication::translate("FRM_Principale", "Afficher les Milestones ?", nullptr));
-        qpbSelectionFichierProgres->setText(QString());
+        qpbExtraireProgresBacap->setText(QCoreApplication::translate("FRM_Principale", "Extraire Progr\303\250s", nullptr));
+        qlAdvancementsBacapExtrait->setText(QCoreApplication::translate("FRM_Principale", "TextLabel", nullptr));
+        qlDernierImportBacap->setText(QCoreApplication::translate("FRM_Principale", "TextLabel", nullptr));
         qleFichierProgres->setInputMask(QString());
         qleFichierProgres->setPlaceholderText(QCoreApplication::translate("FRM_Principale", "C:\\Users\\fake_Utilisateur\\AppData\\Roaming\\.minecraft\\saves\\Une_Sauvegarde\\advancements\\3b6b3dcb-58ee-4538-b019-fa2e694cef8c.json", nullptr));
+        qpbSelectionFichierProgres->setText(QString());
+        qpbImportProgresJoueur->setText(QCoreApplication::translate("FRM_Principale", "Importer Progr\303\250s", nullptr));
         qlFichierProgres->setText(QCoreApplication::translate("FRM_Principale", "Fichier Progr\303\250s", nullptr));
-        qlProgresPersoOuvert->setText(QCoreApplication::translate("FRM_Principale", "TextLabel", nullptr));
-        qpbReadJSONsVanilla->setText(QCoreApplication::translate("FRM_Principale", "Comparer progr\303\250s Vanilla (seulement)", nullptr));
-        qpbReadJSONsBlazeandcave->setText(QCoreApplication::translate("FRM_Principale", "Comparer progr\303\250s 'Blaze and Cave' (seulement)", nullptr));
-        qpbReadAllJSONs->setText(QCoreApplication::translate("FRM_Principale", "Comparer tous les progr\303\250s (Vanilla + Blaze and Cave)", nullptr));
+        qlProgresPerso->setText(QCoreApplication::translate("FRM_Principale", "TextLabel", nullptr));
+        qlDernierImportPerso->setText(QCoreApplication::translate("FRM_Principale", "TextLabel", nullptr));
+        qlVosProgres->setText(QCoreApplication::translate("FRM_Principale", "<html><head/><body><p align=\"center\"><span style=\" font-size:14pt; color:#8bc34a;\">Vos Progres</span></p></body></html>", nullptr));
         qpbReadJSON->setText(QCoreApplication::translate("FRM_Principale", "Read JSON (TEST)", nullptr));
+        qpbReadAllJSONs->setText(QCoreApplication::translate("FRM_Principale", "Comparer tous les progr\303\250s", nullptr));
+        qmFichier->setTitle(QCoreApplication::translate("FRM_Principale", "&Fichier", nullptr));
+        qmOutils->setTitle(QCoreApplication::translate("FRM_Principale", "&Outils", nullptr));
+        qmAide->setTitle(QCoreApplication::translate("FRM_Principale", "&?", nullptr));
+        qdwOpe->setWindowTitle(QCoreApplication::translate("FRM_Principale", "Op\303\251rations (Ctrl+O)", nullptr));
         qgbFiltres->setTitle(QCoreApplication::translate("FRM_Principale", "Filtres", nullptr));
-        label->setText(QCoreApplication::translate("FRM_Principale", "Titre", nullptr));
+        qcbStatistiques->setText(QCoreApplication::translate("FRM_Principale", "Masquer les Statistiques ?", nullptr));
+        qcbMilestones->setText(QCoreApplication::translate("FRM_Principale", "Masquer les Milestones ?", nullptr));
         label_13->setText(QCoreApplication::translate("FRM_Principale", "Du", nullptr));
-        qcbRegExp->setText(QCoreApplication::translate("FRM_Principale", "Expression R\303\251guli\303\250re", nullptr));
-        label_6->setText(QCoreApplication::translate("FRM_Principale", "Type Condition", nullptr));
-        label_4->setText(QCoreApplication::translate("FRM_Principale", "Progr\303\250s Finis", nullptr));
-        label_12->setText(QCoreApplication::translate("FRM_Principale", "Au", nullptr));
-        label_3->setText(QCoreApplication::translate("FRM_Principale", "Origine", nullptr));
-        label_11->setText(QCoreApplication::translate("FRM_Principale", "Date r\303\251alisation", nullptr));
         label_2->setText(QCoreApplication::translate("FRM_Principale", "Condition Faite", nullptr));
+        label_11->setText(QCoreApplication::translate("FRM_Principale", "Date r\303\251alisation", nullptr));
         qcbAutoCompletion->setText(QCoreApplication::translate("FRM_Principale", "Autocompl\303\251tion", nullptr));
+        label_4->setText(QCoreApplication::translate("FRM_Principale", "Progr\303\250s Finis", nullptr));
+        label_3->setText(QCoreApplication::translate("FRM_Principale", "Origine", nullptr));
+        label->setText(QCoreApplication::translate("FRM_Principale", "Titre", nullptr));
+        label_6->setText(QCoreApplication::translate("FRM_Principale", "Type Condition", nullptr));
+        label_12->setText(QCoreApplication::translate("FRM_Principale", "Au", nullptr));
+        qcbRegExp->setText(QCoreApplication::translate("FRM_Principale", "Expression R\303\251guli\303\250re", nullptr));
+        label_14->setText(QCoreApplication::translate("FRM_Principale", "Cat\303\251gorie", nullptr));
         qgbOperations->setTitle(QCoreApplication::translate("FRM_Principale", "Op\303\251rations", nullptr));
         qpbClearFilter->setText(QCoreApplication::translate("FRM_Principale", "Effacer les filtres", nullptr));
         pbImprimer->setText(QCoreApplication::translate("FRM_Principale", "Imprimer", nullptr));
         qpbResetDates->setText(QCoreApplication::translate("FRM_Principale", "Reset dates", nullptr));
-        groupBox->setTitle(QCoreApplication::translate("FRM_Principale", "L\303\251gende", nullptr));
-        label_8->setText(QCoreApplication::translate("FRM_Principale", "<span style=\"color: blue;\">Condition de type OU</span>", nullptr));
-        label_7->setText(QCoreApplication::translate("FRM_Principale", "<html><head/><body><p><span style=\" color:#8b0000;\">Condition de type ET</span></p></body></html>", nullptr));
+        qgbStats->setTitle(QCoreApplication::translate("FRM_Principale", "Statistiques", nullptr));
+        qrbCerce->setText(QCoreApplication::translate("FRM_Principale", "Graphique Ligne courbe", nullptr));
+        qrbLigne->setText(QCoreApplication::translate("FRM_Principale", "Graphique Ligne", nullptr));
+        qpbAfficherGraphique->setText(QCoreApplication::translate("FRM_Principale", "Afficher le Graphique", nullptr));
+        groupBox->setTitle(QCoreApplication::translate("FRM_Principale", "Compteurs Progr\303\250s", nullptr));
+        qlVanilla->setText(QCoreApplication::translate("FRM_Principale", "x / x", nullptr));
+        qlBacap->setText(QCoreApplication::translate("FRM_Principale", "x / x", nullptr));
+        qlTotal->setText(QCoreApplication::translate("FRM_Principale", "x / x", nullptr));
+        qlTitreVanilla->setText(QCoreApplication::translate("FRM_Principale", "Vanilla  :", nullptr));
+        qlTitreBacap->setText(QCoreApplication::translate("FRM_Principale", "BACAP :", nullptr));
+        qlTitreTotal->setText(QCoreApplication::translate("FRM_Principale", "Total    :", nullptr));
+        qgbLegende->setTitle(QCoreApplication::translate("FRM_Principale", "L\303\251gende", nullptr));
         label_9->setText(QCoreApplication::translate("FRM_Principale", "<html><head/><body><p><span style=\" color:#006400;\">Progr\303\250s r\303\251alis\303\251</span></p></body></html>", nullptr));
+        label_7->setText(QCoreApplication::translate("FRM_Principale", "<html><head/><body><p><span style=\" color:#8b0000;\">Condition de type ET</span></p></body></html>", nullptr));
+        label_8->setText(QCoreApplication::translate("FRM_Principale", "<span style=\"color: blue;\">Condition de type OU</span>", nullptr));
         label_10->setText(QCoreApplication::translate("FRM_Principale", "<html><head/><body><p><span style=\" color:#808000;\">Condition Unique</span></p></body></html>", nullptr));
-        qmFichier->setTitle(QCoreApplication::translate("FRM_Principale", "&Fichier", nullptr));
-        qmOutils->setTitle(QCoreApplication::translate("FRM_Principale", "&Outils", nullptr));
-        qmAide->setTitle(QCoreApplication::translate("FRM_Principale", "&?", nullptr));
     } // retranslateUi
 
 };

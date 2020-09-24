@@ -27,7 +27,7 @@
 ****************************************************************************/
 
 function Component()
-{    
+{
     if (installer.isUpdater()) {
         var startMenuShortcut = installer.value("StartMenuDir") + "/Minecraft Advancements.lnk";
         var desktopShortcut = installer.value("DesktopDir") + "/Minecraft Advancements.lnk";

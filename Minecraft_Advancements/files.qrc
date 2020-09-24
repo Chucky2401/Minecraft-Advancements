@@ -1,0 +1,6 @@
+<RCC>
+    <qresource prefix="/">
+        <file>files/minecraft_Advancements.sql</file>
+        <file>files/MINECRAFTER.REG.TTF</file>
+    </qresource>
+</RCC>

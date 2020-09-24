@@ -28,7 +28,7 @@
 
 function Component()
 {
-    var tempRepo = ["https://blackwizard.yj.fr/repository/b-advancements-x64"]
+    var tempRepo = ["https://advancements.blackwizard.fr/repository-64/beta"]
     installer.setTemporaryRepositories(tempRepo, false)
     
     if (installer.isUpdater()) {
@@ -59,7 +59,6 @@ Component.prototype.createOperations = function()
     component.createOperations();
 
     if (installer.isInstaller()) {
-        component.addOperation("GlobalConfig")
         var isStartMenuShortcutCheckBoxChecked = component.userInterface( "StartMenuShortcutCheckBoxForm" ).startMenuShortcutCheckBox.checked;
         var isDesktopShortcutCheckBoxChecked = component.userInterface( "StartMenuShortcutCheckBoxForm" ).desktopShortcutCheckBox.checked;
         if (isStartMenuShortcutCheckBoxChecked) {

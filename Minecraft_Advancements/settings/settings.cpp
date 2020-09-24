@@ -2,19 +2,36 @@
 
 Settings::Settings() {
     m_qsAppdataPath = qEnvironmentVariable("APPDATA");
+    m_qsPathRoamingBdd = m_qsAppdataPath + "\\BlackWizard Company\\bdd\\";
 
 }
 
 void Settings::initialisation(bool test) {
     if (test) {
-        qDebug() << test;
     }
     iniParam = new QSettings(QSettings::IniFormat, QSettings::UserScope, "BlackWizard Company", "Minecraft Advancements");
+
+    bddPath = this->getIniBddPath();
+    if (bddPath == settingDefaultString){
+        this->setBddPath(m_qsPathRoamingBdd);
+    }
+
+    if (test){
+        this->setBddName("minecraft_Advancements-TEST.db");
+    } else {
+        this->setBddName("minecraft_Advancements.db");
+    }
 
     geometrie = this->getIniGeometrie();
     etat = this->getIniEtat();
     restoreSizePos = this->getIniRestoreSizePos();
     this->setRestoreSizePos(restoreSizePos);
+
+    geometrieDock = this->getIniGeometrieDock();
+    this->setGeometrieDock(geometrieDock);
+
+    dockIsFloating = this->getIniDockIsFloating();
+    this->setDockIsFloating(dockIsFloating);
 
     m_verificationAutoMiseAJour = this->getIniVerificationAutoMiseAJour();
     this->setVerificationAutoMiseAJour(m_verificationAutoMiseAJour);
@@ -49,10 +66,14 @@ void Settings::initialisation(bool test) {
     m_statistics = this->getIniStatistics();
     this->setStatistics(m_statistics);
 
+    m_qsTypeGraphique = this->getIniTypeGraphique();
+    this->setTypeGraphique(m_qsTypeGraphique);
+
     m_fichierAdvancementsPerso = this->getIniFichierAdvancementsPerso();
     this->setFichierAdvancementsPerso(m_fichierAdvancementsPerso);
 
-    qDebug() << getPath();
+    m_qslProgresMasque = this->getIniProgresMasque();
+    this->setProgresMasque(m_qslProgresMasque);
 }
 
 QString Settings::getPath() {
@@ -66,6 +87,28 @@ QString Settings::getPath() {
         }
     }
     return qsChemin;
+}
+
+void Settings::setBddPath(QString path){
+    this->bddPath = path;
+    iniParam->setValue("bdd/path", path);
+}
+
+QString Settings::getBddPath(){
+    return this->bddPath;
+}
+
+QString Settings::getIniBddPath(){
+    return iniParam->value("bdd/path", settingDefaultString).toString();
+}
+
+void Settings::setBddName(QString name){
+    this->bddName = name;
+    //iniParam->setValue("bdd/name", name);
+}
+
+QString Settings::getBddName(){
+    return this->bddName;
 }
 
 void Settings::setGeometrie(QByteArray geometrie){
@@ -99,6 +142,32 @@ QByteArray Settings::getIniEtat(){
 
 QByteArray Settings::getEtat(){
     return this->etat;
+}
+
+void Settings::setGeometrieDock(QByteArray geometrie) {
+    this->geometrieDock = geometrie;
+    iniParam->setValue("dock/ope/geometry", geometrie);
+}
+
+QByteArray Settings::getIniGeometrieDock() {
+    return iniParam->value("dock/ope/geometry", settingDefaultByteArray).toByteArray();
+}
+
+QByteArray Settings::getGeometrieDock() {
+    return this->geometrieDock;
+}
+
+void Settings::setDockIsFloating(bool floating) {
+    this->dockIsFloating = floating;
+    iniParam->setValue("dock/ope/floating", floating);
+}
+
+bool Settings::getIniDockIsFloating() {
+    return iniParam->value("dock/ope/floating", settingDefaultBool).toBool();
+}
+
+bool Settings::getDockIsFloating() {
+    return this->dockIsFloating;
 }
 
 void Settings::setRestoreSizePos(bool enabled){
@@ -249,6 +318,19 @@ bool Settings::getStatistics() {
     return m_statistics;
 }
 
+void Settings::setTypeGraphique(QString type) {
+    this->m_qsTypeGraphique = type;
+    iniParam->setValue("data/graphique", type);
+}
+
+QString Settings::getIniTypeGraphique() {
+    return iniParam->value("data/graphique", "Ligne").toString();
+}
+
+QString Settings::getTypeGraphique() {
+    return m_qsTypeGraphique;
+}
+
 void Settings::setFichierAdvancementsPerso(QString fichier) {
     this->m_fichierAdvancementsPerso = fichier;
     iniParam->setValue("data/advancementsPerso", fichier);
@@ -260,4 +342,17 @@ QString Settings::getIniFichierAdvancementsPerso() {
 
 QString Settings::getFichierAdvancementsPerso() {
     return m_fichierAdvancementsPerso;
+}
+
+void Settings::setProgresMasque(QStringList progres) {
+    this->m_qslProgresMasque = progres;
+    iniParam->setValue("progres/masque", progres);
+}
+
+QStringList Settings::getIniProgresMasque() {
+    return iniParam->value("progres/masque", QStringList()).toStringList();
+}
+
+QStringList Settings::getProgresMasque() {
+    return m_qslProgresMasque;
 }

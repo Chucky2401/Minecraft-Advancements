@@ -2,6 +2,92 @@
 
 Suivis des version
 
+## **V2.0.0** - *TBD*
+
+### Modification
+
++ Chargement de tous les progrès dès le départ pour éviter un problème de filtre qui n'affiche rien
+
+## **V2.0.0 Bêta 3** - *25/08/2020*
+
+### Correction
+
++ Lors de l'utilisation sans BACAP, impossible de comparer les progrès
+
+### Modification
+
++ Message d'erreur plus parlant pour les erreurs d'ouverture des fichier JSON, en particulier pour langue BACAP
+
+### Ajout
+
++ Filtre sur la catégorie *(aventure, animal, etc.)*
+
+## **V2.0.0 Bêta 2** - *23/08/2020*
+
+### Correction
+
++ Pour les conditions de types *OU* non fait, rien n'était affiché dans la colonne **Progrès Fait**
++ Intégration de la police d'écriture pour **Vos Progrès**
++ Lors de la recherche de mise à jour Bêta, ajout de la bonne URL en 64 bits
+
+## **V2.0.0 Bêta 1** - *22/08/2020*
+
+### Correction
+
++ Correction des .dll lors migration **Qt 5.15**
++ Correction des binaires pour être du 32 bits sur l'architecture 32 bits
++ Lors de l'ajout de la langue en base de données, plantage lors de l'import du BACAP. Ajout d'une fonction qui prend tout de la base pour stocker.
++ Correction lors du contrôle de mise à jour. Par exemple si la version en cours est là 2.0 et la dernière en ligne la 0.2.4.6, alors le programme disait qu'il fallait mettre à jour.
++ Correction de bugs divers
+
+### Ajout
+
++ Programme disponible en architecture 32 bits (x86) et 64 bits (x64) ! A vous de choisir celle que vous préférez ! Je vous conseil tout de même la 64 bits :wink:
+  [Résultat du sondage](https://docs.google.com/forms/d/e/1FAIpQLSehyTG2_jkLtpeAD-8g2r8esU4IldJcWlvEdIlanZdosfHoeg/viewanalytics)
++ Création d'un dossier **build** pour l'architecture 64 bits avec binaires et dll associées
++ Si les traductions ne sont pas en base, blocage import BACAP
++ Ajout d'un Dock pour les opérations et filtres
++ Le dock peut être fermé, flottant (en dehors de la fenêtre) ou docker (dans la fenêtre). Tout ceci est mémorisé avec l'état de la fenêtre.
++ Ajout d'une image de fond et d'un titre au tableau
++ Status bar de la fenêtre. C'est une bar tout en bas qui permet d'affichage des informations
++ Ajout de barre de progression lors de chargement long dans la status bar [Issue #19](https://github.com/Chucky2401/Minecraft-Advancements/issues/19)
++ Affichage du temps écoulé pour les imports dans la status bar à la fin pendant 10 secondes
++ Info-bulle sur Description
++ Compteurs de progrès [Issue #17](https://github.com/Chucky2401/Minecraft-Advancements/issues/17)
++ Possibilités de masquer un progrès lors d'un clique droit sur la ligne de ce dernier [Issue #3](https://github.com/Chucky2401/Minecraft-Advancements/issues/3)
++ Possibilités d'afficher des statistiques dans un graphique [Issue #18](https://github.com/Chucky2401/Minecraft-Advancements/issues/18)
++ Affichage architecture dans le titre de la fenêtre
+
+### Modification
+
++ **La plus grosse modification, retour arrière impossible**, utilisation d'une base de données **SQLIte 3** pour stocker toutes les données !
+  Avantages : 2 ou 3 long chargement 1 fois, et à chaque changement de version de Minecraft ou du BACAP, puis des affichages rapide pour suivre ses progrès ; Permet de mieux gérer les filtres ; Permet des filtres non possibles avant
+  Inconvénient : demande d'actualiser manuellement les progrès en cas de changement
+  **Etat : 100 %**
+  
++ La base de données est compacté après chaque comparaison
+  
++ Déplacement des fichiers extrait pour Minecraft Vanilla pour éviter les erreurs dû au CCU (**C**ontrôle de **C**ompte **U**tilisateur *ou* **U**ser **A**count **C**ontrol - UAC en anglais)
+
++ Lorsque les progrès Minecraft Vanilla et la langue sont importés, suppression des fichiers
+
++ Les chargements longs ne bloque plus la fenêtre. Windows ne vous dira plus *Ne répond pas*
+
++ Dû au deux modifications du dessus, blocage complet des boutons pendant les traitements longs
+
++ Passage des boutons pour comparer et lors de mes tests sous la liste des progrès
+
++ Le numéro de version du jeu étant très important à présent, dès qu'un changement de version est fait on remet tout à zéro pour forcer à minima la comparaison
+
++ Complèment point du dessus : même chose pour l'import des progrès (Vanilla, BACAP ou personnel)
+
++ Passage en **Qt 5.15** *(vivement Qt 6 !)* et utilisation de **MinGW** (compilateur) en **8.1** au lieu de **7.3**
+  
+
+### Divers
+
++ Ajout des fichiers nécessaires pour création package et repository au GitHub.
+
 ## **V1.0.0** - 16/06/2020
 
 ### Correction
