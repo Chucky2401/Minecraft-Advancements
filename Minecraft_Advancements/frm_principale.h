@@ -75,6 +75,7 @@ private:
     QString hashLangue();
     QString numeroIndex();
     // Configuration
+    void importProgresVanilla(QString cheminProgres, bool bBacap);
     QVariantMap ouvrirJson(QString fichier);
     void traitementFichierAdvancements(QString fichier);
     void traitementDossierBac(QString folder);
@@ -111,6 +112,8 @@ private:
     bool m_bProgresVanillaOK;
     bool m_bProgresBlazeandcaveOK;
     bool m_bProgresPersoOK;
+    bool m_bErreurInsertionAdvancementVanilla;
+    bool m_bErreurDeleteAdvancementVanilla;
     // Utile
     QTemporaryDir m_tempDir;
     QString m_qsAppDataPath;
