@@ -2,7 +2,23 @@
 
 Suivis des version
 
-## **V2.0.0** - *TBD*
+## **V2.1.0 Bêta 1** - *26/09/2020*
+
+### Correction
+
++ Grosse correction (et erreur de ma part ?). Si le datapack BACAP est utilisé, import des progrès Vanilla contenu dans ce datapack au lieu des progres Vanilla de la version. BACAP a dans ses dossiers, les fichiers de Minecraft Vanilla, et certains critères changent... Mais ! Oui, sinon ce sera trop facile, certains fichiers ne contiennent rien, donc je dois aller chercher les infos contenu dans la version de Minecraft ! Une vrai galère.
++ Les messages "Progrès non importé", "Progrès importé", devait être différent suivant certaines conditions, c'est maintenant le cas.
+
+### Modification
+
++ Le bouton d'import des progrès Minecraft Vanilla, devient "Import Langue" si un dossier BACAP valide est sélectionné
++ Pour les mises à jour, utilisation de la bonne balise du fichier Updates.xml. Version de l'application au lieu du package. Car il peut y avoir plusieurs packages dans une application 😅
+
+### Ajout
+
++ Lors du choix de la version, un message apparaît à l'écran pour indiquer ce nouveau fonctionnement, qu'il faut sélectionner le dossier BACAP tout de suite avant de lancer l'import.
+
+## **V2.0.0** - *24/09/2020*
 
 ### Modification
 

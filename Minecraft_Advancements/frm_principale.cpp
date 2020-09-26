@@ -446,7 +446,7 @@ void FRM_Principale::choixVersion(QString text) {
     else
         m_bVersionOK = false;
 
-    if (qsqCompteProgresVanilla.exec("SELECT COUNT(1) progresImporte FROM statistics WHERE nom = \"progres_update\" AND version = \"" + m_qsNumeroVersion + "\"")) {
+    if (m_bVersionOK && qsqCompteProgresVanilla.exec("SELECT COUNT(1) progresImporte FROM statistics WHERE nom = \"progres_update\" AND version = \"" + m_qsNumeroVersion + "\"")) {
         qsqCompteProgresVanilla.next();
         int iNombreEnregistrement = qsqCompteProgresVanilla.value("progresImporte").toInt();
         if (iNombreEnregistrement > 0) {
@@ -493,13 +493,27 @@ void FRM_Principale::choixVersion(QString text) {
             ui->qpbExtraireProgresVanilla->setText("Importer Progrès");
             ui->qpbExtraireProgresVanilla->setEnabled(true);
             m_bUpdateProgres = true;
-            m_bProgresVanillaOK = true;
             // Info utilisateur
             ui->qlAdvancementsVanillaExtrait->setText("Progrès non importé !");
             ui->qlAdvancementsVanillaExtrait->setStyleSheet("QLabel { color: red; }");
             ui->qlAdvancementsVanillaExtrait->setVisible(true);
             m_bProgresVanillaOK = false;
+            if (!ouvertureEnCours && m_bVersionOK)
+                afficherMessage(QMessageBox::Information, "Import progrès Vanilla avec BACAP", \
+                            "Si vous comptez comparer les progrès BACAP, alors choisissez le dossier maintenant !\n"
+                            "Ce datapack utilises ses propres progrès Vanilla qui sont légèrement différents au niveau des critères.\n"
+                            "Les progrès Vanilla seront importés en même temps que ce dernier.");
         }
+    } else if (!m_bVersionOK) {
+        ui->qlDernierImportVanilla->setVisible(false);
+        // Modification du bouton
+        ui->qpbExtraireProgresVanilla->setText("Importer Progrès");
+        ui->qpbExtraireProgresVanilla->setEnabled(false);
+        // Info utilisateur
+        ui->qlAdvancementsVanillaExtrait->setText("Sélectionnez la version d'abord !");
+        ui->qlAdvancementsVanillaExtrait->setStyleSheet("QLabel { color: orange; }");
+        ui->qlAdvancementsVanillaExtrait->setVisible(true);
+        m_bProgresVanillaOK = false;
     } else {
         m_bProgresVanillaOK = false;
         afficherMessage(QMessageBox::Critical, "Impossible de vérifier si les progrès ont déjà étés importés.", \
@@ -713,81 +727,10 @@ void FRM_Principale::extraireProgres(bool checked) {
         importProgresVanilla(m_qdDossierAdvancedments.path(), false);
 
         qtFin = QTime::currentTime();
-//        if (!m_bErreurDeleteAdvancementVanilla && !m_bErreurInsertionAdvancementVanilla) {
-//            QSqlQuery queryDeleteStats(bdd.getBase());
-//            if(!queryDeleteStats.exec("DELETE FROM statistics WHERE nom = \"progres_update\" AND version = \"" + m_qsNumeroVersion + "\"")) {
-//                ui->qlDernierImportVanilla->setVisible(false);
-//                afficherMessage(QMessageBox::Warning, "Impossible de mettre à jour la date d'import des progrès.\nLes progrès pour la version <strong>" + m_qsNumeroVersion + "</strong> ont bien été importés dans la base.", \
-//                                            "Voir les détails pour plus d'informations.", \
-//                                            queryDeleteStats.lastError().text());
-//            } else {
-//                qsDernierImport = QDateTime::currentDateTime().toString("yyyy-MM-dd hh:mm:ss");
-//                QDateTime qdtDernierImportFR = QDateTime::fromString(qsDernierImport, "yyyy-MM-dd hh:mm:ss");
-//                QSqlQuery queryInsertStats(bdd.getBase());
-//                if(!queryInsertStats.exec("INSERT INTO statistics (nom, valeur, version) VALUES (\"progres_update\", \"" + qsDernierImport + "\", \"" + m_qsNumeroVersion + "\")")) {
-//                    ui->qlDernierImportVanilla->setVisible(false);
-//                    afficherMessage(QMessageBox::Warning, "Impossible de mettre à jour la date d'import des progrès.\nLes progrès pour la version <strong>" + m_qsNumeroVersion + "</strong> ont bien été importés dans la base.", \
-//                                                "Voir les détails pour plus d'informations.", \
-//                                                queryInsertStats.lastError().text());
-//                } else {
-//                    ui->qlDernierImportVanilla->setText("Dernier Import : " + qdtDernierImportFR.toString("dd/MM/yyyy hh:mm:ss"));
-//                    ui->qlDernierImportVanilla->setVisible(true);
-//                    afficherMessage(QMessageBox::Information, "Tous les progrès ont été inséré avec succès !", \
-//                                                "Les progrès de Minecraft Vanilla pour la version <strong>" + m_qsNumeroVersion + "</strong> sont maintenant en base");
-//                }
-//            }
-
-//            // Modification du bouton
-//            ui->qpbExtraireProgresVanilla->setText("Ré-Importer Progrès");
-//            ui->qpbExtraireProgresVanilla->setEnabled(true);
-//            m_bUpdateProgres = true;
-//            m_bProgresVanillaOK = true;
-//            // Info utilisateur
-//            ui->qlAdvancementsVanillaExtrait->setText("Progrès importé !");
-//            ui->qlAdvancementsVanillaExtrait->setStyleSheet("QLabel { color: green; }");
-//            ui->qlAdvancementsVanillaExtrait->setVisible(true);
-//            m_bProgresVanillaOK = true;
-//        } else if (!m_bErreurDeleteAdvancementVanilla && m_bErreurInsertionAdvancementVanilla) {
-//            afficherMessage(QMessageBox::Critical, "Impossible d'insérer tous les progrès.", \
-//                                        "Voir les détails pour plus d'informations.", \
-//                                        qsLastErrorBdd + "\nDernières Requêtes :\n" + qsDerniereRequete);
-//            ui->qlDernierImportVanilla->setVisible(false);
-//            // Modification du bouton
-//            ui->qpbExtraireProgresVanilla->setText("Importer Progrès");
-//            ui->qpbExtraireProgresVanilla->setEnabled(true);
-//            m_bUpdateProgres = true;
-//            m_bProgresVanillaOK = true;
-//            // Info utilisateur
-//            ui->qlAdvancementsVanillaExtrait->setText("Progrès non importé !");
-//            ui->qlAdvancementsVanillaExtrait->setStyleSheet("QLabel { color: red; }");
-//            ui->qlAdvancementsVanillaExtrait->setVisible(true);
-//            m_bProgresVanillaOK = false;
-//        }
-
-//        // On supprime les dossiers ont en a plus besoin...
-//        m_qdDossierAdvancedments.removeRecursively();
-//        // On remet les boutons actifs
-//        ui->qcbLauncher->setEnabled(true);
-//        ui->qcbLangue->setEnabled(true);
-//        ui->qcbVersion->setEnabled(true);
-//        ui->qpbExtraireProgresVanilla->setEnabled(true);
-//        if (m_qdDossierAdvancementsBlazeAndCave.exists())
-//            ui->qpbExtraireProgresBacap->setEnabled(true);
-//        if (QFile::exists(m_qsFichierAdvancementsSolo))
-//            ui->qpbImportProgresJoueur->setEnabled(true);
-//        // On supprime les widgets de la status bar
-//        m_statusBar->removeWidget(m_progressExtractionProgresVanilla);
-//        m_statusBar->removeWidget(m_labelExtractionProgresVanilla);
-//        m_statusBar->clearMessage();
-
-//        activationBoutonExtraction();
-
-//        traitementDossierBac(m_qdDossierAdvancementsBlazeAndCave.path().replace("/data/blazeandcave/advancements", ""));
-//        traitementFichierAdvancements(m_qsFichierAdvancementsSolo);
     } else if(!bErreurDetecteAdvancement && !bErreurDetecteLang && m_qdDossierAdvancementsBlazeAndCave.exists()) {
         qtFin = QTime::currentTime();
         afficherMessage(QMessageBox::Information, "Progrès BACAP", "Vous avez choisis un dossier de progrès Blaze and Cave Advancement Pack\n"
-                                                                   "C'est progrès remplace ceux de Minecraft Vanilla.\n"
+                                                                   "Ces progrès remplacent ceux de Minecraft Vanilla.\n"
                                                                    "Ils seront importés au même moment.\n"
                                                                    "\n"
                                                                    "Veuillez donc importer les progrès BACAP pour avoir les Vanilla.");
@@ -879,6 +822,10 @@ void FRM_Principale::importProgresBlazeandcave(bool checked) {
     ui->qpbReadAllJSONs->setEnabled(false);
 
     importProgresVanilla(qsCheminVanillaBacap, true);
+
+    m_progressExtractionProgresVanilla->setMinimum(0);
+    m_progressExtractionProgresVanilla->setMaximum(0);
+    m_progressExtractionProgresVanilla->setValue(0);
 
     // On les supprimes avant
     QSqlQuery queryDelete(bdd.getBase());
@@ -2144,16 +2091,19 @@ void FRM_Principale::comparaisonVersion(bool ecrireFichier){
     QDomElement Component = root.firstChild().toElement();
 
     while(!Component.isNull()) {
-        if (Component.tagName() == "PackageUpdate") {
-            QDomElement Child = Component.firstChild().toElement();
-
-            while (!Child.isNull()) {
-                if (Child.tagName() == "Version") {
-                    qsVersionOnline = Child.firstChild().toText().data();
-                }
-                Child = Child.nextSibling().toElement();
-            }
+        if (Component.tagName() == "ApplicationVersion") {
+            qsVersionOnline = Component.firstChild().toText().data();
         }
+//        if (Component.tagName() == "PackageUpdate") {
+//            QDomElement Child = Component.firstChild().toElement();
+
+//            while (!Child.isNull()) {
+//                if (Child.tagName() == "Version") {
+//                    qsVersionOnline = Child.firstChild().toText().data();
+//                }
+//                Child = Child.nextSibling().toElement();
+//            }
+//        }
         Component = Component.nextSibling().toElement();
     }
     //TEST
@@ -2235,6 +2185,9 @@ void FRM_Principale::dockWidgetOperationFloating(bool floating) {
  *  ~~~~~~~~~~~~~
  */
 
+/*
+ * Import des progres Vanilla en fonction de BACAP ou pas
+ */
 void FRM_Principale::importProgresVanilla(QString cheminProgres, bool bBacap = false) {
     QStringList qslFormatFichier;
     QString qsLastErrorBdd = "", qsDernierImport = "", qsDerniereRequete = "", qsCheminASupprimer = "";
@@ -2553,6 +2506,9 @@ void FRM_Principale::importProgresVanilla(QString cheminProgres, bool bBacap = f
     }
 }
 
+/*
+ * Fonction pour ouvrir un fichier JSON et renvoie son contenu
+ */
 QVariantMap FRM_Principale::ouvrirJson(QString fichier) {
     QFile qfFichierJson(fichier);
     QJsonParseError *error = new QJsonParseError();
