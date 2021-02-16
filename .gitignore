@@ -35,3 +35,4 @@ build_x64/deploy-b/repository*
 build_x64/deploy-b/*.exe
 Minecraft_Advancements/Backup-ReadJson.txt
 Minecraft_Advancements/Backup-ChoixVersion.txt
+\#Test/
