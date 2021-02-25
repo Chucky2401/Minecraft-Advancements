@@ -1,6 +1,10 @@
 [![GitHub license](https://img.shields.io/github/license/Chucky2401/Minecraft-Advancements)](https://github.com/Chucky2401/Minecraft-Advancements/blob/master/LICENSE.md) [![GitHub issues](https://img.shields.io/github/issues/Chucky2401/Minecraft-Advancements?style=plastic)](https://github.com/Chucky2401/Minecraft-Advancements/issues) [![GitHub stars](https://img.shields.io/github/stars/Chucky2401/Minecraft-Advancements)](https://github.com/Chucky2401/Minecraft-Advancements/stargazers) [![Twitter](https://img.shields.io/twitter/url?style=social&url=https%3A%2F%2Ftwitter.com%2FGoCChucky2401)](https://twitter.com/intent/tweet?text=Wow:&url=https%3A%2F%2Fgithub.com%2FChucky2401%2FMinecraft-Advancements) [![Facebook](https://img.shields.io/twitter/url?label=Facebook&logo=facebook&style=social&url=https%3A%2F%2Fwww.facebook.com%2FChucky2401.GoC%2F)](https://www.facebook.com/Chucky2401.GoC/)
 
 
+# /!\ PROJET ABANDONNÉ /!\
+
+# UN MOD MINECRAFT EST MAINTENANT DISPONIBLE : https://www.curseforge.com/minecraft/mc-mods/advancementinfo
+
 
 # Minecraft Advancements
 
